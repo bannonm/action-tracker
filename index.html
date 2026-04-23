@@ -401,11 +401,17 @@
 <script>
 // ── Config — swap PROXY_URL for your Cloudflare Worker URL ───
 const PROXY_URL  = 'https://altius-proxy.bannon-matthew.workers.dev/';
-const SB_URL     = 'https://uslelxguolwqtyrtjcpi.supabase.co';
-const SB_KEY     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzbGVseGd1b2x3cXR5cnRqY3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MjM1ODQsImV4cCI6MjA5MjQ5OTU4NH0.-91VKLJANiT7_X1yvK-GuU1dWEtLk-tmeos_rFISHeY';
-const ITEMS_API  = SB_URL + '/rest/v1/action_items';
-const ALIASES_API= SB_URL + '/rest/v1/aliases';
-const SB_H = {'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};
+// All Supabase calls routed through Cloudflare Worker to avoid CORS/auth issues
+async function sbCall(action, body={}) {
+  const res = await fetch(PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-action': action },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) throw new Error('Worker error: ' + res.status);
+  const text = await res.text();
+  try { return JSON.parse(text); } catch(e) { return text; }
+}
 
 // ── State ────────────────────────────────────────────────────
 let items=[], aliases=[], currentStatusFilter='all';
@@ -427,12 +433,11 @@ function setSyncStatus(s){
 async function loadAll(){
   setSyncStatus('syncing');
   try {
-    const [ir,ar]=await Promise.all([
-      fetch(ITEMS_API+'?order=duedate.asc.nullslast',{headers:SB_H}),
-      fetch(ALIASES_API+'?order=alias.asc',{headers:SB_H})
+    const [items_data, aliases_data] = await Promise.all([
+      sbCall('sb-get-items'),
+      sbCall('sb-get-aliases')
     ]);
-    if(!ir.ok||!ar.ok) throw new Error();
-    items=await ir.json(); aliases=await ar.json();
+    items=items_data; aliases=aliases_data;
     setSyncStatus('ok');
   } catch(e){ setSyncStatus('error'); showToast('Connection error'); }
   updateHeader();
@@ -461,8 +466,7 @@ function getCandidates(field){
 async function saveAlias(aliasText,canonical,type){
   const rec={id:Date.now().toString(),alias:aliasText,canonical,type,created:new Date().toISOString()};
   try{
-    const res=await fetch(ALIASES_API,{method:'POST',headers:SB_H,body:JSON.stringify(rec)});
-    if(!res.ok) throw new Error();
+    await sbCall('sb-save-alias', rec);
     aliases.push(rec);
     showToast(`Alias saved: "${aliasText}" → "${canonical}"`);
     if(currentTab==='aliases') renderAliases();
@@ -476,7 +480,7 @@ async function callClaude(prompt){
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-sonnet-4-6',
         max_tokens: 1000,
         messages: [{role:'user', content:prompt}]
       })
@@ -812,8 +816,7 @@ async function confirmSave(){
   const item={id:Date.now().toString(),datetime:currentData.datetime||nowLocal(),project:currentData.project||null,contractor:currentData.contractor||null,action,responsible:currentData.responsible||null,duedate:currentData.duedate||null,created:new Date().toISOString()};
   setSyncStatus('syncing');
   try{
-    const res=await fetch(ITEMS_API,{method:'POST',headers:SB_H,body:JSON.stringify(item)});
-    if(!res.ok) throw new Error();
+    await sbCall('sb-save-item', item);
     setSyncStatus('ok'); await loadAll(); discardAll(); showToast('Action item saved!');
   }catch(e){setSyncStatus('error');showToast('Save failed — check connection');}
 }
@@ -823,8 +826,7 @@ async function saveEdit(){
   const patch={datetime:document.getElementById('e-datetime').value,project:document.getElementById('e-project').value.trim()||null,contractor:document.getElementById('e-contractor').value.trim()||null,action:document.getElementById('e-action').value.trim(),responsible:document.getElementById('e-responsible').value.trim()||null,duedate:document.getElementById('e-duedate').value||null};
   setSyncStatus('syncing');
   try{
-    const res=await fetch(ITEMS_API+'?id=eq.'+editId,{method:'PATCH',headers:SB_H,body:JSON.stringify(patch)});
-    if(!res.ok) throw new Error();
+    await sbCall('sb-update-item', {id: editId, patch});
     setSyncStatus('ok'); await loadAll(); closeModal(); renderCurrentTab(); showToast('Item updated');
   }catch(e){setSyncStatus('error');showToast('Update failed');}
 }
@@ -843,7 +845,7 @@ async function deleteItem(id){
   showConfirmDialog('Delete this action item? This cannot be undone.',async()=>{
     setSyncStatus('syncing');
     try{
-      const res=await fetch(ITEMS_API+'?id=eq.'+id,{method:'DELETE',headers:SB_H});
+      await sbCall('sb-delete-item', {id});
       if(!res.ok) throw new Error();
       setSyncStatus('ok'); await loadAll(); renderCurrentTab(); showToast('Item deleted');
     }catch(e){setSyncStatus('error');showToast('Delete failed');}
@@ -853,7 +855,7 @@ async function deleteItem(id){
 async function deleteAlias(id){
   showConfirmDialog('Delete this alias?',async()=>{
     try{
-      const res=await fetch(ALIASES_API+'?id=eq.'+id,{method:'DELETE',headers:SB_H});
+      await sbCall('sb-delete-alias', {id});
       if(!res.ok) throw new Error();
       aliases=aliases.filter(a=>a.id!==id); renderAliases(); showToast('Alias deleted');
     }catch(e){showToast('Delete failed');}
