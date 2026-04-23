@@ -2,8 +2,56 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Action Tracker</title>
+
+<!-- PWA core -->
+<meta name="application-name" content="Action Tracker">
+<meta name="description" content="Voice-powered action item tracker with AI parsing">
+
+<!-- iOS PWA — full screen, no browser chrome -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Action Tracker">
+
+<!-- iOS splash screens (covers common iPhone sizes) -->
+<meta name="apple-touch-fullscreen" content="yes">
+
+<!-- iOS home screen icon — PNG generated at runtime (iOS requires PNG not SVG) -->
+<link rel="apple-touch-icon" id="pwa-icon">
+<link rel="manifest" id="pwa-manifest">
+<script>
+(function(){
+  var c=document.createElement("canvas"); c.width=c.height=180;
+  var x=c.getContext("2d");
+  x.fillStyle="#1D4E89"; x.beginPath(); x.roundRect(0,0,180,180,36); x.fill();
+  x.fillStyle="white"; x.beginPath(); x.roundRect(72,45,36,56,18); x.fill();
+  x.strokeStyle="white"; x.lineWidth=8; x.lineCap="round";
+  x.beginPath(); x.arc(90,90,30,Math.PI,0,true); x.stroke();
+  x.beginPath(); x.moveTo(90,120); x.lineTo(90,135); x.stroke();
+  x.beginPath(); x.moveTo(72,135); x.lineTo(108,135); x.stroke();
+  x.fillStyle="#E8A020"; x.beginPath(); x.arc(133,133,28,0,Math.PI*2); x.fill();
+  x.strokeStyle="white"; x.lineWidth=5; x.lineJoin="round";
+  x.beginPath(); x.moveTo(120,133); x.lineTo(129,143); x.lineTo(146,122); x.stroke();
+  var url=c.toDataURL("image/png");
+  document.getElementById("pwa-icon").href=url;
+  var m={name:"Action Tracker",short_name:"Action Tracker",description:"Voice-powered action item tracker",start_url:"./",display:"standalone",orientation:"portrait",background_color:"#1D4E89",theme_color:"#1D4E89",icons:[{src:url,sizes:"180x180",type:"image/png"}]};
+  var b=new Blob([JSON.stringify(m)],{type:"application/json"});
+  document.getElementById("pwa-manifest").href=URL.createObjectURL(b);
+})();
+</script>
+
+
+<!-- Theme color for browser chrome on Android -->
+<meta name="theme-color" content="#1D4E89">
+
+<!-- iOS status bar safe area padding -->
+<style>
+  body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+  .header { padding-top: calc(16px + env(safe-area-inset-top)); }
+  .toast  { bottom: calc(24px + env(safe-area-inset-bottom)); }
+</style>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
@@ -1017,6 +1065,19 @@ function exportExcel() {
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
 loadAll();
+
+// ── Service Worker (offline shell + CDN caching) ─────────────
+if ('serviceWorker' in navigator) {
+  const swCode = `
+const CACHE='action-tracker-v1';
+const ASSETS=['https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting();});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
+self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request)));});
+  `;
+  const blob = new Blob([swCode],{type:'application/javascript'});
+  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+}
 </script>
 </body>
 </html>
