@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Action Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --primary: #1D4E89;
+    --primary-light: #E8F0FA;
+    --accent: #E8A020;
+    --accent-light: #FDF3E0;
+    --surface: #FFFFFF;
+    --bg: #F4F6FA;
+    --border: #D8DDE8;
+    --text: #1A2033;
+    --text-muted: #6B7590;
+    --danger: #C0392B;
+    --success: #1D7A4E;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, 'SF Pro Text', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .header { background: var(--primary); color: white; padding: 16px 20px 12px; position: sticky; top: 0; z-index: 100; }
+  .header h1 { font-size: 18px; font-weight: 600; }
+  .header-row { display: flex; align-items: center; justify-content: space-between; }
+  .sync-indicator { font-size: 11px; opacity: 0.85; display: flex; align-items: center; gap: 5px; }
+  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
+  .sync-dot.syncing { background: var(--accent); animation: pulse 1s infinite; }
+  .sync-dot.error { background: #f87171; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+  .header p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+
+  .nav { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; scrollbar-width: none; }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn { flex: none; padding: 12px 14px; font-size: 12px; font-weight: 500; color: var(--text-muted); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+  .nav-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  .content { padding: 16px; max-width: 600px; margin: 0 auto; }
+
+  /* ── Voice UI ── */
+  .voice-center { display: flex; flex-direction: column; align-items: center; padding: 28px 16px 20px; }
+  .voice-ring { position: relative; width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+  .voice-ring-bg  { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--border); }
+  .voice-ring-anim  { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--primary); opacity: 0; }
+  .voice-ring-anim2 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--primary); opacity: 0; }
+  .voice-ring-anim.active  { animation: ripple 1.4s ease-out infinite; }
+  .voice-ring-anim2.active { animation: ripple 1.4s ease-out infinite 0.5s; }
+  @keyframes ripple { 0%{transform:scale(1);opacity:0.6}100%{transform:scale(1.6);opacity:0} }
+  .mic-btn { width: 100px; height: 100px; border-radius: 50%; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: var(--primary); box-shadow: 0 4px 20px rgba(29,78,137,0.35); position: relative; z-index: 1; transition: background 0.2s, box-shadow 0.2s; }
+  .mic-btn.recording  { background: var(--danger);  box-shadow: 0 4px 20px rgba(192,57,43,0.4); }
+  .mic-btn.processing { background: var(--accent);  box-shadow: 0 4px 20px rgba(232,160,32,0.4); }
+  .mic-btn.confirm    { background: var(--success);  box-shadow: 0 4px 20px rgba(29,122,78,0.4); }
+  .mic-btn.alias-mode { background: #7c3aed; box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
+  .mic-btn svg { width: 32px; height: 32px; fill: white; }
+  .mic-label { font-size: 10px; color: white; font-weight: 700; letter-spacing: 0.5px; text-align: center; line-height: 1.3; padding: 0 8px; }
+  .voice-status { font-size: 14px; color: var(--text-muted); text-align: center; min-height: 20px; margin-bottom: 10px; }
+  .voice-status.listening   { color: var(--danger); font-weight: 500; }
+  .voice-status.processing  { color: var(--accent); font-weight: 500; }
+  .voice-status.confirm-mode { color: var(--success); font-weight: 500; }
+  .voice-status.alias-mode  { color: #7c3aed; font-weight: 500; }
+  .transcript-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 12px; font-size: 14px; line-height: 1.5; color: var(--text-muted); font-style: italic; min-height: 52px; width: 100%; }
+  .transcript-box.has-text { color: var(--text); font-style: normal; }
+  .tip { font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.6; padding: 0 8px; }
+  .tip strong { color: var(--text); }
+
+  /* ── Alias prompt banner ── */
+  .alias-banner { background: #f3f0ff; border: 1.5px solid #a78bfa; border-radius: var(--radius-sm); padding: 14px; margin-top: 12px; }
+  .alias-banner-title { font-size: 13px; font-weight: 700; color: #5b21b6; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .alias-banner-body  { font-size: 13px; color: #4c1d95; line-height: 1.6; margin-bottom: 10px; }
+  .alias-banner-body strong { font-weight: 700; }
+  .alias-banner-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .alias-btn { padding: 8px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
+  .alias-btn-yes  { background: #7c3aed; color: white; }
+  .alias-btn-new  { background: #e9d5ff; color: #5b21b6; }
+  .alias-btn-skip { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+
+  /* ── Confirm card ── */
+  .confirm-card { background: var(--surface); border-radius: var(--radius); border: 1.5px solid var(--primary); padding: 16px; margin-top: 8px; }
+  .confirm-title { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+  .cf-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 11px; padding-bottom: 11px; border-bottom: 0.5px solid var(--border); }
+  .cf-row:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .cf-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .cf-body { flex: 1; min-width: 0; }
+  .cf-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 2px; }
+  .cf-value { font-size: 14px; color: var(--text); line-height: 1.4; word-break: break-word; }
+  .cf-value.empty { color: var(--text-muted); font-style: italic; }
+  .cf-inferred { display: inline-block; font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 5px; }
+  .cf-changed  { display: inline-block; font-size: 10px; background: #e6f4ec; color: var(--success); padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 5px; }
+  .cf-resolved { display: inline-block; font-size: 10px; background: #f3f0ff; color: #5b21b6; padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 5px; }
+  .confirm-banner { background: #e6f4ec; border: 1px solid #a8d5bc; border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 12px; font-size: 13px; color: var(--success); line-height: 1.5; }
+  .confirm-banner strong { display: block; margin-bottom: 2px; font-size: 14px; }
+  .confirm-actions { display: flex; gap: 10px; margin-top: 14px; }
+  .btn-save    { flex: 1; padding: 13px; background: var(--primary); color: white; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; }
+  .btn-discard { flex: none; padding: 13px 16px; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; cursor: pointer; }
+
+  /* ── Aliases tab ── */
+  .alias-type-header { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 16px 0 8px; }
+  .alias-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .alias-arrow { color: var(--text-muted); font-size: 16px; flex-shrink: 0; }
+  .alias-text { flex: 1; min-width: 0; }
+  .alias-from { font-size: 14px; font-weight: 500; color: var(--text); }
+  .alias-to   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .alias-type-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; flex-shrink: 0; }
+  .alias-type-project     { background: var(--primary-light); color: var(--primary); }
+  .alias-type-contractor  { background: var(--accent-light); color: #7a4800; }
+  .alias-type-responsible { background: #e6f4ec; color: var(--success); }
+  .alias-type-general     { background: #f3f0ff; color: #5b21b6; }
+  .alias-delete { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; padding: 4px; flex-shrink: 0; }
+  .alias-add-card { background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+  .alias-add-title { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 12px; }
+  .alias-form-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
+  .alias-form-row input, .alias-form-row select { flex: 1; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; color: var(--text); background: var(--bg); -webkit-appearance: none; }
+  .alias-form-arrow { color: var(--text-muted); font-size: 18px; flex-shrink: 0; }
+
+  /* ── Shared ── */
+  .btn { display: block; width: 100%; padding: 14px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; border: none; text-align: center; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-accent  { background: var(--accent); color: white; }
+  .btn-outline { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
+  .btn-sm { padding: 8px 14px; font-size: 13px; width: auto; display: inline-block; border-radius: var(--radius-sm); }
+  .btn-danger { background: var(--danger); color: white; }
+  .item { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px; margin-bottom: 10px; }
+  .item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .item-action { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.4; }
+  .badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; margin-left: 8px; }
+  .badge-overdue { background: #fdecea; color: var(--danger); }
+  .badge-soon    { background: var(--accent-light); color: #8a5a00; }
+  .badge-ok      { background: #e6f4ec; color: var(--success); }
+  .item-meta { font-size: 12px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 8px; }
+  .item-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .search-box { position: relative; margin-bottom: 14px; }
+  .search-box input { padding-left: 38px; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); }
+  input, select, textarea { width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; color: var(--text); background: var(--bg); -webkit-appearance: none; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); background: white; }
+  textarea { resize: vertical; min-height: 80px; }
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 16px 0 8px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal-day-name { text-align: center; font-size: 10px; font-weight: 600; color: var(--text-muted); padding: 4px 0; }
+  .cal-cell { min-height: 40px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); padding: 3px; cursor: pointer; }
+  .cal-cell.today     { border-color: var(--primary); background: var(--primary-light); }
+  .cal-cell.has-items { background: var(--accent-light); border-color: var(--accent); }
+  .cal-cell.other-month { opacity: 0.3; }
+  .cal-num { font-size: 11px; font-weight: 500; }
+  .cal-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 2px; }
+  .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .cal-nav button { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 14px; }
+  .cal-month { font-size: 15px; font-weight: 600; }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; scrollbar-width: none; }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .filter-chip { flex: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); background: var(--surface); cursor: pointer; }
+  .filter-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
+  .stat-num { font-size: 24px; font-weight: 700; color: var(--primary); }
+  .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .group-header { background: var(--primary-light); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 8px; margin-top: 14px; }
+  .group-title { font-size: 13px; font-weight: 600; color: var(--primary); }
+  .group-count { font-size: 11px; color: var(--text-muted); }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1A2033; color: white; padding: 12px 20px; border-radius: 20px; font-size: 13px; z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: flex-end; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; padding: 20px; width: 100%; max-height: 85vh; overflow-y: auto; }
+  .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+  .form-group { margin-bottom: 14px; }
+  label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .empty { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .export-row { margin-bottom: 14px; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-row">
+    <h1>Action Tracker</h1>
+    <div class="sync-indicator">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-label">Connecting...</span>
+    </div>
+  </div>
+  <p id="header-sub">Loading...</p>
+</div>
+
+<div class="nav">
+  <button class="nav-btn active" onclick="showTab('log')">Log Item</button>
+  <button class="nav-btn" onclick="showTab('all')">All Items</button>
+  <button class="nav-btn" onclick="showTab('project')">By Project</button>
+  <button class="nav-btn" onclick="showTab('contractor')">By Contractor</button>
+  <button class="nav-btn" onclick="showTab('calendar')">Calendar</button>
+  <button class="nav-btn" onclick="showTab('aliases')">Aliases</button>
+</div>
+
+<div class="content">
+
+  <!-- ── LOG TAB ── -->
+  <div id="tab-log">
+    <div class="voice-center">
+      <div class="voice-ring">
+        <div class="voice-ring-bg"></div>
+        <div class="voice-ring-anim"  id="ring1"></div>
+        <div class="voice-ring-anim2" id="ring2"></div>
+        <button class="mic-btn" id="mic-btn" onclick="handleMicTap()">
+          <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zm-1 3a1 1 0 0 1 2 0v8a1 1 0 0 1-2 0V4zm6 8a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.93V21h2v-2.07A7 7 0 0 0 19 12h-2z"/></svg>
+          <span class="mic-label" id="mic-label">TAP TO SPEAK</span>
+        </button>
+      </div>
+      <div class="voice-status" id="voice-status">Tap the mic and describe your action item</div>
+      <div class="transcript-box" id="transcript-box">Your speech will appear here...</div>
+      <p class="tip" id="voice-tip">
+        Speak naturally — for example:<br>
+        <strong>"Remind Legendary to submit their payment application. Due end of month. Sarah is responsible."</strong><br><br>
+        You can also teach the app:<br>
+        <strong>"Remember that Legendary means Bluewater Marina"</strong>
+      </p>
+    </div>
+
+    <!-- Alias prompt (purple) -->
+    <div class="alias-banner hidden" id="alias-banner">
+      <div class="alias-banner-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#5b21b6"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+        New name detected
+      </div>
+      <div class="alias-banner-body" id="alias-banner-body"></div>
+      <div class="alias-banner-actions">
+        <button class="alias-btn alias-btn-yes"  id="alias-btn-yes"  onclick="handleAliasYes()"></button>
+        <button class="alias-btn alias-btn-new"  onclick="handleAliasNew()">It's a new entry</button>
+        <button class="alias-btn alias-btn-skip" onclick="handleAliasSkip()">Skip</button>
+      </div>
+    </div>
+
+    <!-- Confirmation card -->
+    <div class="confirm-card hidden" id="confirm-card">
+      <div class="confirm-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--primary)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        Inferred action item
+      </div>
+      <div class="cf-row"><div class="cf-icon">🕐</div><div class="cf-body"><div class="cf-label">Date &amp; Time logged</div><div class="cf-value" id="cv-datetime"></div></div></div>
+      <div class="cf-row"><div class="cf-icon">📁</div><div class="cf-body"><div class="cf-label">Project</div><div class="cf-value" id="cv-project"></div></div></div>
+      <div class="cf-row"><div class="cf-icon">🏗</div><div class="cf-body"><div class="cf-label">Contractor / Consultant</div><div class="cf-value" id="cv-contractor"></div></div></div>
+      <div class="cf-row"><div class="cf-icon">✅</div><div class="cf-body"><div class="cf-label">Action Item</div><div class="cf-value" id="cv-action"></div></div></div>
+      <div class="cf-row"><div class="cf-icon">👤</div><div class="cf-body"><div class="cf-label">Party Responsible</div><div class="cf-value" id="cv-responsible"></div></div></div>
+      <div class="cf-row"><div class="cf-icon">📅</div><div class="cf-body"><div class="cf-label">Due Date</div><div class="cf-value" id="cv-duedate"></div></div></div>
+      <div class="confirm-banner hidden" id="confirm-banner">
+        <strong>Does this look correct?</strong>
+        Tap the mic and say <em>"yes, save it"</em> — or describe any changes, e.g. <em>"change the due date to May 10th"</em>.
+      </div>
+      <div class="confirm-actions">
+        <button class="btn-save" onclick="confirmSave()">Save Action Item</button>
+        <button class="btn-discard" onclick="discardAll()">Discard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ALL ITEMS TAB ── -->
+  <div id="tab-all" class="hidden">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total Items</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-overdue" style="color:var(--danger)">0</div><div class="stat-label">Overdue</div></div>
+    </div>
+    <div class="export-row"><button class="btn btn-accent btn-sm" onclick="exportExcel()">Export to Excel</button></div>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="search-all" placeholder="Search action items..." oninput="renderAll()"></div>
+    <div class="filter-row">
+      <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-chip" onclick="setFilter('overdue',this)">Overdue</button>
+      <button class="filter-chip" onclick="setFilter('soon',this)">Due Soon</button>
+      <button class="filter-chip" onclick="setFilter('ok',this)">On Track</button>
+    </div>
+    <div id="list-all"></div>
+  </div>
+
+  <!-- ── PROJECT TAB ── -->
+  <div id="tab-project" class="hidden">
+    <div class="export-row"><button class="btn btn-accent btn-sm" onclick="exportExcel()">Export to Excel</button></div>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="search-project" placeholder="Search projects..." oninput="renderByProject()"></div>
+    <div id="list-project"></div>
+  </div>
+
+  <!-- ── CONTRACTOR TAB ── -->
+  <div id="tab-contractor" class="hidden">
+    <div class="export-row"><button class="btn btn-accent btn-sm" onclick="exportExcel()">Export to Excel</button></div>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="search-contractor" placeholder="Search contractors..." oninput="renderByContractor()"></div>
+    <div id="list-contractor"></div>
+  </div>
+
+  <!-- ── CALENDAR TAB ── -->
+  <div id="tab-calendar" class="hidden">
+    <div class="cal-nav">
+      <button onclick="calPrev()">&#8592;</button>
+      <span class="cal-month" id="cal-month-label"></span>
+      <button onclick="calNext()">&#8594;</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div id="cal-day-items" style="margin-top:16px"></div>
+  </div>
+
+  <!-- ── ALIASES TAB ── -->
+  <div id="tab-aliases" class="hidden">
+
+    <div class="alias-add-card">
+      <div class="alias-add-title">Add alias manually</div>
+      <div class="alias-form-row">
+        <input type="text" id="new-alias-from" placeholder="What you say (e.g. Legendary)">
+        <span class="alias-form-arrow">→</span>
+        <input type="text" id="new-alias-to" placeholder="Canonical name (e.g. Bluewater Marina)">
+      </div>
+      <div class="alias-form-row">
+        <select id="new-alias-type">
+          <option value="project">Project</option>
+          <option value="contractor">Contractor</option>
+          <option value="responsible">Responsible party</option>
+          <option value="general">General</option>
+        </select>
+        <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="addAliasManually()">Add</button>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Or just say it on the Log tab: <em>"Remember that Legendary means Bluewater Marina"</em></p>
+    </div>
+
+    <div id="alias-list"></div>
+  </div>
+
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">Edit Action Item</div>
+    <div class="form-group"><label>Date &amp; Time</label><input type="datetime-local" id="e-datetime"></div>
+    <div class="form-group"><label>Project</label><input type="text" id="e-project"></div>
+    <div class="form-group"><label>Contractor / Consultant</label><input type="text" id="e-contractor"></div>
+    <div class="form-group"><label>Action Item</label><textarea id="e-action"></textarea></div>
+    <div class="form-group"><label>Party Responsible</label><input type="text" id="e-responsible"></div>
+    <div class="form-group"><label>Due Date</label><input type="date" id="e-duedate"></div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button style="flex:1;padding:14px;font-size:15px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;background:var(--primary);color:white;border:none" onclick="saveEdit()">Save</button>
+      <button style="flex:1;padding:14px;font-size:15px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;background:transparent;color:var(--primary);border:1.5px solid var(--primary)" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const SB_URL  = 'https://uslelxguolwqtyrtjcpi.supabase.co';
+const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzbGVseGd1b2x3cXR5cnRqY3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MjM1ODQsImV4cCI6MjA5MjQ5OTU4NH0.-91VKLJANiT7_X1yvK-GuU1dWEtLk-tmeos_rFISHeY';
+const ITEMS_API   = SB_URL + '/rest/v1/action_items';
+const ALIASES_API = SB_URL + '/rest/v1/aliases';
+const SB_H = { 'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation' };
+
+// ── State ────────────────────────────────────────────────────
+let items = [], aliases = [], currentStatusFilter = 'all';
+let calYear, calMonth, editId = null, currentTab = 'log';
+let recognition = null;
+let appMode = 'initial'; // initial | recording | processing | confirm | alias-pending
+let currentData = {}, prevData = {};
+let pendingAlias = null; // { heard, field, candidates }
+
+const nd = new Date(); calYear = nd.getFullYear(); calMonth = nd.getMonth();
+
+// ── Sync status ──────────────────────────────────────────────
+function setSyncStatus(s) {
+  document.getElementById('sync-dot').className = 'sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');
+  document.getElementById('sync-label').textContent = s==='syncing'?'Syncing...':s==='error'?'Offline':'Synced';
+}
+
+// ── Load data ────────────────────────────────────────────────
+async function loadAll() {
+  setSyncStatus('syncing');
+  try {
+    const [itemsRes, aliasRes] = await Promise.all([
+      fetch(ITEMS_API+'?order=duedate.asc.nullslast', {headers:SB_H}),
+      fetch(ALIASES_API+'?order=alias.asc', {headers:SB_H})
+    ]);
+    if (!itemsRes.ok || !aliasRes.ok) throw new Error('Load failed');
+    items   = await itemsRes.json();
+    aliases = await aliasRes.json();
+    setSyncStatus('ok');
+  } catch(e) { setSyncStatus('error'); showToast('Connection error'); console.error(e); }
+  updateHeader();
+}
+
+function updateHeader() {
+  const ov = items.filter(i=>statusOf(i)==='overdue').length;
+  document.getElementById('header-sub').textContent = `${items.length} item${items.length!==1?'s':''} · ${ov} overdue`;
+}
+
+// ── Apply aliases to a value ─────────────────────────────────
+function applyAliases(value, type) {
+  if (!value) return { resolved: value, wasResolved: false };
+  const lower = value.toLowerCase().trim();
+  const match = aliases.find(a =>
+    (a.type === type || a.type === 'general') &&
+    a.alias.toLowerCase().trim() === lower
+  );
+  if (match) return { resolved: match.canonical, wasResolved: true, original: value };
+  return { resolved: value, wasResolved: false };
+}
+
+// ── Build alias context string for Claude prompts ─────────────
+function buildAliasContext() {
+  if (!aliases.length) return 'No aliases defined yet.';
+  return aliases.map(a => `"${a.alias}" → "${a.canonical}" (${a.type})`).join('\n');
+}
+
+// ── Known canonical names from history ───────────────────────
+function knownProjects()     { return [...new Set(items.map(i=>i.project).filter(Boolean))]; }
+function knownContractors()  { return [...new Set(items.map(i=>i.contractor).filter(Boolean))]; }
+function knownResponsible()  { return [...new Set(items.map(i=>i.responsible).filter(Boolean))]; }
+
+// ── Save alias to Supabase ───────────────────────────────────
+async function saveAlias(aliasText, canonical, type) {
+  const rec = { id: Date.now().toString(), alias: aliasText, canonical, type, created: new Date().toISOString() };
+  try {
+    const res = await fetch(ALIASES_API, {method:'POST', headers:SB_H, body:JSON.stringify(rec)});
+    if (!res.ok) throw new Error(await res.text());
+    aliases.push(rec);
+    showToast(`Alias saved: "${aliasText}" → "${canonical}"`);
+    if (currentTab === 'aliases') renderAliases();
+  } catch(e) { console.error(e); showToast('Could not save alias'); }
+}
+
+// ── Mic tap — context aware ──────────────────────────────────
+function handleMicTap() {
+  if (appMode === 'recording')       { stopRecording(); return; }
+  if (appMode === 'processing')      { return; }
+  if (appMode === 'alias-pending')   { return; }
+  if (appMode === 'confirm')         { startConfirmRecording(); return; }
+  startInitialRecording();
+}
+
+function stopRecording() { if (recognition) recognition.stop(); }
+
+// ── Initial recording ────────────────────────────────────────
+function startInitialRecording() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast('Voice not supported — try Safari on iPhone'); return; }
+  appMode = 'recording';
+  setMicState('recording','TAP TO STOP','Listening...');
+  document.getElementById('transcript-box').textContent = '';
+  document.getElementById('transcript-box').classList.remove('has-text');
+  document.getElementById('confirm-card').classList.add('hidden');
+  document.getElementById('alias-banner').classList.add('hidden');
+  let final = '';
+  recognition = new SR();
+  recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
+  recognition.onresult = e => {
+    let interim = ''; final = '';
+    for (let i=0;i<e.results.length;i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript+' ';
+      else interim += e.results[i][0].transcript;
+    }
+    const box = document.getElementById('transcript-box');
+    box.textContent = final+interim;
+    box.classList.toggle('has-text',(final+interim).trim().length>0);
+  };
+  recognition.onend = () => {
+    if (final.trim()) {
+      appMode = 'processing';
+      setMicState('processing','PROCESSING','AI is parsing your input...');
+      parseInitial(final.trim());
+    } else {
+      appMode = 'initial';
+      setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
+    }
+  };
+  recognition.onerror = e => {
+    appMode = 'initial';
+    setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
+    if (e.error!=='no-speech') showToast('Voice error: '+e.error);
+  };
+  recognition.start();
+}
+
+// ── Confirm-mode recording ───────────────────────────────────
+function startConfirmRecording() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { showToast('Voice not supported'); return; }
+  appMode = 'recording';
+  setMicState('recording','TAP TO STOP','Listening for confirmation or edits...');
+  let final = '';
+  recognition = new SR();
+  recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
+  recognition.onresult = e => {
+    let interim = ''; final = '';
+    for (let i=0;i<e.results.length;i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript+' ';
+      else interim += e.results[i][0].transcript;
+    }
+    const box = document.getElementById('transcript-box');
+    box.textContent = final+interim;
+    box.classList.toggle('has-text',(final+interim).trim().length>0);
+  };
+  recognition.onend = () => {
+    if (final.trim()) {
+      appMode = 'processing';
+      setMicState('processing','PROCESSING','AI is interpreting your response...');
+      parseConfirmResponse(final.trim());
+    } else {
+      appMode = 'confirm';
+      setMicState('confirm','TAP TO RESPOND','Does this look correct?');
+    }
+  };
+  recognition.onerror = e => {
+    appMode = 'confirm';
+    setMicState('confirm','TAP TO RESPOND','Does this look correct?');
+    if (e.error!=='no-speech') showToast('Voice error: '+e.error);
+  };
+  recognition.start();
+}
+
+// ── AI: parse initial speech ─────────────────────────────────
+async function parseInitial(transcript) {
+  const today  = new Date().toISOString().slice(0,10);
+  const nowDT  = nowLocal();
+  const aliasCtx   = buildAliasContext();
+  const knownProj  = knownProjects().join(', ')   || 'none yet';
+  const knownContr = knownContractors().join(', ') || 'none yet';
+  const knownResp  = knownResponsible().join(', ') || 'none yet';
+
+  const prompt = `You are an assistant parsing spoken action item notes into structured data.
+Today: ${today}. Current datetime: ${nowDT}.
+
+ALIAS TABLE — always apply these mappings when you see the alias:
+${aliasCtx}
+
+Known projects (canonical): ${knownProj}
+Known contractors (canonical): ${knownContr}
+Known responsible parties: ${knownResp}
+
+INSTRUCTIONS:
+1. Extract fields: project, contractor, action, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
+2. Apply alias mappings automatically — if the user says an alias, output the canonical name.
+3. If the user is teaching an alias (e.g. "remember that X means Y" or "X is the same as Y"), extract the alias teaching and set teachAlias: {alias, canonical, type} where type is one of: project, contractor, responsible, general.
+4. If a name is used that does NOT match any known canonical name or alias, flag it in unknownNames: [{heard, field}].
+5. Only include fields that were mentioned or can be reasonably inferred. Null for anything not mentioned.
+
+Respond ONLY with valid JSON:
+{
+  "project": null,
+  "contractor": null,
+  "action": null,
+  "responsible": null,
+  "duedate": null,
+  "datetime": "${nowDT}",
+  "teachAlias": null,
+  "unknownNames": []
+}`;
+
+  try {
+    const res  = await callClaude(prompt);
+    const parsed = JSON.parse(res.replace(/```json|```/g,'').trim());
+
+    // Handle explicit alias teaching
+    if (parsed.teachAlias) {
+      const { alias: a, canonical: c, type: t } = parsed.teachAlias;
+      await saveAlias(a, c, t || 'general');
+      // Re-apply to any fields in this parse
+      if (parsed.project    && parsed.project.toLowerCase()    === a.toLowerCase()) parsed.project    = c;
+      if (parsed.contractor && parsed.contractor.toLowerCase() === a.toLowerCase()) parsed.contractor = c;
+      if (parsed.responsible&& parsed.responsible.toLowerCase()=== a.toLowerCase()) parsed.responsible= c;
+    }
+
+    currentData = { datetime: nowDT, ...parsed };
+    delete currentData.teachAlias;
+    delete currentData.unknownNames;
+    prevData = {};
+
+    // Check for unknown names — ask about first one
+    const unknowns = parsed.unknownNames || [];
+    if (unknowns.length > 0 && parsed.action) {
+      const unknown = unknowns[0];
+      const candidates = getCandidates(unknown.field);
+      pendingAlias = { heard: unknown.heard, field: unknown.field, candidates };
+      showAliasBanner(unknown.heard, unknown.field, candidates);
+      return;
+    }
+
+    showConfirmCard(false);
+  } catch(e) {
+    console.error(e);
+    appMode = 'initial';
+    setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
+    showToast('Could not parse — please try again');
+  }
+}
+
+// ── AI: parse confirm/edit response ─────────────────────────
+async function parseConfirmResponse(transcript) {
+  const today = new Date().toISOString().slice(0,10);
+  const confirmWords = /\b(yes|correct|good|save|confirm|looks good|that('s| is) (right|correct|good)|perfect|go ahead|do it|yep|yeah|ok|okay)\b/i;
+  if (confirmWords.test(transcript) && transcript.trim().split(/\s+/).length < 8) {
+    confirmSave(); return;
+  }
+  const prompt = `You are managing an action item confirmation.
+Current data: ${JSON.stringify(currentData)}
+Today: ${today}.
+Alias table:\n${buildAliasContext()}
+
+User said: "${transcript}"
+
+If confirmed: return {"confirmed": true}
+If edits: return the full updated object with ALL fields, applying changes. Apply any alias mappings. Keep existing values unless changed.
+Fields: project, contractor, action, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
+Respond ONLY with valid JSON.`;
+
+  try {
+    const res    = await callClaude(prompt);
+    const parsed = JSON.parse(res.replace(/```json|```/g,'').trim());
+    if (parsed.confirmed) { confirmSave(); }
+    else { prevData = {...currentData}; currentData = parsed; showConfirmCard(true); }
+  } catch(e) {
+    console.error(e);
+    appMode = 'confirm';
+    setMicState('confirm','TAP TO RESPOND','Does this look correct?');
+    showToast('Could not parse — please try again');
+  }
+}
+
+// ── Alias banner logic ───────────────────────────────────────
+function getCandidates(field) {
+  if (field==='project')     return knownProjects();
+  if (field==='contractor')  return knownContractors();
+  if (field==='responsible') return knownResponsible();
+  return [...knownProjects(),...knownContractors()];
+}
+
+function showAliasBanner(heard, field, candidates) {
+  appMode = 'alias-pending';
+  setMicState('alias-mode','','New name detected');
+
+  const banner = document.getElementById('alias-banner');
+  const body   = document.getElementById('alias-banner-body');
+  const yesBtn = document.getElementById('alias-btn-yes');
+
+  if (candidates.length > 0) {
+    const list = candidates.slice(0,3).map(c=>`"${c}"`).join(', ');
+    body.innerHTML = `I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this the same as one of your existing entries: ${list}${candidates.length>3?' or another?':' ?'}`;
+    yesBtn.textContent = `Yes, it's an alias`;
+    yesBtn.classList.remove('hidden');
+  } else {
+    body.innerHTML = `I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this a new entry or an alias for an existing name?`;
+    yesBtn.classList.add('hidden');
+  }
+
+  banner.classList.remove('hidden');
+  banner.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function handleAliasYes() {
+  // Ask which canonical it maps to via voice
+  if (!pendingAlias) return;
+  appMode = 'recording';
+  setMicState('recording','TAP TO STOP',`Which existing ${pendingAlias.field} is "${pendingAlias.heard}"?`);
+  document.getElementById('transcript-box').textContent = '';
+  document.getElementById('transcript-box').classList.remove('has-text');
+
+  let final = '';
+  recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
+  recognition.onresult = e => {
+    let interim = ''; final = '';
+    for (let i=0;i<e.results.length;i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript+' ';
+      else interim += e.results[i][0].transcript;
+    }
+    const box = document.getElementById('transcript-box');
+    box.textContent = final+interim;
+    box.classList.toggle('has-text',(final+interim).trim().length>0);
+  };
+  recognition.onend = async () => {
+    if (final.trim()) {
+      // Use Claude to match to canonical
+      const prompt = `The user was asked which existing ${pendingAlias.field} the name "${pendingAlias.heard}" maps to.
+Known options: ${getCandidates(pendingAlias.field).join(', ') || 'none'}.
+User said: "${final.trim()}"
+Return ONLY a JSON object: {"canonical": "the matched canonical name"}
+If you cannot determine, return {"canonical": null}.`;
+      try {
+        const res = await callClaude(prompt);
+        const { canonical } = JSON.parse(res.replace(/```json|```/g,'').trim());
+        if (canonical) {
+          await saveAlias(pendingAlias.heard, canonical, pendingAlias.field);
+          // Update currentData
+          if (pendingAlias.field==='project')     currentData.project     = canonical;
+          if (pendingAlias.field==='contractor')  currentData.contractor  = canonical;
+          if (pendingAlias.field==='responsible') currentData.responsible = canonical;
+        }
+      } catch(e) { console.error(e); }
+    }
+    pendingAlias = null;
+    document.getElementById('alias-banner').classList.add('hidden');
+    showConfirmCard(false);
+  };
+  recognition.onerror = () => {
+    pendingAlias = null;
+    document.getElementById('alias-banner').classList.add('hidden');
+    showConfirmCard(false);
+  };
+  recognition.start();
+}
+
+function handleAliasNew() {
+  // It's genuinely new — just proceed
+  pendingAlias = null;
+  document.getElementById('alias-banner').classList.add('hidden');
+  showConfirmCard(false);
+}
+
+function handleAliasSkip() {
+  pendingAlias = null;
+  document.getElementById('alias-banner').classList.add('hidden');
+  showConfirmCard(false);
+}
+
+// ── Confirm card render ──────────────────────────────────────
+function showConfirmCard(showChanges) {
+  appMode = 'confirm';
+  const fields = [
+    {key:'datetime',   id:'cv-datetime',   fmt:v=>v?formatDateTime(v):null},
+    {key:'project',    id:'cv-project',    fmt:v=>v||null},
+    {key:'contractor', id:'cv-contractor', fmt:v=>v||null},
+    {key:'action',     id:'cv-action',     fmt:v=>v||null},
+    {key:'responsible',id:'cv-responsible',fmt:v=>v||null},
+    {key:'duedate',    id:'cv-duedate',    fmt:v=>v?formatDate(v):null},
+  ];
+  fields.forEach(f => {
+    const el   = document.getElementById(f.id);
+    const val  = f.fmt(currentData[f.key]);
+    const prev = showChanges ? f.fmt(prevData[f.key]) : null;
+    const changed = showChanges && prev !== val;
+    // Check if this value was alias-resolved
+    const wasResolved = aliases.some(a =>
+      currentData[f.key] && a.canonical === currentData[f.key] &&
+      a.alias.toLowerCase() !== currentData[f.key].toLowerCase()
+    );
+    if (val) {
+      let badge = '';
+      if (changed)                              badge = `<span class="cf-changed">updated</span>`;
+      else if (wasResolved && !showChanges)     badge = `<span class="cf-resolved">alias resolved</span>`;
+      else if (!showChanges && f.key!=='datetime') badge = `<span class="cf-inferred">inferred</span>`;
+      el.innerHTML = esc(val)+badge;
+      el.className = 'cf-value';
+    } else {
+      el.innerHTML = 'Not mentioned';
+      el.className = 'cf-value empty';
+    }
+  });
+  document.getElementById('confirm-card').classList.remove('hidden');
+  document.getElementById('confirm-banner').classList.remove('hidden');
+  document.getElementById('alias-banner').classList.add('hidden');
+  setMicState('confirm','TAP TO RESPOND','Does this look correct?');
+  document.getElementById('voice-tip').classList.add('hidden');
+  document.getElementById('confirm-card').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function discardAll() {
+  appMode = 'initial'; currentData = {}; prevData = {}; pendingAlias = null;
+  document.getElementById('confirm-card').classList.add('hidden');
+  document.getElementById('confirm-banner').classList.add('hidden');
+  document.getElementById('alias-banner').classList.add('hidden');
+  document.getElementById('transcript-box').textContent = 'Your speech will appear here...';
+  document.getElementById('transcript-box').classList.remove('has-text');
+  document.getElementById('voice-tip').classList.remove('hidden');
+  setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
+}
+
+// ── Save item ────────────────────────────────────────────────
+async function confirmSave() {
+  const action = (currentData.action||'').trim();
+  if (!action) { showToast('No action item to save'); return; }
+  const item = {
+    id: Date.now().toString(),
+    datetime: currentData.datetime || nowLocal(),
+    project: currentData.project||null, contractor: currentData.contractor||null,
+    action, responsible: currentData.responsible||null, duedate: currentData.duedate||null,
+    created: new Date().toISOString()
+  };
+  setSyncStatus('syncing');
+  try {
+    const res = await fetch(ITEMS_API, {method:'POST', headers:SB_H, body:JSON.stringify(item)});
+    if (!res.ok) throw new Error(await res.text());
+    setSyncStatus('ok'); await loadAll(); discardAll(); showToast('Action item saved!');
+  } catch(e) { setSyncStatus('error'); showToast('Save failed'); console.error(e); }
+}
+
+// ── Aliases tab ──────────────────────────────────────────────
+function renderAliases() {
+  const el = document.getElementById('alias-list');
+  if (!aliases.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🔤</div><p>No aliases yet.<br>Add one above or teach the app by voice.</p></div>`;
+    return;
+  }
+  const types = ['project','contractor','responsible','general'];
+  const typeLabels = {project:'Projects',contractor:'Contractors',responsible:'Responsible Parties',general:'General'};
+  let html = '';
+  types.forEach(type => {
+    const group = aliases.filter(a=>a.type===type);
+    if (!group.length) return;
+    html += `<div class="alias-type-header">${typeLabels[type]}</div>`;
+    group.forEach(a => {
+      html += `<div class="alias-item">
+        <div class="alias-text">
+          <div class="alias-from">${esc(a.alias)}</div>
+          <div class="alias-to">→ ${esc(a.canonical)}</div>
+        </div>
+        <span class="alias-type-badge alias-type-${a.type}">${a.type}</span>
+        <button class="alias-delete" onclick="deleteAlias('${a.id}')" title="Delete">✕</button>
+      </div>`;
+    });
+  });
+  el.innerHTML = html;
+}
+
+async function addAliasManually() {
+  const from = document.getElementById('new-alias-from').value.trim();
+  const to   = document.getElementById('new-alias-to').value.trim();
+  const type = document.getElementById('new-alias-type').value;
+  if (!from || !to) { showToast('Both fields are required'); return; }
+  await saveAlias(from, to, type);
+  document.getElementById('new-alias-from').value = '';
+  document.getElementById('new-alias-to').value   = '';
+}
+
+async function deleteAlias(id) {
+  if (!confirm('Delete this alias?')) return;
+  try {
+    const res = await fetch(ALIASES_API+'?id=eq.'+id, {method:'DELETE', headers:SB_H});
+    if (!res.ok) throw new Error();
+    aliases = aliases.filter(a=>a.id!==id);
+    renderAliases(); showToast('Alias deleted');
+  } catch(e) { showToast('Delete failed'); }
+}
+
+// ── Claude API call ──────────────────────────────────────────
+async function callClaude(prompt) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+  });
+  const data = await res.json();
+  return data.content?.find(b=>b.type==='text')?.text || '';
+}
+
+// ── Mic visual state ─────────────────────────────────────────
+function setMicState(state, label, statusText) {
+  const btn    = document.getElementById('mic-btn');
+  const lbl    = document.getElementById('mic-label');
+  const status = document.getElementById('voice-status');
+  const r1     = document.getElementById('ring1');
+  const r2     = document.getElementById('ring2');
+  btn.className = 'mic-btn'+(state==='recording'?' recording':state==='processing'?' processing':state==='confirm'?' confirm':state==='alias-mode'?' alias-mode':'');
+  lbl.textContent = label;
+  r1.className = 'voice-ring-anim' +(state==='recording'?' active':'');
+  r2.className = 'voice-ring-anim2'+(state==='recording'?' active':'');
+  status.textContent = statusText;
+  status.className = 'voice-status'+(state==='recording'?' listening':state==='processing'?' processing':state==='confirm'?' confirm-mode':state==='alias-mode'?' alias-mode':'');
+}
+
+// ── Supabase edit/delete ─────────────────────────────────────
+async function saveEdit() {
+  const patch = {
+    datetime:    document.getElementById('e-datetime').value,
+    project:     document.getElementById('e-project').value.trim()||null,
+    contractor:  document.getElementById('e-contractor').value.trim()||null,
+    action:      document.getElementById('e-action').value.trim(),
+    responsible: document.getElementById('e-responsible').value.trim()||null,
+    duedate:     document.getElementById('e-duedate').value||null
+  };
+  setSyncStatus('syncing');
+  try {
+    const res = await fetch(ITEMS_API+'?id=eq.'+editId, {method:'PATCH', headers:SB_H, body:JSON.stringify(patch)});
+    if (!res.ok) throw new Error();
+    setSyncStatus('ok'); await loadAll(); closeModal(); renderCurrentTab(); showToast('Item updated');
+  } catch(e) { setSyncStatus('error'); showToast('Update failed'); }
+}
+
+async function deleteItem(id) {
+  if (!confirm('Delete this action item?')) return;
+  setSyncStatus('syncing');
+  try {
+    const res = await fetch(ITEMS_API+'?id=eq.'+id, {method:'DELETE', headers:SB_H});
+    if (!res.ok) throw new Error();
+    setSyncStatus('ok'); await loadAll(); renderCurrentTab(); showToast('Item deleted');
+  } catch(e) { setSyncStatus('error'); showToast('Delete failed'); }
+}
+
+// ── Helpers ──────────────────────────────────────────────────
+function nowLocal() { const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); }
+function statusOf(item) {
+  if (!item.duedate) return 'ok';
+  const due=new Date(item.duedate), today=new Date(); today.setHours(0,0,0,0);
+  const diff=Math.ceil((due-today)/86400000);
+  return diff<0?'overdue':diff<=7?'soon':'ok';
+}
+function badgeHTML(item) {
+  if (!item.duedate) return '';
+  const s=statusOf(item);
+  return `<span class="badge badge-${s}">${s==='overdue'?'Overdue':s==='soon'?'Due Soon':'On Track'}</span>`;
+}
+function formatDate(d) { if(!d) return '—'; return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
+function formatDateTime(d) { if(!d) return '—'; return new Date(d).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}); }
+function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function itemHTML(item, showProject=true) {
+  return `<div class="item">
+    <div class="item-top"><div class="item-action">${esc(item.action)}</div>${badgeHTML(item)}</div>
+    <div class="item-meta">
+      ${showProject&&item.project?`<span>📁 ${esc(item.project)}</span>`:''}
+      ${item.contractor?`<span>🏗 ${esc(item.contractor)}</span>`:''}
+      ${item.responsible?`<span>👤 ${esc(item.responsible)}</span>`:''}
+      ${item.duedate?`<span>📅 Due ${formatDate(item.duedate)}</span>`:''}
+      <span>🕐 ${formatDateTime(item.datetime)}</span>
+    </div>
+    <div class="item-actions">
+      <button class="btn btn-outline btn-sm" onclick="openEdit('${item.id}')">Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteItem('${item.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+
+// ── Tabs ─────────────────────────────────────────────────────
+function showTab(tab) {
+  currentTab=tab;
+  document.querySelectorAll('[id^="tab-"]').forEach(el=>el.classList.add('hidden'));
+  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.remove('hidden');
+  ['log','all','project','contractor','calendar','aliases'].forEach((t,i)=>{
+    document.querySelectorAll('.nav-btn')[i].classList.toggle('active',t===tab);
+  });
+  renderCurrentTab();
+}
+function renderCurrentTab() {
+  if(currentTab==='all')        renderAll();
+  else if(currentTab==='project')    renderByProject();
+  else if(currentTab==='contractor') renderByContractor();
+  else if(currentTab==='calendar')   renderCalendar();
+  else if(currentTab==='aliases')    renderAliases();
+}
+function setFilter(f,btn) { currentStatusFilter=f; document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderAll(); }
+function renderAll() {
+  const q=(document.getElementById('search-all').value||'').toLowerCase();
+  const filtered=items.filter(i=>{
+    const match=!q||[i.action,i.project,i.contractor,i.responsible].join(' ').toLowerCase().includes(q);
+    return match&&(currentStatusFilter==='all'||statusOf(i)===currentStatusFilter);
+  });
+  document.getElementById('stat-total').textContent=items.length;
+  document.getElementById('stat-overdue').textContent=items.filter(i=>statusOf(i)==='overdue').length;
+  document.getElementById('list-all').innerHTML=filtered.length?filtered.map(i=>itemHTML(i)).join(''):`<div class="empty"><div class="empty-icon">📋</div><p>No action items found</p></div>`;
+}
+function renderByProject() {
+  const q=(document.getElementById('search-project').value||'').toLowerCase();
+  const filtered=items.filter(i=>!q||(i.project||'').toLowerCase().includes(q)||(i.action||'').toLowerCase().includes(q));
+  const groups={}; filtered.forEach(i=>{const k=i.project||'(No Project)';if(!groups[k])groups[k]=[];groups[k].push(i);});
+  const el=document.getElementById('list-project');
+  if(!Object.keys(groups).length){el.innerHTML=`<div class="empty"><div class="empty-icon">📁</div><p>No items found</p></div>`;return;}
+  el.innerHTML=Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).map(([p,its])=>
+    `<div class="group-header"><div class="group-title">📁 ${esc(p)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div></div>`+its.map(i=>itemHTML(i,false)).join('')).join('');
+}
+function renderByContractor() {
+  const q=(document.getElementById('search-contractor').value||'').toLowerCase();
+  const filtered=items.filter(i=>!q||(i.contractor||'').toLowerCase().includes(q)||(i.action||'').toLowerCase().includes(q));
+  const groups={}; filtered.forEach(i=>{const k=i.contractor||'(No Contractor)';if(!groups[k])groups[k]=[];groups[k].push(i);});
+  const el=document.getElementById('list-contractor');
+  if(!Object.keys(groups).length){el.innerHTML=`<div class="empty"><div class="empty-icon">🏗</div><p>No items found</p></div>`;return;}
+  el.innerHTML=Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).map(([c,its])=>
+    `<div class="group-header"><div class="group-title">🏗 ${esc(c)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div></div>`+its.map(i=>itemHTML(i)).join('')).join('');
+}
+function renderCalendar() {
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent=`${months[calMonth]} ${calYear}`;
+  const first=new Date(calYear,calMonth,1),last=new Date(calYear,calMonth+1,0);
+  const today=new Date();today.setHours(0,0,0,0);
+  const byDate={};items.forEach(i=>{if(i.duedate){if(!byDate[i.duedate])byDate[i.duedate]=[];byDate[i.duedate].push(i);}});
+  const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  let html=days.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
+  for(let i=0;i<first.getDay();i++) html+=`<div class="cal-cell other-month"></div>`;
+  for(let d=1;d<=last.getDate();d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const cd=new Date(calYear,calMonth,d);
+    const cls=['cal-cell',cd.getTime()===today.getTime()?'today':'',byDate[ds]?.length?'has-items':''].filter(Boolean).join(' ');
+    html+=`<div class="${cls}" onclick="showCalDay('${ds}')"><div class="cal-num">${d}</div>${byDate[ds]?.length?'<div class="cal-dot"></div>':''}</div>`;
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+  document.getElementById('cal-day-items').innerHTML='';
+}
+function showCalDay(ds) {
+  const its=items.filter(i=>i.duedate===ds);
+  const el=document.getElementById('cal-day-items');
+  if(!its.length){el.innerHTML='';return;}
+  const label=new Date(ds+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  el.innerHTML=`<div class="section-label">${label}</div>`+its.map(i=>itemHTML(i)).join('');
+}
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
+function openEdit(id) {
+  const item=items.find(i=>i.id===id);if(!item)return;
+  editId=id;
+  ['datetime','project','contractor','action','responsible','duedate'].forEach(f=>{ document.getElementById('e-'+f).value=item[f]||''; });
+  document.getElementById('edit-modal').classList.add('open');
+}
+function closeModal(){document.getElementById('edit-modal').classList.remove('open');editId=null;}
+function exportExcel() {
+  if(!items.length){showToast('No items to export');return;}
+  const data=items.map(i=>({'Date/Time':i.datetime?new Date(i.datetime).toLocaleString():'','Project':i.project||'','Contractor/Consultant':i.contractor||'','Action Item':i.action||'','Party Responsible':i.responsible||'','Due Date':i.duedate?formatDate(i.duedate):'','Status':statusOf(i).charAt(0).toUpperCase()+statusOf(i).slice(1)}));
+  const ws=XLSX.utils.json_to_sheet(data),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Action Items');
+  XLSX.writeFile(wb,`action-items-${new Date().toISOString().slice(0,10)}.xlsx`);
+  showToast('Exported to Excel!');
+}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+loadAll();
+</script>
+</body>
+</html>
