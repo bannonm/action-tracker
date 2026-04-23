@@ -846,7 +846,6 @@ async function deleteItem(id){
     setSyncStatus('syncing');
     try{
       await sbCall('sb-delete-item', {id});
-      if(!res.ok) throw new Error();
       setSyncStatus('ok'); await loadAll(); renderCurrentTab(); showToast('Item deleted');
     }catch(e){setSyncStatus('error');showToast('Delete failed');}
   });
@@ -856,7 +855,6 @@ async function deleteAlias(id){
   showConfirmDialog('Delete this alias?',async()=>{
     try{
       await sbCall('sb-delete-alias', {id});
-      if(!res.ok) throw new Error();
       aliases=aliases.filter(a=>a.id!==id); renderAliases(); showToast('Alias deleted');
     }catch(e){showToast('Delete failed');}
   });
