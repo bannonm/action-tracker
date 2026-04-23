@@ -3,237 +3,231 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Action Tracker</title>
-
-<!-- PWA core -->
-<meta name="application-name" content="Action Tracker">
-<meta name="description" content="Voice-powered action item tracker with AI parsing">
-
-<!-- iOS PWA — full screen, no browser chrome -->
+<title>Altius</title>
+<meta name="application-name" content="Altius">
+<meta name="description" content="Altius action item tracker">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Action Tracker">
-
-<!-- iOS splash screens (covers common iPhone sizes) -->
+<meta name="apple-mobile-web-app-title" content="Altius">
 <meta name="apple-touch-fullscreen" content="yes">
-
-<!-- iOS home screen icon — PNG generated at runtime (iOS requires PNG not SVG) -->
+<meta name="theme-color" content="#929374">
 <link rel="apple-touch-icon" id="pwa-icon">
 <link rel="manifest" id="pwa-manifest">
 <script>
+// Altius brand icon — rendered from SVG source
 (function(){
-  var c=document.createElement("canvas"); c.width=c.height=180;
-  var x=c.getContext("2d");
-  x.fillStyle="#1D4E89"; x.beginPath(); x.roundRect(0,0,180,180,36); x.fill();
-  x.fillStyle="white"; x.beginPath(); x.roundRect(72,45,36,56,18); x.fill();
-  x.strokeStyle="white"; x.lineWidth=8; x.lineCap="round";
-  x.beginPath(); x.arc(90,90,30,Math.PI,0,true); x.stroke();
-  x.beginPath(); x.moveTo(90,120); x.lineTo(90,135); x.stroke();
-  x.beginPath(); x.moveTo(72,135); x.lineTo(108,135); x.stroke();
-  x.fillStyle="#E8A020"; x.beginPath(); x.arc(133,133,28,0,Math.PI*2); x.fill();
-  x.strokeStyle="white"; x.lineWidth=5; x.lineJoin="round";
-  x.beginPath(); x.moveTo(120,133); x.lineTo(129,143); x.lineTo(146,122); x.stroke();
-  var url=c.toDataURL("image/png");
-  document.getElementById("pwa-icon").href=url;
-  var m={name:"Action Tracker",short_name:"Action Tracker",description:"Voice-powered action item tracker",start_url:"./",display:"standalone",orientation:"portrait",background_color:"#1D4E89",theme_color:"#1D4E89",icons:[{src:url,sizes:"180x180",type:"image/png"}]};
-  var b=new Blob([JSON.stringify(m)],{type:"application/json"});
-  document.getElementById("pwa-manifest").href=URL.createObjectURL(b);
+  var iconURL = 'data:image/png;base64,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';
+  document.getElementById('pwa-icon').href = iconURL;
+  var m={name:'Altius',short_name:'Altius',description:'Altius — Action Item Tracker',start_url:'./',display:'standalone',orientation:'portrait',background_color:'#929374',theme_color:'#929374',icons:[{src:iconURL,sizes:'180x180',type:'image/png'}]};
+  var b=new Blob([JSON.stringify(m)],{type:'application/json'});
+  document.getElementById('pwa-manifest').href=URL.createObjectURL(b);
 })();
 </script>
-
-
-<!-- Theme color for browser chrome on Android -->
-<meta name="theme-color" content="#1D4E89">
-
-<!-- iOS status bar safe area padding -->
-<style>
-  body { padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
-  .header { padding-top: calc(16px + env(safe-area-inset-top)); }
-  .toast  { bottom: calc(24px + env(safe-area-inset-bottom)); }
-</style>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
-    --primary: #1D4E89;
-    --primary-light: #E8F0FA;
-    --accent: #E8A020;
-    --accent-light: #FDF3E0;
-    --surface: #FFFFFF;
-    --bg: #F4F6FA;
-    --border: #D8DDE8;
-    --text: #1A2033;
-    --text-muted: #6B7590;
-    --danger: #C0392B;
-    --success: #1D7A4E;
-    --radius: 12px;
-    --radius-sm: 8px;
+    --primary:#929374; --primary-light:#EEEEE0; --accent:#626256; --accent-light:#EAEAE0;
+    --surface:#FFFFFF; --bg:#F0F0E8; --border:#D4D4C4; --text:#1A2033; --text-muted:#6B7590;
+    --danger:#C0392B; --success:#1D7A4E; --radius:12px; --radius-sm:8px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, 'SF Pro Text', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html { height:100%; }
+  body { font-family:-apple-system,'SF Pro Text',sans-serif; background:var(--bg); color:var(--text); min-height:100%; padding-bottom:var(--safe-bottom); }
 
-  .header { background: var(--primary); color: white; padding: 16px 20px 12px; position: sticky; top: 0; z-index: 100; }
-  .header h1 { font-size: 18px; font-weight: 600; }
-  .header-row { display: flex; align-items: center; justify-content: space-between; }
-  .sync-indicator { font-size: 11px; opacity: 0.85; display: flex; align-items: center; gap: 5px; }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #4ade80; flex-shrink: 0; }
-  .sync-dot.syncing { background: var(--accent); animation: pulse 1s infinite; }
-  .sync-dot.error { background: #f87171; }
+  /* Header — accounts for notch/dynamic island */
+  .header { background:var(--primary); color:white; padding:10px 20px 10px; padding-top:calc(10px + var(--safe-top)); position:sticky; top:0; z-index:100; }
+  .header-row { display:flex; align-items:center; justify-content:space-between; }
+  .sync-indicator { font-size:11px; opacity:0.85; display:flex; align-items:center; gap:5px; }
+  .sync-dot { width:7px; height:7px; border-radius:50%; background:#4ade80; flex-shrink:0; }
+  .sync-dot.syncing { background:var(--accent); animation:pulse 1s infinite; }
+  .sync-dot.error { background:#f87171; }
   @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
-  .header p { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+  .header p { font-size:11px; opacity:0.75; margin-top:2px; color:white; }
 
-  .nav { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; overflow-x: auto; scrollbar-width: none; }
-  .nav::-webkit-scrollbar { display: none; }
-  .nav-btn { flex: none; padding: 12px 14px; font-size: 12px; font-weight: 500; color: var(--text-muted); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
-  .nav-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+  /* Nav */
+  .nav { background:var(--surface); border-bottom:1px solid var(--border); display:flex; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .nav::-webkit-scrollbar { display:none; }
+  /* CarPlay: 44pt minimum tap targets */
+  .nav-btn { flex:none; padding:14px 16px; font-size:12px; font-weight:500; color:var(--text-muted); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; min-height:44px; }
+  .nav-btn.active { color:var(--primary); border-bottom-color:var(--primary); }
 
-  .content { padding: 16px; max-width: 600px; margin: 0 auto; }
+  .content { padding:16px; max-width:600px; margin:0 auto; }
 
-  /* ── Voice UI ── */
-  .voice-center { display: flex; flex-direction: column; align-items: center; padding: 28px 16px 20px; }
-  .voice-ring { position: relative; width: 130px; height: 130px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
-  .voice-ring-bg  { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--border); }
-  .voice-ring-anim  { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--primary); opacity: 0; }
-  .voice-ring-anim2 { position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--primary); opacity: 0; }
-  .voice-ring-anim.active  { animation: ripple 1.4s ease-out infinite; }
-  .voice-ring-anim2.active { animation: ripple 1.4s ease-out infinite 0.5s; }
+  /* Voice UI */
+  .voice-center { display:flex; flex-direction:column; align-items:center; padding:28px 16px 20px; }
+  .voice-ring { position:relative; width:130px; height:130px; display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
+  .voice-ring-bg { position:absolute; top:0; left:0; right:0; bottom:0; border-radius:50%; border:2px solid var(--border); }
+  /* Fixed: replaced inset:0 with explicit positioning for iOS 14 */
+  .voice-ring-anim  { position:absolute; top:0; left:0; right:0; bottom:0; border-radius:50%; border:2px solid var(--primary); opacity:0; }
+  .voice-ring-anim2 { position:absolute; top:0; left:0; right:0; bottom:0; border-radius:50%; border:2px solid var(--primary); opacity:0; }
+  .voice-ring-anim.active  { animation:ripple 1.4s ease-out infinite; }
+  .voice-ring-anim2.active { animation:ripple 1.4s ease-out infinite 0.5s; }
   @keyframes ripple { 0%{transform:scale(1);opacity:0.6}100%{transform:scale(1.6);opacity:0} }
-  .mic-btn { width: 100px; height: 100px; border-radius: 50%; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; background: var(--primary); box-shadow: 0 4px 20px rgba(29,78,137,0.35); position: relative; z-index: 1; transition: background 0.2s, box-shadow 0.2s; }
-  .mic-btn.recording  { background: var(--danger);  box-shadow: 0 4px 20px rgba(192,57,43,0.4); }
-  .mic-btn.processing { background: var(--accent);  box-shadow: 0 4px 20px rgba(232,160,32,0.4); }
-  .mic-btn.confirm    { background: var(--success);  box-shadow: 0 4px 20px rgba(29,122,78,0.4); }
-  .mic-btn.alias-mode { background: #7c3aed; box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
-  .mic-btn svg { width: 32px; height: 32px; fill: white; }
-  .mic-label { font-size: 10px; color: white; font-weight: 700; letter-spacing: 0.5px; text-align: center; line-height: 1.3; padding: 0 8px; }
-  .voice-status { font-size: 14px; color: var(--text-muted); text-align: center; min-height: 20px; margin-bottom: 10px; }
-  .voice-status.listening   { color: var(--danger); font-weight: 500; }
-  .voice-status.processing  { color: var(--accent); font-weight: 500; }
-  .voice-status.confirm-mode { color: var(--success); font-weight: 500; }
-  .voice-status.alias-mode  { color: #7c3aed; font-weight: 500; }
-  .transcript-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 12px; font-size: 14px; line-height: 1.5; color: var(--text-muted); font-style: italic; min-height: 52px; width: 100%; }
-  .transcript-box.has-text { color: var(--text); font-style: normal; }
-  .tip { font-size: 12px; color: var(--text-muted); text-align: center; line-height: 1.6; padding: 0 8px; }
-  .tip strong { color: var(--text); }
+  /* CarPlay: 100px button is well above 44pt minimum */
+  .mic-btn { width:100px; height:100px; border-radius:50%; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; background:var(--primary); box-shadow:0 4px 20px rgba(146,147,116,0.5); position:relative; z-index:1; transition:background 0.2s, box-shadow 0.2s; -webkit-appearance:none; }
+  .mic-btn.recording  { background:var(--danger);  box-shadow:0 4px 20px rgba(192,57,43,0.4); }
+  .mic-btn.processing { background:var(--accent);  box-shadow:0 4px 20px rgba(232,160,32,0.4); }
+  .mic-btn.confirm    { background:var(--success);  box-shadow:0 4px 20px rgba(98,98,86,0.4); }
+  .mic-btn.alias-mode { background:#7c3aed; box-shadow:0 4px 20px rgba(124,58,237,0.4); }
+  .mic-btn svg { width:32px; height:32px; fill:white; pointer-events:none; }
+  .mic-label { font-size:10px; color:white; font-weight:700; letter-spacing:0.5px; text-align:center; line-height:1.3; padding:0 8px; pointer-events:none; }
+  .voice-status { font-size:14px; color:var(--text-muted); text-align:center; min-height:20px; margin-bottom:10px; }
+  .voice-status.listening   { color:var(--danger); font-weight:500; }
+  .voice-status.processing  { color:var(--accent); font-weight:500; }
+  .voice-status.confirm-mode{ color:var(--success); font-weight:500; }
+  .voice-status.alias-mode  { color:#7c3aed; font-weight:500; }
+  .transcript-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:12px; font-size:14px; line-height:1.5; color:var(--text-muted); font-style:italic; min-height:60px; width:100%; }
+  .transcript-box.has-text { color:var(--text); font-style:normal; }
+  .tip { font-size:12px; color:var(--text-muted); text-align:center; line-height:1.6; padding:0 8px; }
+  .tip strong { color:var(--text); }
 
-  /* ── Alias prompt banner ── */
-  .alias-banner { background: #f3f0ff; border: 1.5px solid #a78bfa; border-radius: var(--radius-sm); padding: 14px; margin-top: 12px; }
-  .alias-banner-title { font-size: 13px; font-weight: 700; color: #5b21b6; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
-  .alias-banner-body  { font-size: 13px; color: #4c1d95; line-height: 1.6; margin-bottom: 10px; }
-  .alias-banner-body strong { font-weight: 700; }
-  .alias-banner-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .alias-btn { padding: 8px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
-  .alias-btn-yes  { background: #7c3aed; color: white; }
-  .alias-btn-new  { background: #e9d5ff; color: #5b21b6; }
-  .alias-btn-skip { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+  /* Alias banner */
+  .alias-banner { background:#f3f0ff; border:1.5px solid #a78bfa; border-radius:var(--radius-sm); padding:14px; margin-top:12px; }
+  .alias-banner-title { font-size:13px; font-weight:700; color:#5b21b6; margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+  .alias-banner-body  { font-size:13px; color:#4c1d95; line-height:1.6; margin-bottom:10px; }
+  .alias-banner-body strong { font-weight:700; }
+  .alias-banner-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  /* CarPlay: alias buttons need 44pt height */
+  .alias-btn { padding:12px 16px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer; border:none; min-height:44px; }
+  .alias-btn-yes  { background:#7c3aed; color:white; }
+  .alias-btn-new  { background:#e9d5ff; color:#5b21b6; }
+  .alias-btn-skip { background:transparent; color:var(--text-muted); border:1px solid var(--border); }
 
-  /* ── Confirm card ── */
-  .confirm-card { background: var(--surface); border-radius: var(--radius); border: 1.5px solid var(--primary); padding: 16px; margin-top: 8px; }
-  .confirm-title { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
-  .cf-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 11px; padding-bottom: 11px; border-bottom: 0.5px solid var(--border); }
-  .cf-row:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-  .cf-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
-  .cf-body { flex: 1; min-width: 0; }
-  .cf-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 2px; }
-  .cf-value { font-size: 14px; color: var(--text); line-height: 1.4; word-break: break-word; }
-  .cf-value.empty { color: var(--text-muted); font-style: italic; }
-  .cf-inferred { display: inline-block; font-size: 10px; background: var(--primary-light); color: var(--primary); padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 5px; }
-  .cf-changed  { display: inline-block; font-size: 10px; background: #e6f4ec; color: var(--success); padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 5px; }
-  .cf-resolved { display: inline-block; font-size: 10px; background: #f3f0ff; color: #5b21b6; padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 5px; }
-  .confirm-banner { background: #e6f4ec; border: 1px solid #a8d5bc; border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 12px; font-size: 13px; color: var(--success); line-height: 1.5; }
-  .confirm-banner strong { display: block; margin-bottom: 2px; font-size: 14px; }
-  .confirm-actions { display: flex; gap: 10px; margin-top: 14px; }
-  .btn-save    { flex: 1; padding: 13px; background: var(--primary); color: white; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; }
-  .btn-discard { flex: none; padding: 13px 16px; background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; cursor: pointer; }
+  /* Confirm card */
+  .confirm-card { background:var(--surface); border-radius:var(--radius); border:1.5px solid var(--primary); padding:16px; margin-top:8px; }
+  .confirm-title { font-size:13px; font-weight:600; color:var(--primary); margin-bottom:14px; display:flex; align-items:center; gap:6px; }
+  .cf-row { display:flex; align-items:flex-start; gap:10px; margin-bottom:11px; padding-bottom:11px; border-bottom:0.5px solid var(--border); }
+  .cf-row:last-of-type { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+  .cf-icon { font-size:16px; flex-shrink:0; margin-top:2px; }
+  .cf-body { flex:1; min-width:0; }
+  .cf-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted); margin-bottom:2px; }
+  .cf-value { font-size:14px; color:var(--text); line-height:1.4; word-break:break-word; }
+  .cf-value.empty { color:var(--text-muted); font-style:italic; }
+  .cf-inferred { display:inline-block; font-size:10px; background:var(--primary-light); color:var(--primary); padding:1px 6px; border-radius:4px; font-weight:600; margin-left:5px; }
+  .cf-changed  { display:inline-block; font-size:10px; background:#e6f4ec; color:var(--success); padding:1px 6px; border-radius:4px; font-weight:600; margin-left:5px; }
+  .cf-resolved { display:inline-block; font-size:10px; background:#f3f0ff; color:#5b21b6; padding:1px 6px; border-radius:4px; font-weight:600; margin-left:5px; }
+  .confirm-banner { background:#e6f4ec; border:1px solid #a8d5bc; border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:12px; font-size:13px; color:var(--success); line-height:1.5; }
+  .confirm-banner strong { display:block; margin-bottom:2px; font-size:14px; }
+  .confirm-actions { display:flex; gap:10px; margin-top:14px; }
+  .btn-save    { flex:1; padding:14px; background:var(--primary); color:white; border:none; border-radius:var(--radius-sm); font-size:15px; font-weight:600; cursor:pointer; min-height:44px; }
+  .btn-discard { flex:none; padding:14px 16px; background:transparent; color:var(--text-muted); border:1px solid var(--border); border-radius:var(--radius-sm); font-size:14px; cursor:pointer; min-height:44px; }
 
-  /* ── Aliases tab ── */
-  .alias-type-header { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 16px 0 8px; }
-  .alias-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
-  .alias-arrow { color: var(--text-muted); font-size: 16px; flex-shrink: 0; }
-  .alias-text { flex: 1; min-width: 0; }
-  .alias-from { font-size: 14px; font-weight: 500; color: var(--text); }
-  .alias-to   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
-  .alias-type-badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; flex-shrink: 0; }
-  .alias-type-project     { background: var(--primary-light); color: var(--primary); }
-  .alias-type-contractor  { background: var(--accent-light); color: #7a4800; }
-  .alias-type-responsible { background: #e6f4ec; color: var(--success); }
-  .alias-type-general     { background: #f3f0ff; color: #5b21b6; }
-  .alias-delete { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 18px; padding: 4px; flex-shrink: 0; }
-  .alias-add-card { background: var(--surface); border: 1px dashed var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
-  .alias-add-title { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 12px; }
-  .alias-form-row { display: flex; gap: 8px; margin-bottom: 10px; align-items: center; }
-  .alias-form-row input, .alias-form-row select { flex: 1; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; color: var(--text); background: var(--bg); -webkit-appearance: none; }
-  .alias-form-arrow { color: var(--text-muted); font-size: 18px; flex-shrink: 0; }
+  /* Aliases tab */
+  .alias-type-header { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin:16px 0 8px; }
+  .alias-item { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
+  .alias-text { flex:1; min-width:0; }
+  .alias-from { font-size:14px; font-weight:500; color:var(--text); }
+  .alias-to   { font-size:12px; color:var(--text-muted); margin-top:2px; }
+  .alias-type-badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; flex-shrink:0; }
+  .alias-type-project    { background:var(--primary-light); color:var(--primary); }
+  .alias-type-contractor { background:var(--accent-light); color:#7a4800; }
+  .alias-type-responsible{ background:#e6f4ec; color:var(--success); }
+  .alias-type-general    { background:#f3f0ff; color:#5b21b6; }
+  /* CarPlay: delete button min 44pt */
+  .alias-delete { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:18px; padding:8px; min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .alias-add-card { background:var(--surface); border:1px dashed var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
+  .alias-add-title { font-size:13px; font-weight:600; color:var(--primary); margin-bottom:12px; }
+  .alias-form-row { display:flex; gap:8px; margin-bottom:10px; align-items:center; }
+  .alias-form-row input, .alias-form-row select { flex:1; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:14px; color:var(--text); background:var(--bg); -webkit-appearance:none; min-height:44px; }
+  .alias-form-arrow { color:var(--text-muted); font-size:18px; flex-shrink:0; }
 
-  /* ── Shared ── */
-  .btn { display: block; width: 100%; padding: 14px; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; cursor: pointer; border: none; text-align: center; }
-  .btn-primary { background: var(--primary); color: white; }
-  .btn-accent  { background: var(--accent); color: white; }
-  .btn-outline { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); }
-  .btn-sm { padding: 8px 14px; font-size: 13px; width: auto; display: inline-block; border-radius: var(--radius-sm); }
-  .btn-danger { background: var(--danger); color: white; }
-  .item { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px; margin-bottom: 10px; }
-  .item-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-  .item-action { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.4; }
-  .badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; margin-left: 8px; }
-  .badge-overdue { background: #fdecea; color: var(--danger); }
-  .badge-soon    { background: var(--accent-light); color: #8a5a00; }
-  .badge-ok      { background: #e6f4ec; color: var(--success); }
-  .item-meta { font-size: 12px; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 8px; }
-  .item-actions { display: flex; gap: 8px; margin-top: 10px; }
-  .search-box { position: relative; margin-bottom: 14px; }
-  .search-box input { padding-left: 38px; }
-  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); }
-  input, select, textarea { width: 100%; padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 15px; color: var(--text); background: var(--bg); -webkit-appearance: none; }
-  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); background: white; }
-  textarea { resize: vertical; min-height: 80px; }
-  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 16px 0 8px; }
-  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
-  .cal-day-name { text-align: center; font-size: 10px; font-weight: 600; color: var(--text-muted); padding: 4px 0; }
-  .cal-cell { min-height: 40px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); padding: 3px; cursor: pointer; }
-  .cal-cell.today     { border-color: var(--primary); background: var(--primary-light); }
-  .cal-cell.has-items { background: var(--accent-light); border-color: var(--accent); }
-  .cal-cell.other-month { opacity: 0.3; }
-  .cal-num { font-size: 11px; font-weight: 500; }
-  .cal-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); margin-top: 2px; }
-  .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-  .cal-nav button { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 6px 12px; cursor: pointer; font-size: 14px; }
-  .cal-month { font-size: 15px; font-weight: 600; }
-  .filter-row { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; scrollbar-width: none; }
-  .filter-row::-webkit-scrollbar { display: none; }
-  .filter-chip { flex: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); background: var(--surface); cursor: pointer; }
-  .filter-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
-  .stat-num { font-size: 24px; font-weight: 700; color: var(--primary); }
-  .stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-  .group-header { background: var(--primary-light); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 8px; margin-top: 14px; }
-  .group-title { font-size: 13px; font-weight: 600; color: var(--primary); }
-  .group-count { font-size: 11px; color: var(--text-muted); }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1A2033; color: white; padding: 12px 20px; border-radius: 20px; font-size: 13px; z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none; white-space: nowrap; }
-  .toast.show { opacity: 1; }
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 200; display: none; align-items: flex-end; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; padding: 20px; width: 100%; max-height: 85vh; overflow-y: auto; }
-  .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
-  .form-group { margin-bottom: 14px; }
-  label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .empty { text-align: center; padding: 40px 20px; color: var(--text-muted); }
-  .empty-icon { font-size: 40px; margin-bottom: 12px; }
-  .export-row { margin-bottom: 14px; }
-  .hidden { display: none !important; }
+  /* Shared */
+  .btn { display:block; width:100%; padding:14px; border-radius:var(--radius-sm); font-size:15px; font-weight:600; cursor:pointer; border:none; text-align:center; min-height:44px; }
+  .btn-primary { background:var(--primary); color:white; }
+  .btn-accent  { background:var(--accent); color:white; }
+  .btn-outline { background:transparent; color:var(--primary); border:1.5px solid var(--primary); }
+  /* CarPlay: btn-sm still needs 44pt height */
+  .btn-sm { padding:10px 16px; font-size:13px; width:auto; display:inline-flex; align-items:center; border-radius:var(--radius-sm); min-height:44px; }
+  .btn-danger { background:var(--danger); color:white; }
+
+  .item { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); padding:14px; margin-bottom:10px; }
+  .item-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+  .item-action { font-size:14px; font-weight:500; flex:1; line-height:1.4; }
+  .badge { font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; white-space:nowrap; margin-left:8px; }
+  .badge-overdue { background:#fdecea; color:var(--danger); }
+  .badge-soon    { background:var(--accent-light); color:#8a5a00; }
+  .badge-ok      { background:#e6f4ec; color:var(--success); }
+  .item-meta { font-size:12px; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
+  /* CarPlay: item action buttons 44pt */
+  .item-actions { display:flex; gap:8px; margin-top:10px; }
+  .item-btn { padding:10px 18px; font-size:13px; font-weight:600; border-radius:var(--radius-sm); cursor:pointer; min-height:44px; min-width:44px; display:inline-flex; align-items:center; justify-content:center; }
+  .item-btn-edit   { background:transparent; color:var(--primary); border:1.5px solid var(--primary); }
+  .item-btn-delete { background:var(--danger); color:white; border:none; }
+
+  .search-box { position:relative; margin-bottom:14px; }
+  .search-box input { padding-left:38px; }
+  .search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none; }
+  input, select, textarea { width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:16px; color:var(--text); background:var(--bg); -webkit-appearance:none; min-height:44px; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:var(--primary); background:white; }
+  textarea { resize:vertical; min-height:80px; }
+
+  .section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin:16px 0 8px; }
+  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+  .cal-day-name { text-align:center; font-size:10px; font-weight:600; color:var(--text-muted); padding:4px 0; }
+  /* CarPlay: calendar cells need to be at least 44pt tall */
+  .cal-cell { min-height:44px; border-radius:6px; border:1px solid var(--border); background:var(--surface); padding:4px; cursor:pointer; }
+  .cal-cell.today     { border-color:var(--primary); background:var(--primary-light); }
+  .cal-cell.has-items { background:var(--accent-light); border-color:var(--accent); }
+  .cal-cell.other-month { opacity:0.3; }
+  .cal-num { font-size:11px; font-weight:500; }
+  .cal-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); margin-top:2px; }
+  .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .cal-nav button { background:none; border:1px solid var(--border); border-radius:6px; padding:10px 16px; cursor:pointer; font-size:14px; min-height:44px; }
+  .cal-month { font-size:15px; font-weight:600; }
+
+  .filter-row { display:flex; gap:8px; margin-bottom:14px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .filter-row::-webkit-scrollbar { display:none; }
+  .filter-chip { flex:none; padding:10px 16px; border-radius:20px; font-size:12px; font-weight:500; border:1px solid var(--border); background:var(--surface); cursor:pointer; min-height:44px; display:inline-flex; align-items:center; }
+  .filter-chip.active { background:var(--primary); color:white; border-color:var(--primary); }
+
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; text-align:center; }
+  .stat-num { font-size:24px; font-weight:700; color:var(--primary); }
+  .stat-label { font-size:11px; color:var(--text-muted); margin-top:2px; }
+
+  .group-header { background:var(--primary-light); border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:8px; margin-top:14px; }
+  .group-title { font-size:13px; font-weight:600; color:var(--primary); }
+  .group-count { font-size:11px; color:var(--text-muted); }
+
+  .toast { position:fixed; bottom:calc(24px + var(--safe-bottom)); left:50%; transform:translateX(-50%); background:#1A2033; color:white; padding:12px 20px; border-radius:20px; font-size:13px; z-index:1000; opacity:0; transition:opacity 0.3s; pointer-events:none; white-space:nowrap; max-width:90vw; text-align:center; }
+  .toast.show { opacity:1; }
+
+  /* Modal — fixed to viewport, iOS keyboard safe */
+  .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:200; display:none; align-items:flex-end; -webkit-overflow-scrolling:touch; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--surface); border-radius:var(--radius) var(--radius) 0 0; padding:20px; padding-bottom:calc(20px + var(--safe-bottom)); width:100%; max-height:88vh; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .modal-title { font-size:16px; font-weight:600; margin-bottom:16px; }
+
+  /* Custom confirm dialog — replaces window.confirm() which is blocked in iOS PWA */
+  .confirm-dialog-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:300; display:none; align-items:center; justify-content:center; padding:20px; }
+  .confirm-dialog-overlay.open { display:flex; }
+  .confirm-dialog { background:var(--surface); border-radius:var(--radius); padding:24px; width:100%; max-width:320px; text-align:center; }
+  .confirm-dialog-title { font-size:17px; font-weight:600; margin-bottom:8px; }
+  .confirm-dialog-msg   { font-size:14px; color:var(--text-muted); margin-bottom:20px; line-height:1.5; }
+  .confirm-dialog-actions { display:flex; gap:10px; }
+  .confirm-dialog-actions button { flex:1; padding:12px; border-radius:var(--radius-sm); font-size:15px; font-weight:600; cursor:pointer; min-height:44px; }
+
+  .form-group { margin-bottom:14px; }
+  label { display:block; font-size:12px; font-weight:500; color:var(--text-muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px; }
+  .empty { text-align:center; padding:40px 20px; color:var(--text-muted); }
+  .empty-icon { font-size:40px; margin-bottom:12px; }
+  .export-row { margin-bottom:14px; }
+  .hidden { display:none !important; }
 </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-row">
-    <h1>Action Tracker</h1>
+    <img src="data:image/png;base64,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" alt="Altius" style="height:28px;width:auto;display:block;">
     <div class="sync-indicator">
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-label">Connecting...</span>
     </div>
   </div>
-  <p id="header-sub">Loading...</p>
+  <p id="header-sub" style="margin-top:4px;">Loading...</p>
 </div>
 
 <div class="nav">
@@ -247,7 +241,7 @@
 
 <div class="content">
 
-  <!-- ── LOG TAB ── -->
+  <!-- LOG TAB -->
   <div id="tab-log">
     <div class="voice-center">
       <div class="voice-ring">
@@ -269,7 +263,7 @@
       </p>
     </div>
 
-    <!-- Alias prompt (purple) -->
+    <!-- Alias prompt -->
     <div class="alias-banner hidden" id="alias-banner">
       <div class="alias-banner-title">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="#5b21b6"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
@@ -277,8 +271,8 @@
       </div>
       <div class="alias-banner-body" id="alias-banner-body"></div>
       <div class="alias-banner-actions">
-        <button class="alias-btn alias-btn-yes"  id="alias-btn-yes"  onclick="handleAliasYes()"></button>
-        <button class="alias-btn alias-btn-new"  onclick="handleAliasNew()">It's a new entry</button>
+        <button class="alias-btn alias-btn-yes" id="alias-btn-yes" onclick="handleAliasYes()"></button>
+        <button class="alias-btn alias-btn-new" onclick="handleAliasNew()">It's a new entry</button>
         <button class="alias-btn alias-btn-skip" onclick="handleAliasSkip()">Skip</button>
       </div>
     </div>
@@ -297,7 +291,7 @@
       <div class="cf-row"><div class="cf-icon">📅</div><div class="cf-body"><div class="cf-label">Due Date</div><div class="cf-value" id="cv-duedate"></div></div></div>
       <div class="confirm-banner hidden" id="confirm-banner">
         <strong>Does this look correct?</strong>
-        Tap the mic and say <em>"yes, save it"</em> — or describe any changes, e.g. <em>"change the due date to May 10th"</em>.
+        Tap the mic and say <em>"yes, save it"</em> — or describe any changes.
       </div>
       <div class="confirm-actions">
         <button class="btn-save" onclick="confirmSave()">Save Action Item</button>
@@ -306,7 +300,7 @@
     </div>
   </div>
 
-  <!-- ── ALL ITEMS TAB ── -->
+  <!-- ALL ITEMS TAB -->
   <div id="tab-all" class="hidden">
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-label">Total Items</div></div>
@@ -323,21 +317,21 @@
     <div id="list-all"></div>
   </div>
 
-  <!-- ── PROJECT TAB ── -->
+  <!-- PROJECT TAB -->
   <div id="tab-project" class="hidden">
     <div class="export-row"><button class="btn btn-accent btn-sm" onclick="exportExcel()">Export to Excel</button></div>
     <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="search-project" placeholder="Search projects..." oninput="renderByProject()"></div>
     <div id="list-project"></div>
   </div>
 
-  <!-- ── CONTRACTOR TAB ── -->
+  <!-- CONTRACTOR TAB -->
   <div id="tab-contractor" class="hidden">
     <div class="export-row"><button class="btn btn-accent btn-sm" onclick="exportExcel()">Export to Excel</button></div>
     <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="search-contractor" placeholder="Search contractors..." oninput="renderByContractor()"></div>
     <div id="list-contractor"></div>
   </div>
 
-  <!-- ── CALENDAR TAB ── -->
+  <!-- CALENDAR TAB -->
   <div id="tab-calendar" class="hidden">
     <div class="cal-nav">
       <button onclick="calPrev()">&#8592;</button>
@@ -348,9 +342,8 @@
     <div id="cal-day-items" style="margin-top:16px"></div>
   </div>
 
-  <!-- ── ALIASES TAB ── -->
+  <!-- ALIASES TAB -->
   <div id="tab-aliases" class="hidden">
-
     <div class="alias-add-card">
       <div class="alias-add-title">Add alias manually</div>
       <div class="alias-form-row">
@@ -367,9 +360,8 @@
         </select>
         <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="addAliasManually()">Add</button>
       </div>
-      <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Or just say it on the Log tab: <em>"Remember that Legendary means Bluewater Marina"</em></p>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Or say it on the Log tab: <em>"Remember that Legendary means Bluewater Marina"</em></p>
     </div>
-
     <div id="alias-list"></div>
   </div>
 
@@ -386,8 +378,20 @@
     <div class="form-group"><label>Party Responsible</label><input type="text" id="e-responsible"></div>
     <div class="form-group"><label>Due Date</label><input type="date" id="e-duedate"></div>
     <div style="display:flex;gap:10px;margin-top:8px">
-      <button style="flex:1;padding:14px;font-size:15px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;background:var(--primary);color:white;border:none" onclick="saveEdit()">Save</button>
-      <button style="flex:1;padding:14px;font-size:15px;font-weight:600;border-radius:var(--radius-sm);cursor:pointer;background:transparent;color:var(--primary);border:1.5px solid var(--primary)" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEdit()">Save</button>
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Custom confirm dialog — replaces window.confirm() blocked in iOS PWA -->
+<div class="confirm-dialog-overlay" id="confirm-dialog">
+  <div class="confirm-dialog">
+    <div class="confirm-dialog-title" id="confirm-dialog-title">Confirm</div>
+    <div class="confirm-dialog-msg" id="confirm-dialog-msg"></div>
+    <div class="confirm-dialog-actions">
+      <button style="background:var(--danger);color:white;border:none;" id="confirm-dialog-yes">Delete</button>
+      <button style="background:var(--bg);color:var(--text);border:1px solid var(--border);" onclick="closeConfirmDialog()">Cancel</button>
     </div>
   </div>
 </div>
@@ -395,408 +399,364 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const SB_URL  = 'https://uslelxguolwqtyrtjcpi.supabase.co';
-const SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzbGVseGd1b2x3cXR5cnRqY3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MjM1ODQsImV4cCI6MjA5MjQ5OTU4NH0.-91VKLJANiT7_X1yvK-GuU1dWEtLk-tmeos_rFISHeY';
-const ITEMS_API   = SB_URL + '/rest/v1/action_items';
-const ALIASES_API = SB_URL + '/rest/v1/aliases';
-const SB_H = { 'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation' };
+// ── Config — swap PROXY_URL for your Cloudflare Worker URL ───
+const PROXY_URL  = 'https://action-tracker-proxy.bannon-matthew.workers.dev/';
+const SB_URL     = 'https://uslelxguolwqtyrtjcpi.supabase.co';
+const SB_KEY     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVzbGVseGd1b2x3cXR5cnRqY3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY5MjM1ODQsImV4cCI6MjA5MjQ5OTU4NH0.-91VKLJANiT7_X1yvK-GuU1dWEtLk-tmeos_rFISHeY';
+const ITEMS_API  = SB_URL + '/rest/v1/action_items';
+const ALIASES_API= SB_URL + '/rest/v1/aliases';
+const SB_H = {'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=representation'};
 
 // ── State ────────────────────────────────────────────────────
-let items = [], aliases = [], currentStatusFilter = 'all';
-let calYear, calMonth, editId = null, currentTab = 'log';
-let recognition = null;
-let appMode = 'initial'; // initial | recording | processing | confirm | alias-pending
-let currentData = {}, prevData = {};
-let pendingAlias = null; // { heard, field, candidates }
+let items=[], aliases=[], currentStatusFilter='all';
+let calYear, calMonth, editId=null, currentTab='log';
+let recognition=null, isRecording=false;
+let appMode='initial'; // initial|recording|processing|confirm|alias-pending
+let currentData={}, prevData={}, pendingAlias=null;
+let recordingStart=0; // track minimum recording duration
 
-const nd = new Date(); calYear = nd.getFullYear(); calMonth = nd.getMonth();
+const nd=new Date(); calYear=nd.getFullYear(); calMonth=nd.getMonth();
 
 // ── Sync status ──────────────────────────────────────────────
-function setSyncStatus(s) {
-  document.getElementById('sync-dot').className = 'sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');
-  document.getElementById('sync-label').textContent = s==='syncing'?'Syncing...':s==='error'?'Offline':'Synced';
+function setSyncStatus(s){
+  document.getElementById('sync-dot').className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');
+  document.getElementById('sync-label').textContent=s==='syncing'?'Syncing...':s==='error'?'Offline':'Synced';
 }
 
 // ── Load data ────────────────────────────────────────────────
-async function loadAll() {
+async function loadAll(){
   setSyncStatus('syncing');
   try {
-    const [itemsRes, aliasRes] = await Promise.all([
-      fetch(ITEMS_API+'?order=duedate.asc.nullslast', {headers:SB_H}),
-      fetch(ALIASES_API+'?order=alias.asc', {headers:SB_H})
+    const [ir,ar]=await Promise.all([
+      fetch(ITEMS_API+'?order=duedate.asc.nullslast',{headers:SB_H}),
+      fetch(ALIASES_API+'?order=alias.asc',{headers:SB_H})
     ]);
-    if (!itemsRes.ok || !aliasRes.ok) throw new Error('Load failed');
-    items   = await itemsRes.json();
-    aliases = await aliasRes.json();
+    if(!ir.ok||!ar.ok) throw new Error();
+    items=await ir.json(); aliases=await ar.json();
     setSyncStatus('ok');
-  } catch(e) { setSyncStatus('error'); showToast('Connection error'); console.error(e); }
+  } catch(e){ setSyncStatus('error'); showToast('Connection error'); }
   updateHeader();
 }
 
-function updateHeader() {
-  const ov = items.filter(i=>statusOf(i)==='overdue').length;
-  document.getElementById('header-sub').textContent = `${items.length} item${items.length!==1?'s':''} · ${ov} overdue`;
+function updateHeader(){
+  const ov=items.filter(i=>statusOf(i)==='overdue').length;
+  document.getElementById('header-sub').textContent=`${items.length} item${items.length!==1?'s':''} · ${ov} overdue`;
 }
 
-// ── Apply aliases to a value ─────────────────────────────────
-function applyAliases(value, type) {
-  if (!value) return { resolved: value, wasResolved: false };
-  const lower = value.toLowerCase().trim();
-  const match = aliases.find(a =>
-    (a.type === type || a.type === 'general') &&
-    a.alias.toLowerCase().trim() === lower
-  );
-  if (match) return { resolved: match.canonical, wasResolved: true, original: value };
-  return { resolved: value, wasResolved: false };
+// ── Alias helpers ────────────────────────────────────────────
+function buildAliasContext(){
+  if(!aliases.length) return 'No aliases defined yet.';
+  return aliases.map(a=>`"${a.alias}" → "${a.canonical}" (${a.type})`).join('\n');
+}
+function knownProjects()   {return[...new Set(items.map(i=>i.project).filter(Boolean))];}
+function knownContractors(){return[...new Set(items.map(i=>i.contractor).filter(Boolean))];}
+function knownResponsible(){return[...new Set(items.map(i=>i.responsible).filter(Boolean))];}
+function getCandidates(field){
+  if(field==='project')    return knownProjects();
+  if(field==='contractor') return knownContractors();
+  if(field==='responsible')return knownResponsible();
+  return[...knownProjects(),...knownContractors()];
 }
 
-// ── Build alias context string for Claude prompts ─────────────
-function buildAliasContext() {
-  if (!aliases.length) return 'No aliases defined yet.';
-  return aliases.map(a => `"${a.alias}" → "${a.canonical}" (${a.type})`).join('\n');
-}
-
-// ── Known canonical names from history ───────────────────────
-function knownProjects()     { return [...new Set(items.map(i=>i.project).filter(Boolean))]; }
-function knownContractors()  { return [...new Set(items.map(i=>i.contractor).filter(Boolean))]; }
-function knownResponsible()  { return [...new Set(items.map(i=>i.responsible).filter(Boolean))]; }
-
-// ── Save alias to Supabase ───────────────────────────────────
-async function saveAlias(aliasText, canonical, type) {
-  const rec = { id: Date.now().toString(), alias: aliasText, canonical, type, created: new Date().toISOString() };
-  try {
-    const res = await fetch(ALIASES_API, {method:'POST', headers:SB_H, body:JSON.stringify(rec)});
-    if (!res.ok) throw new Error(await res.text());
+async function saveAlias(aliasText,canonical,type){
+  const rec={id:Date.now().toString(),alias:aliasText,canonical,type,created:new Date().toISOString()};
+  try{
+    const res=await fetch(ALIASES_API,{method:'POST',headers:SB_H,body:JSON.stringify(rec)});
+    if(!res.ok) throw new Error();
     aliases.push(rec);
     showToast(`Alias saved: "${aliasText}" → "${canonical}"`);
-    if (currentTab === 'aliases') renderAliases();
-  } catch(e) { console.error(e); showToast('Could not save alias'); }
+    if(currentTab==='aliases') renderAliases();
+  }catch(e){showToast('Could not save alias');}
 }
 
-// ── Mic tap — context aware ──────────────────────────────────
-function handleMicTap() {
-  if (appMode === 'recording')       { stopRecording(); return; }
-  if (appMode === 'processing')      { return; }
-  if (appMode === 'alias-pending')   { return; }
-  if (appMode === 'confirm')         { startConfirmRecording(); return; }
+// ── Claude API via proxy ─────────────────────────────────────
+async function callClaude(prompt){
+  // If no proxy configured, try direct (works in Claude.ai artifact viewer)
+  const endpoint = PROXY_URL || 'https://api.anthropic.com/v1/messages';
+
+  const headers = {'Content-Type':'application/json'};
+  // Direct call needs auth headers; proxy handles them server-side
+  if(endpoint.includes('anthropic.com')){
+    // Will fail due to CORS on hosted sites but works in dev/artifact
+  }
+
+  const res=await fetch(endpoint,{
+    method:'POST',
+    headers,
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+  });
+  if(!res.ok) throw new Error('API error: '+res.status);
+  const data=await res.json();
+  return data.content?.find(b=>b.type==='text')?.text||'';
+}
+
+// ── Mic tap handler ──────────────────────────────────────────
+function handleMicTap(){
+  if(appMode==='recording')    {stopRecording();return;}
+  if(appMode==='processing')   return;
+  if(appMode==='alias-pending')return;
+  if(appMode==='confirm')      {startConfirmRecording();return;}
   startInitialRecording();
 }
+function stopRecording(){
+  // iOS: enforce minimum 1 second before allowing stop to prevent accidental cutoff
+  const elapsed=Date.now()-recordingStart;
+  if(elapsed<1000){setTimeout(()=>{if(recognition)recognition.stop();},1000-elapsed);}
+  else{if(recognition)recognition.stop();}
+}
 
-function stopRecording() { if (recognition) recognition.stop(); }
+// ── Speech recognition factory ───────────────────────────────
+function makeSR(onFinal, onEnd, label){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){showToast('Voice not supported — use Safari on iPhone');return null;}
+  const r=new SR();
+  r.continuous=true;
+  r.interimResults=true;
+  r.lang='en-US';
+  // iOS: maxAlternatives=1 is most stable
+  r.maxAlternatives=1;
+  let finalText='', silenceTimer=null;
+
+  r.onstart=()=>{
+    recordingStart=Date.now();
+    setMicState('recording','TAP TO STOP',label||'Listening...');
+  };
+
+  r.onresult=e=>{
+    // Reset silence timer — iOS often fires onend too early
+    if(silenceTimer){clearTimeout(silenceTimer);}
+    let interim=''; finalText='';
+    for(let i=0;i<e.results.length;i++){
+      if(e.results[i].isFinal) finalText+=e.results[i][0].transcript+' ';
+      else interim+=e.results[i][0].transcript;
+    }
+    const display=finalText+interim;
+    const box=document.getElementById('transcript-box');
+    box.textContent=display;
+    box.classList.toggle('has-text',display.trim().length>0);
+    // Auto-stop after 2.5s silence (iOS workaround)
+    silenceTimer=setTimeout(()=>{if(recognition)recognition.stop();},2500);
+  };
+
+  r.onend=()=>{
+    if(silenceTimer)clearTimeout(silenceTimer);
+    isRecording=false; recognition=null;
+    onEnd(finalText.trim());
+  };
+
+  r.onerror=e=>{
+    if(silenceTimer)clearTimeout(silenceTimer);
+    isRecording=false; recognition=null;
+    if(e.error!=='no-speech'&&e.error!=='aborted') showToast('Voice error: '+e.error);
+    onEnd(finalText.trim());
+  };
+  return r;
+}
 
 // ── Initial recording ────────────────────────────────────────
-function startInitialRecording() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { showToast('Voice not supported — try Safari on iPhone'); return; }
-  appMode = 'recording';
-  setMicState('recording','TAP TO STOP','Listening...');
-  document.getElementById('transcript-box').textContent = '';
+function startInitialRecording(){
+  appMode='recording';
+  document.getElementById('transcript-box').textContent='';
   document.getElementById('transcript-box').classList.remove('has-text');
   document.getElementById('confirm-card').classList.add('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
-  let final = '';
-  recognition = new SR();
-  recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
-  recognition.onresult = e => {
-    let interim = ''; final = '';
-    for (let i=0;i<e.results.length;i++) {
-      if (e.results[i].isFinal) final += e.results[i][0].transcript+' ';
-      else interim += e.results[i][0].transcript;
-    }
-    const box = document.getElementById('transcript-box');
-    box.textContent = final+interim;
-    box.classList.toggle('has-text',(final+interim).trim().length>0);
-  };
-  recognition.onend = () => {
-    if (final.trim()) {
-      appMode = 'processing';
+
+  recognition=makeSR(null,(finalText)=>{
+    if(finalText){
+      appMode='processing';
       setMicState('processing','PROCESSING','AI is parsing your input...');
-      parseInitial(final.trim());
-    } else {
-      appMode = 'initial';
+      parseInitial(finalText);
+    }else{
+      appMode='initial';
       setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
     }
-  };
-  recognition.onerror = e => {
-    appMode = 'initial';
-    setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
-    if (e.error!=='no-speech') showToast('Voice error: '+e.error);
-  };
-  recognition.start();
+  },'Listening...');
+  if(recognition){isRecording=true;recognition.start();}
 }
 
-// ── Confirm-mode recording ───────────────────────────────────
-function startConfirmRecording() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { showToast('Voice not supported'); return; }
-  appMode = 'recording';
-  setMicState('recording','TAP TO STOP','Listening for confirmation or edits...');
-  let final = '';
-  recognition = new SR();
-  recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
-  recognition.onresult = e => {
-    let interim = ''; final = '';
-    for (let i=0;i<e.results.length;i++) {
-      if (e.results[i].isFinal) final += e.results[i][0].transcript+' ';
-      else interim += e.results[i][0].transcript;
-    }
-    const box = document.getElementById('transcript-box');
-    box.textContent = final+interim;
-    box.classList.toggle('has-text',(final+interim).trim().length>0);
-  };
-  recognition.onend = () => {
-    if (final.trim()) {
-      appMode = 'processing';
+// ── Confirm recording ────────────────────────────────────────
+function startConfirmRecording(){
+  appMode='recording';
+  document.getElementById('transcript-box').textContent='';
+  document.getElementById('transcript-box').classList.remove('has-text');
+
+  recognition=makeSR(null,(finalText)=>{
+    if(finalText){
+      appMode='processing';
       setMicState('processing','PROCESSING','AI is interpreting your response...');
-      parseConfirmResponse(final.trim());
-    } else {
-      appMode = 'confirm';
+      parseConfirmResponse(finalText);
+    }else{
+      appMode='confirm';
       setMicState('confirm','TAP TO RESPOND','Does this look correct?');
     }
-  };
-  recognition.onerror = e => {
-    appMode = 'confirm';
-    setMicState('confirm','TAP TO RESPOND','Does this look correct?');
-    if (e.error!=='no-speech') showToast('Voice error: '+e.error);
-  };
-  recognition.start();
+  },'Listening for confirmation or edits...');
+  if(recognition){isRecording=true;recognition.start();}
 }
 
-// ── AI: parse initial speech ─────────────────────────────────
-async function parseInitial(transcript) {
-  const today  = new Date().toISOString().slice(0,10);
-  const nowDT  = nowLocal();
-  const aliasCtx   = buildAliasContext();
-  const knownProj  = knownProjects().join(', ')   || 'none yet';
-  const knownContr = knownContractors().join(', ') || 'none yet';
-  const knownResp  = knownResponsible().join(', ') || 'none yet';
-
-  const prompt = `You are an assistant parsing spoken action item notes into structured data.
+// ── AI: parse initial ────────────────────────────────────────
+async function parseInitial(transcript){
+  const today=new Date().toISOString().slice(0,10);
+  const nowDT=nowLocal();
+  const prompt=`You are an assistant parsing spoken action item notes into structured data.
 Today: ${today}. Current datetime: ${nowDT}.
 
-ALIAS TABLE — always apply these mappings when you see the alias:
-${aliasCtx}
+ALIAS TABLE — apply these mappings:
+${buildAliasContext()}
 
-Known projects (canonical): ${knownProj}
-Known contractors (canonical): ${knownContr}
-Known responsible parties: ${knownResp}
+Known projects: ${knownProjects().join(', ')||'none yet'}
+Known contractors: ${knownContractors().join(', ')||'none yet'}
+Known responsible parties: ${knownResponsible().join(', ')||'none yet'}
 
 INSTRUCTIONS:
-1. Extract fields: project, contractor, action, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
-2. Apply alias mappings automatically — if the user says an alias, output the canonical name.
-3. If the user is teaching an alias (e.g. "remember that X means Y" or "X is the same as Y"), extract the alias teaching and set teachAlias: {alias, canonical, type} where type is one of: project, contractor, responsible, general.
-4. If a name is used that does NOT match any known canonical name or alias, flag it in unknownNames: [{heard, field}].
-5. Only include fields that were mentioned or can be reasonably inferred. Null for anything not mentioned.
+1. Extract: project, contractor, action, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
+2. Apply alias mappings automatically.
+3. If teaching an alias (e.g. "remember X means Y"), set teachAlias:{alias,canonical,type}.
+4. Flag unknown names in unknownNames:[{heard,field}].
+5. Return null for anything not mentioned.
+
+User speech: "${transcript}"
 
 Respond ONLY with valid JSON:
-{
-  "project": null,
-  "contractor": null,
-  "action": null,
-  "responsible": null,
-  "duedate": null,
-  "datetime": "${nowDT}",
-  "teachAlias": null,
-  "unknownNames": []
-}`;
+{"project":null,"contractor":null,"action":null,"responsible":null,"duedate":null,"datetime":"${nowDT}","teachAlias":null,"unknownNames":[]}`;
 
-  try {
-    const res  = await callClaude(prompt);
-    const parsed = JSON.parse(res.replace(/```json|```/g,'').trim());
+  try{
+    const res=await callClaude(prompt);
+    const parsed=JSON.parse(res.replace(/```json|```/g,'').trim());
 
-    // Handle explicit alias teaching
-    if (parsed.teachAlias) {
-      const { alias: a, canonical: c, type: t } = parsed.teachAlias;
-      await saveAlias(a, c, t || 'general');
-      // Re-apply to any fields in this parse
-      if (parsed.project    && parsed.project.toLowerCase()    === a.toLowerCase()) parsed.project    = c;
-      if (parsed.contractor && parsed.contractor.toLowerCase() === a.toLowerCase()) parsed.contractor = c;
-      if (parsed.responsible&& parsed.responsible.toLowerCase()=== a.toLowerCase()) parsed.responsible= c;
+    if(parsed.teachAlias){
+      const{alias:a,canonical:c,type:t}=parsed.teachAlias;
+      await saveAlias(a,c,t||'general');
+      if(parsed.project&&parsed.project.toLowerCase()===a.toLowerCase()) parsed.project=c;
+      if(parsed.contractor&&parsed.contractor.toLowerCase()===a.toLowerCase()) parsed.contractor=c;
+      if(parsed.responsible&&parsed.responsible.toLowerCase()===a.toLowerCase()) parsed.responsible=c;
     }
 
-    currentData = { datetime: nowDT, ...parsed };
-    delete currentData.teachAlias;
-    delete currentData.unknownNames;
-    prevData = {};
+    currentData={datetime:nowDT,...parsed};
+    delete currentData.teachAlias; delete currentData.unknownNames;
+    prevData={};
 
-    // Check for unknown names — ask about first one
-    const unknowns = parsed.unknownNames || [];
-    if (unknowns.length > 0 && parsed.action) {
-      const unknown = unknowns[0];
-      const candidates = getCandidates(unknown.field);
-      pendingAlias = { heard: unknown.heard, field: unknown.field, candidates };
-      showAliasBanner(unknown.heard, unknown.field, candidates);
+    const unknowns=parsed.unknownNames||[];
+    if(unknowns.length>0&&parsed.action){
+      const unknown=unknowns[0];
+      pendingAlias={heard:unknown.heard,field:unknown.field,candidates:getCandidates(unknown.field)};
+      showAliasBanner(unknown.heard,unknown.field,pendingAlias.candidates);
       return;
     }
-
     showConfirmCard(false);
-  } catch(e) {
+  }catch(e){
     console.error(e);
-    appMode = 'initial';
+    appMode='initial';
     setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
     showToast('Could not parse — please try again');
   }
 }
 
 // ── AI: parse confirm/edit response ─────────────────────────
-async function parseConfirmResponse(transcript) {
-  const today = new Date().toISOString().slice(0,10);
-  const confirmWords = /\b(yes|correct|good|save|confirm|looks good|that('s| is) (right|correct|good)|perfect|go ahead|do it|yep|yeah|ok|okay)\b/i;
-  if (confirmWords.test(transcript) && transcript.trim().split(/\s+/).length < 8) {
-    confirmSave(); return;
-  }
-  const prompt = `You are managing an action item confirmation.
+async function parseConfirmResponse(transcript){
+  const confirmWords=/\b(yes|correct|good|save|confirm|looks good|that('s| is) (right|correct|good)|perfect|go ahead|do it|yep|yeah|ok|okay)\b/i;
+  if(confirmWords.test(transcript)&&transcript.trim().split(/\s+/).length<8){confirmSave();return;}
+
+  const today=new Date().toISOString().slice(0,10);
+  const prompt=`You are managing an action item confirmation.
 Current data: ${JSON.stringify(currentData)}
 Today: ${today}.
 Alias table:\n${buildAliasContext()}
-
 User said: "${transcript}"
-
-If confirmed: return {"confirmed": true}
-If edits: return the full updated object with ALL fields, applying changes. Apply any alias mappings. Keep existing values unless changed.
+If confirmed: return {"confirmed":true}
+If edits: return full updated object with ALL fields applied. Keep existing values unless changed.
 Fields: project, contractor, action, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
 Respond ONLY with valid JSON.`;
 
-  try {
-    const res    = await callClaude(prompt);
-    const parsed = JSON.parse(res.replace(/```json|```/g,'').trim());
-    if (parsed.confirmed) { confirmSave(); }
-    else { prevData = {...currentData}; currentData = parsed; showConfirmCard(true); }
-  } catch(e) {
-    console.error(e);
-    appMode = 'confirm';
+  try{
+    const res=await callClaude(prompt);
+    const parsed=JSON.parse(res.replace(/```json|```/g,'').trim());
+    if(parsed.confirmed){confirmSave();}
+    else{prevData={...currentData};currentData=parsed;showConfirmCard(true);}
+  }catch(e){
+    appMode='confirm';
     setMicState('confirm','TAP TO RESPOND','Does this look correct?');
     showToast('Could not parse — please try again');
   }
 }
 
-// ── Alias banner logic ───────────────────────────────────────
-function getCandidates(field) {
-  if (field==='project')     return knownProjects();
-  if (field==='contractor')  return knownContractors();
-  if (field==='responsible') return knownResponsible();
-  return [...knownProjects(),...knownContractors()];
-}
-
-function showAliasBanner(heard, field, candidates) {
-  appMode = 'alias-pending';
+// ── Alias banner ─────────────────────────────────────────────
+function showAliasBanner(heard,field,candidates){
+  appMode='alias-pending';
   setMicState('alias-mode','','New name detected');
-
-  const banner = document.getElementById('alias-banner');
-  const body   = document.getElementById('alias-banner-body');
-  const yesBtn = document.getElementById('alias-btn-yes');
-
-  if (candidates.length > 0) {
-    const list = candidates.slice(0,3).map(c=>`"${c}"`).join(', ');
-    body.innerHTML = `I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this the same as one of your existing entries: ${list}${candidates.length>3?' or another?':' ?'}`;
-    yesBtn.textContent = `Yes, it's an alias`;
-    yesBtn.classList.remove('hidden');
-  } else {
-    body.innerHTML = `I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this a new entry or an alias for an existing name?`;
+  const banner=document.getElementById('alias-banner');
+  const body=document.getElementById('alias-banner-body');
+  const yesBtn=document.getElementById('alias-btn-yes');
+  if(candidates.length>0){
+    const list=candidates.slice(0,3).map(c=>`"${esc(c)}"`).join(', ');
+    body.innerHTML=`I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this the same as one of your existing entries: ${list}?`;
+    yesBtn.textContent="Yes, it's an alias"; yesBtn.classList.remove('hidden');
+  }else{
+    body.innerHTML=`I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this a new entry or an alias for an existing name?`;
     yesBtn.classList.add('hidden');
   }
-
   banner.classList.remove('hidden');
-  banner.scrollIntoView({behavior:'smooth', block:'start'});
+  // Use scrollTop instead of scrollIntoView to avoid iOS PWA jump bug
+  setTimeout(()=>{ banner.closest('.content')? window.scrollTo(0,banner.offsetTop-80) : null; },100);
 }
 
-function handleAliasYes() {
-  // Ask which canonical it maps to via voice
-  if (!pendingAlias) return;
-  appMode = 'recording';
+function handleAliasYes(){
+  if(!pendingAlias)return;
+  appMode='recording';
   setMicState('recording','TAP TO STOP',`Which existing ${pendingAlias.field} is "${pendingAlias.heard}"?`);
-  document.getElementById('transcript-box').textContent = '';
+  document.getElementById('transcript-box').textContent='';
   document.getElementById('transcript-box').classList.remove('has-text');
 
-  let final = '';
-  recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-  recognition.continuous = true; recognition.interimResults = true; recognition.lang = 'en-US';
-  recognition.onresult = e => {
-    let interim = ''; final = '';
-    for (let i=0;i<e.results.length;i++) {
-      if (e.results[i].isFinal) final += e.results[i][0].transcript+' ';
-      else interim += e.results[i][0].transcript;
-    }
-    const box = document.getElementById('transcript-box');
-    box.textContent = final+interim;
-    box.classList.toggle('has-text',(final+interim).trim().length>0);
-  };
-  recognition.onend = async () => {
-    if (final.trim()) {
-      // Use Claude to match to canonical
-      const prompt = `The user was asked which existing ${pendingAlias.field} the name "${pendingAlias.heard}" maps to.
-Known options: ${getCandidates(pendingAlias.field).join(', ') || 'none'}.
-User said: "${final.trim()}"
-Return ONLY a JSON object: {"canonical": "the matched canonical name"}
-If you cannot determine, return {"canonical": null}.`;
-      try {
-        const res = await callClaude(prompt);
-        const { canonical } = JSON.parse(res.replace(/```json|```/g,'').trim());
-        if (canonical) {
-          await saveAlias(pendingAlias.heard, canonical, pendingAlias.field);
-          // Update currentData
-          if (pendingAlias.field==='project')     currentData.project     = canonical;
-          if (pendingAlias.field==='contractor')  currentData.contractor  = canonical;
-          if (pendingAlias.field==='responsible') currentData.responsible = canonical;
+  recognition=makeSR(null,async(finalText)=>{
+    if(finalText){
+      const prompt=`The user was asked which existing ${pendingAlias.field} the name "${pendingAlias.heard}" maps to.
+Known options: ${getCandidates(pendingAlias.field).join(', ')||'none'}.
+User said: "${finalText}"
+Return ONLY JSON: {"canonical":"matched name or null"}`;
+      try{
+        const res=await callClaude(prompt);
+        const{canonical}=JSON.parse(res.replace(/```json|```/g,'').trim());
+        if(canonical){
+          await saveAlias(pendingAlias.heard,canonical,pendingAlias.field);
+          if(pendingAlias.field==='project')    currentData.project=canonical;
+          if(pendingAlias.field==='contractor') currentData.contractor=canonical;
+          if(pendingAlias.field==='responsible')currentData.responsible=canonical;
         }
-      } catch(e) { console.error(e); }
+      }catch(e){console.error(e);}
     }
-    pendingAlias = null;
+    pendingAlias=null;
     document.getElementById('alias-banner').classList.add('hidden');
     showConfirmCard(false);
-  };
-  recognition.onerror = () => {
-    pendingAlias = null;
-    document.getElementById('alias-banner').classList.add('hidden');
-    showConfirmCard(false);
-  };
-  recognition.start();
+  });
+  if(recognition){isRecording=true;recognition.start();}
 }
+function handleAliasNew(){pendingAlias=null;document.getElementById('alias-banner').classList.add('hidden');showConfirmCard(false);}
+function handleAliasSkip(){pendingAlias=null;document.getElementById('alias-banner').classList.add('hidden');showConfirmCard(false);}
 
-function handleAliasNew() {
-  // It's genuinely new — just proceed
-  pendingAlias = null;
-  document.getElementById('alias-banner').classList.add('hidden');
-  showConfirmCard(false);
-}
-
-function handleAliasSkip() {
-  pendingAlias = null;
-  document.getElementById('alias-banner').classList.add('hidden');
-  showConfirmCard(false);
-}
-
-// ── Confirm card render ──────────────────────────────────────
-function showConfirmCard(showChanges) {
-  appMode = 'confirm';
-  const fields = [
-    {key:'datetime',   id:'cv-datetime',   fmt:v=>v?formatDateTime(v):null},
-    {key:'project',    id:'cv-project',    fmt:v=>v||null},
-    {key:'contractor', id:'cv-contractor', fmt:v=>v||null},
-    {key:'action',     id:'cv-action',     fmt:v=>v||null},
+// ── Confirm card ─────────────────────────────────────────────
+function showConfirmCard(showChanges){
+  appMode='confirm';
+  const fields=[
+    {key:'datetime',id:'cv-datetime',fmt:v=>v?formatDateTime(v):null},
+    {key:'project',id:'cv-project',fmt:v=>v||null},
+    {key:'contractor',id:'cv-contractor',fmt:v=>v||null},
+    {key:'action',id:'cv-action',fmt:v=>v||null},
     {key:'responsible',id:'cv-responsible',fmt:v=>v||null},
-    {key:'duedate',    id:'cv-duedate',    fmt:v=>v?formatDate(v):null},
+    {key:'duedate',id:'cv-duedate',fmt:v=>v?formatDate(v):null},
   ];
-  fields.forEach(f => {
-    const el   = document.getElementById(f.id);
-    const val  = f.fmt(currentData[f.key]);
-    const prev = showChanges ? f.fmt(prevData[f.key]) : null;
-    const changed = showChanges && prev !== val;
-    // Check if this value was alias-resolved
-    const wasResolved = aliases.some(a =>
-      currentData[f.key] && a.canonical === currentData[f.key] &&
-      a.alias.toLowerCase() !== currentData[f.key].toLowerCase()
-    );
-    if (val) {
-      let badge = '';
-      if (changed)                              badge = `<span class="cf-changed">updated</span>`;
-      else if (wasResolved && !showChanges)     badge = `<span class="cf-resolved">alias resolved</span>`;
-      else if (!showChanges && f.key!=='datetime') badge = `<span class="cf-inferred">inferred</span>`;
-      el.innerHTML = esc(val)+badge;
-      el.className = 'cf-value';
-    } else {
-      el.innerHTML = 'Not mentioned';
-      el.className = 'cf-value empty';
+  fields.forEach(f=>{
+    const el=document.getElementById(f.id);
+    const val=f.fmt(currentData[f.key]);
+    const prev=showChanges?f.fmt(prevData[f.key]):null;
+    const changed=showChanges&&prev!==val;
+    const wasResolved=aliases.some(a=>currentData[f.key]&&a.canonical===currentData[f.key]&&a.alias.toLowerCase()!==currentData[f.key].toLowerCase());
+    if(val){
+      let badge='';
+      if(changed) badge=`<span class="cf-changed">updated</span>`;
+      else if(wasResolved&&!showChanges) badge=`<span class="cf-resolved">alias resolved</span>`;
+      else if(!showChanges&&f.key!=='datetime') badge=`<span class="cf-inferred">inferred</span>`;
+      el.innerHTML=esc(val)+badge; el.className='cf-value';
+    }else{
+      el.innerHTML='Not mentioned'; el.className='cf-value empty';
     }
   });
   document.getElementById('confirm-card').classList.remove('hidden');
@@ -804,160 +764,142 @@ function showConfirmCard(showChanges) {
   document.getElementById('alias-banner').classList.add('hidden');
   setMicState('confirm','TAP TO RESPOND','Does this look correct?');
   document.getElementById('voice-tip').classList.add('hidden');
-  document.getElementById('confirm-card').scrollIntoView({behavior:'smooth',block:'start'});
+  // Safe scroll — avoid scrollIntoView smooth which breaks in iOS PWA
+  setTimeout(()=>window.scrollTo({top:document.getElementById('confirm-card').offsetTop-80}),100);
 }
 
-function discardAll() {
-  appMode = 'initial'; currentData = {}; prevData = {}; pendingAlias = null;
+function discardAll(){
+  appMode='initial'; currentData={}; prevData={}; pendingAlias=null;
   document.getElementById('confirm-card').classList.add('hidden');
   document.getElementById('confirm-banner').classList.add('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
-  document.getElementById('transcript-box').textContent = 'Your speech will appear here...';
+  document.getElementById('transcript-box').textContent='Your speech will appear here...';
   document.getElementById('transcript-box').classList.remove('has-text');
   document.getElementById('voice-tip').classList.remove('hidden');
   setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
 }
 
-// ── Save item ────────────────────────────────────────────────
-async function confirmSave() {
-  const action = (currentData.action||'').trim();
-  if (!action) { showToast('No action item to save'); return; }
-  const item = {
-    id: Date.now().toString(),
-    datetime: currentData.datetime || nowLocal(),
-    project: currentData.project||null, contractor: currentData.contractor||null,
-    action, responsible: currentData.responsible||null, duedate: currentData.duedate||null,
-    created: new Date().toISOString()
-  };
+// ── Save ─────────────────────────────────────────────────────
+async function confirmSave(){
+  const action=(currentData.action||'').trim();
+  if(!action){showToast('No action item to save');return;}
+  const item={id:Date.now().toString(),datetime:currentData.datetime||nowLocal(),project:currentData.project||null,contractor:currentData.contractor||null,action,responsible:currentData.responsible||null,duedate:currentData.duedate||null,created:new Date().toISOString()};
   setSyncStatus('syncing');
-  try {
-    const res = await fetch(ITEMS_API, {method:'POST', headers:SB_H, body:JSON.stringify(item)});
-    if (!res.ok) throw new Error(await res.text());
+  try{
+    const res=await fetch(ITEMS_API,{method:'POST',headers:SB_H,body:JSON.stringify(item)});
+    if(!res.ok) throw new Error();
     setSyncStatus('ok'); await loadAll(); discardAll(); showToast('Action item saved!');
-  } catch(e) { setSyncStatus('error'); showToast('Save failed'); console.error(e); }
+  }catch(e){setSyncStatus('error');showToast('Save failed — check connection');}
 }
 
-// ── Aliases tab ──────────────────────────────────────────────
-function renderAliases() {
-  const el = document.getElementById('alias-list');
-  if (!aliases.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">🔤</div><p>No aliases yet.<br>Add one above or teach the app by voice.</p></div>`;
-    return;
-  }
-  const types = ['project','contractor','responsible','general'];
-  const typeLabels = {project:'Projects',contractor:'Contractors',responsible:'Responsible Parties',general:'General'};
-  let html = '';
-  types.forEach(type => {
-    const group = aliases.filter(a=>a.type===type);
-    if (!group.length) return;
-    html += `<div class="alias-type-header">${typeLabels[type]}</div>`;
-    group.forEach(a => {
-      html += `<div class="alias-item">
-        <div class="alias-text">
-          <div class="alias-from">${esc(a.alias)}</div>
-          <div class="alias-to">→ ${esc(a.canonical)}</div>
-        </div>
-        <span class="alias-type-badge alias-type-${a.type}">${a.type}</span>
-        <button class="alias-delete" onclick="deleteAlias('${a.id}')" title="Delete">✕</button>
-      </div>`;
+// ── Edit / delete ────────────────────────────────────────────
+async function saveEdit(){
+  const patch={datetime:document.getElementById('e-datetime').value,project:document.getElementById('e-project').value.trim()||null,contractor:document.getElementById('e-contractor').value.trim()||null,action:document.getElementById('e-action').value.trim(),responsible:document.getElementById('e-responsible').value.trim()||null,duedate:document.getElementById('e-duedate').value||null};
+  setSyncStatus('syncing');
+  try{
+    const res=await fetch(ITEMS_API+'?id=eq.'+editId,{method:'PATCH',headers:SB_H,body:JSON.stringify(patch)});
+    if(!res.ok) throw new Error();
+    setSyncStatus('ok'); await loadAll(); closeModal(); renderCurrentTab(); showToast('Item updated');
+  }catch(e){setSyncStatus('error');showToast('Update failed');}
+}
+
+// Custom confirm dialog — window.confirm() is blocked in iOS PWA standalone mode
+let confirmCallback=null;
+function showConfirmDialog(msg,onYes){
+  confirmCallback=onYes;
+  document.getElementById('confirm-dialog-msg').textContent=msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-dialog-yes').onclick=()=>{closeConfirmDialog();if(confirmCallback)confirmCallback();};
+}
+function closeConfirmDialog(){document.getElementById('confirm-dialog').classList.remove('open');confirmCallback=null;}
+
+async function deleteItem(id){
+  showConfirmDialog('Delete this action item? This cannot be undone.',async()=>{
+    setSyncStatus('syncing');
+    try{
+      const res=await fetch(ITEMS_API+'?id=eq.'+id,{method:'DELETE',headers:SB_H});
+      if(!res.ok) throw new Error();
+      setSyncStatus('ok'); await loadAll(); renderCurrentTab(); showToast('Item deleted');
+    }catch(e){setSyncStatus('error');showToast('Delete failed');}
+  });
+}
+
+async function deleteAlias(id){
+  showConfirmDialog('Delete this alias?',async()=>{
+    try{
+      const res=await fetch(ALIASES_API+'?id=eq.'+id,{method:'DELETE',headers:SB_H});
+      if(!res.ok) throw new Error();
+      aliases=aliases.filter(a=>a.id!==id); renderAliases(); showToast('Alias deleted');
+    }catch(e){showToast('Delete failed');}
+  });
+}
+
+// ── Alias tab render ─────────────────────────────────────────
+function renderAliases(){
+  const el=document.getElementById('alias-list');
+  if(!aliases.length){el.innerHTML=`<div class="empty"><div class="empty-icon">🔤</div><p>No aliases yet.<br>Add one above or teach the app by voice.</p></div>`;return;}
+  const types=['project','contractor','responsible','general'];
+  const labels={project:'Projects',contractor:'Contractors',responsible:'Responsible Parties',general:'General'};
+  let html='';
+  types.forEach(type=>{
+    const group=aliases.filter(a=>a.type===type); if(!group.length)return;
+    html+=`<div class="alias-type-header">${labels[type]}</div>`;
+    group.forEach(a=>{
+      html+=`<div class="alias-item"><div class="alias-text"><div class="alias-from">${esc(a.alias)}</div><div class="alias-to">→ ${esc(a.canonical)}</div></div><span class="alias-type-badge alias-type-${a.type}">${a.type}</span><button class="alias-delete" data-id="${a.id}" aria-label="Delete alias">✕</button></div>`;
     });
   });
-  el.innerHTML = html;
-}
-
-async function addAliasManually() {
-  const from = document.getElementById('new-alias-from').value.trim();
-  const to   = document.getElementById('new-alias-to').value.trim();
-  const type = document.getElementById('new-alias-type').value;
-  if (!from || !to) { showToast('Both fields are required'); return; }
-  await saveAlias(from, to, type);
-  document.getElementById('new-alias-from').value = '';
-  document.getElementById('new-alias-to').value   = '';
-}
-
-async function deleteAlias(id) {
-  if (!confirm('Delete this alias?')) return;
-  try {
-    const res = await fetch(ALIASES_API+'?id=eq.'+id, {method:'DELETE', headers:SB_H});
-    if (!res.ok) throw new Error();
-    aliases = aliases.filter(a=>a.id!==id);
-    renderAliases(); showToast('Alias deleted');
-  } catch(e) { showToast('Delete failed'); }
-}
-
-// ── Claude API call ──────────────────────────────────────────
-async function callClaude(prompt) {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+  el.innerHTML=html;
+  // CarPlay-safe: attach events via delegation instead of inline onclick
+  el.querySelectorAll('.alias-delete').forEach(btn=>{
+    btn.addEventListener('click',()=>deleteAlias(btn.dataset.id));
   });
-  const data = await res.json();
-  return data.content?.find(b=>b.type==='text')?.text || '';
+}
+
+async function addAliasManually(){
+  const from=document.getElementById('new-alias-from').value.trim();
+  const to=document.getElementById('new-alias-to').value.trim();
+  const type=document.getElementById('new-alias-type').value;
+  if(!from||!to){showToast('Both fields are required');return;}
+  await saveAlias(from,to,type);
+  document.getElementById('new-alias-from').value='';
+  document.getElementById('new-alias-to').value='';
 }
 
 // ── Mic visual state ─────────────────────────────────────────
-function setMicState(state, label, statusText) {
-  const btn    = document.getElementById('mic-btn');
-  const lbl    = document.getElementById('mic-label');
-  const status = document.getElementById('voice-status');
-  const r1     = document.getElementById('ring1');
-  const r2     = document.getElementById('ring2');
-  btn.className = 'mic-btn'+(state==='recording'?' recording':state==='processing'?' processing':state==='confirm'?' confirm':state==='alias-mode'?' alias-mode':'');
-  lbl.textContent = label;
-  r1.className = 'voice-ring-anim' +(state==='recording'?' active':'');
-  r2.className = 'voice-ring-anim2'+(state==='recording'?' active':'');
-  status.textContent = statusText;
-  status.className = 'voice-status'+(state==='recording'?' listening':state==='processing'?' processing':state==='confirm'?' confirm-mode':state==='alias-mode'?' alias-mode':'');
-}
-
-// ── Supabase edit/delete ─────────────────────────────────────
-async function saveEdit() {
-  const patch = {
-    datetime:    document.getElementById('e-datetime').value,
-    project:     document.getElementById('e-project').value.trim()||null,
-    contractor:  document.getElementById('e-contractor').value.trim()||null,
-    action:      document.getElementById('e-action').value.trim(),
-    responsible: document.getElementById('e-responsible').value.trim()||null,
-    duedate:     document.getElementById('e-duedate').value||null
-  };
-  setSyncStatus('syncing');
-  try {
-    const res = await fetch(ITEMS_API+'?id=eq.'+editId, {method:'PATCH', headers:SB_H, body:JSON.stringify(patch)});
-    if (!res.ok) throw new Error();
-    setSyncStatus('ok'); await loadAll(); closeModal(); renderCurrentTab(); showToast('Item updated');
-  } catch(e) { setSyncStatus('error'); showToast('Update failed'); }
-}
-
-async function deleteItem(id) {
-  if (!confirm('Delete this action item?')) return;
-  setSyncStatus('syncing');
-  try {
-    const res = await fetch(ITEMS_API+'?id=eq.'+id, {method:'DELETE', headers:SB_H});
-    if (!res.ok) throw new Error();
-    setSyncStatus('ok'); await loadAll(); renderCurrentTab(); showToast('Item deleted');
-  } catch(e) { setSyncStatus('error'); showToast('Delete failed'); }
+function setMicState(state,label,statusText){
+  const btn=document.getElementById('mic-btn');
+  const lbl=document.getElementById('mic-label');
+  const status=document.getElementById('voice-status');
+  const r1=document.getElementById('ring1');
+  const r2=document.getElementById('ring2');
+  btn.className='mic-btn'+(state==='recording'?' recording':state==='processing'?' processing':state==='confirm'?' confirm':state==='alias-mode'?' alias-mode':'');
+  lbl.textContent=label;
+  r1.className='voice-ring-anim'+(state==='recording'?' active':'');
+  r2.className='voice-ring-anim2'+(state==='recording'?' active':'');
+  status.textContent=statusText;
+  status.className='voice-status'+(state==='recording'?' listening':state==='processing'?' processing':state==='confirm'?' confirm-mode':state==='alias-mode'?' alias-mode':'');
 }
 
 // ── Helpers ──────────────────────────────────────────────────
-function nowLocal() { const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,16); }
-function statusOf(item) {
-  if (!item.duedate) return 'ok';
-  const due=new Date(item.duedate), today=new Date(); today.setHours(0,0,0,0);
+function nowLocal(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);}
+function statusOf(item){
+  if(!item.duedate)return'ok';
+  const due=new Date(item.duedate),today=new Date();today.setHours(0,0,0,0);
   const diff=Math.ceil((due-today)/86400000);
   return diff<0?'overdue':diff<=7?'soon':'ok';
 }
-function badgeHTML(item) {
-  if (!item.duedate) return '';
+function badgeHTML(item){
+  if(!item.duedate)return'';
   const s=statusOf(item);
-  return `<span class="badge badge-${s}">${s==='overdue'?'Overdue':s==='soon'?'Due Soon':'On Track'}</span>`;
+  return`<span class="badge badge-${s}">${s==='overdue'?'Overdue':s==='soon'?'Due Soon':'On Track'}</span>`;
 }
-function formatDate(d) { if(!d) return '—'; return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
-function formatDateTime(d) { if(!d) return '—'; return new Date(d).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}); }
-function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function formatDate(d){if(!d)return'—';return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
+function formatDateTime(d){if(!d)return'—';return new Date(d).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-function itemHTML(item, showProject=true) {
-  return `<div class="item">
+// ── Item HTML — uses data attributes for CarPlay-safe events ─
+function itemHTML(item,showProject=true){
+  return`<div class="item">
     <div class="item-top"><div class="item-action">${esc(item.action)}</div>${badgeHTML(item)}</div>
     <div class="item-meta">
       ${showProject&&item.project?`<span>📁 ${esc(item.project)}</span>`:''}
@@ -967,14 +909,24 @@ function itemHTML(item, showProject=true) {
       <span>🕐 ${formatDateTime(item.datetime)}</span>
     </div>
     <div class="item-actions">
-      <button class="btn btn-outline btn-sm" onclick="openEdit('${item.id}')">Edit</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteItem('${item.id}')">Delete</button>
+      <button class="item-btn item-btn-edit"   data-id="${item.id}" data-action="edit">Edit</button>
+      <button class="item-btn item-btn-delete" data-id="${item.id}" data-action="delete">Delete</button>
     </div>
   </div>`;
 }
 
+// ── Event delegation for item buttons (CarPlay safe) ─────────
+document.addEventListener('click',function(e){
+  const btn=e.target.closest('[data-action]');
+  if(!btn)return;
+  const id=btn.dataset.id;
+  const action=btn.dataset.action;
+  if(action==='edit')   openEdit(id);
+  if(action==='delete') deleteItem(id);
+});
+
 // ── Tabs ─────────────────────────────────────────────────────
-function showTab(tab) {
+function showTab(tab){
   currentTab=tab;
   document.querySelectorAll('[id^="tab-"]').forEach(el=>el.classList.add('hidden'));
   document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
@@ -984,43 +936,39 @@ function showTab(tab) {
   });
   renderCurrentTab();
 }
-function renderCurrentTab() {
+function renderCurrentTab(){
   if(currentTab==='all')        renderAll();
   else if(currentTab==='project')    renderByProject();
   else if(currentTab==='contractor') renderByContractor();
   else if(currentTab==='calendar')   renderCalendar();
   else if(currentTab==='aliases')    renderAliases();
 }
-function setFilter(f,btn) { currentStatusFilter=f; document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active')); btn.classList.add('active'); renderAll(); }
-function renderAll() {
+function setFilter(f,btn){currentStatusFilter=f;document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderAll();}
+
+function renderAll(){
   const q=(document.getElementById('search-all').value||'').toLowerCase();
-  const filtered=items.filter(i=>{
-    const match=!q||[i.action,i.project,i.contractor,i.responsible].join(' ').toLowerCase().includes(q);
-    return match&&(currentStatusFilter==='all'||statusOf(i)===currentStatusFilter);
-  });
+  const filtered=items.filter(i=>{const match=!q||[i.action,i.project,i.contractor,i.responsible].join(' ').toLowerCase().includes(q);return match&&(currentStatusFilter==='all'||statusOf(i)===currentStatusFilter);});
   document.getElementById('stat-total').textContent=items.length;
   document.getElementById('stat-overdue').textContent=items.filter(i=>statusOf(i)==='overdue').length;
   document.getElementById('list-all').innerHTML=filtered.length?filtered.map(i=>itemHTML(i)).join(''):`<div class="empty"><div class="empty-icon">📋</div><p>No action items found</p></div>`;
 }
-function renderByProject() {
+function renderByProject(){
   const q=(document.getElementById('search-project').value||'').toLowerCase();
   const filtered=items.filter(i=>!q||(i.project||'').toLowerCase().includes(q)||(i.action||'').toLowerCase().includes(q));
-  const groups={}; filtered.forEach(i=>{const k=i.project||'(No Project)';if(!groups[k])groups[k]=[];groups[k].push(i);});
+  const groups={};filtered.forEach(i=>{const k=i.project||'(No Project)';if(!groups[k])groups[k]=[];groups[k].push(i);});
   const el=document.getElementById('list-project');
   if(!Object.keys(groups).length){el.innerHTML=`<div class="empty"><div class="empty-icon">📁</div><p>No items found</p></div>`;return;}
-  el.innerHTML=Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).map(([p,its])=>
-    `<div class="group-header"><div class="group-title">📁 ${esc(p)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div></div>`+its.map(i=>itemHTML(i,false)).join('')).join('');
+  el.innerHTML=Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).map(([p,its])=>`<div class="group-header"><div class="group-title">📁 ${esc(p)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div></div>`+its.map(i=>itemHTML(i,false)).join('')).join('');
 }
-function renderByContractor() {
+function renderByContractor(){
   const q=(document.getElementById('search-contractor').value||'').toLowerCase();
   const filtered=items.filter(i=>!q||(i.contractor||'').toLowerCase().includes(q)||(i.action||'').toLowerCase().includes(q));
-  const groups={}; filtered.forEach(i=>{const k=i.contractor||'(No Contractor)';if(!groups[k])groups[k]=[];groups[k].push(i);});
+  const groups={};filtered.forEach(i=>{const k=i.contractor||'(No Contractor)';if(!groups[k])groups[k]=[];groups[k].push(i);});
   const el=document.getElementById('list-contractor');
   if(!Object.keys(groups).length){el.innerHTML=`<div class="empty"><div class="empty-icon">🏗</div><p>No items found</p></div>`;return;}
-  el.innerHTML=Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).map(([c,its])=>
-    `<div class="group-header"><div class="group-title">🏗 ${esc(c)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div></div>`+its.map(i=>itemHTML(i)).join('')).join('');
+  el.innerHTML=Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).map(([c,its])=>`<div class="group-header"><div class="group-title">🏗 ${esc(c)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div></div>`+its.map(i=>itemHTML(i)).join('')).join('');
 }
-function renderCalendar() {
+function renderCalendar(){
   const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
   document.getElementById('cal-month-label').textContent=`${months[calMonth]} ${calYear}`;
   const first=new Date(calYear,calMonth,1),last=new Date(calYear,calMonth+1,0);
@@ -1028,17 +976,22 @@ function renderCalendar() {
   const byDate={};items.forEach(i=>{if(i.duedate){if(!byDate[i.duedate])byDate[i.duedate]=[];byDate[i.duedate].push(i);}});
   const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
   let html=days.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
-  for(let i=0;i<first.getDay();i++) html+=`<div class="cal-cell other-month"></div>`;
+  for(let i=0;i<first.getDay();i++)html+=`<div class="cal-cell other-month"></div>`;
   for(let d=1;d<=last.getDate();d++){
     const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const cd=new Date(calYear,calMonth,d);
     const cls=['cal-cell',cd.getTime()===today.getTime()?'today':'',byDate[ds]?.length?'has-items':''].filter(Boolean).join(' ');
-    html+=`<div class="${cls}" onclick="showCalDay('${ds}')"><div class="cal-num">${d}</div>${byDate[ds]?.length?'<div class="cal-dot"></div>':''}</div>`;
+    html+=`<div class="${cls}" data-date="${ds}"><div class="cal-num">${d}</div>${byDate[ds]?.length?'<div class="cal-dot"></div>':''}</div>`;
   }
   document.getElementById('cal-grid').innerHTML=html;
   document.getElementById('cal-day-items').innerHTML='';
+  // CarPlay-safe calendar tap via delegation
+  document.getElementById('cal-grid').onclick=e=>{
+    const cell=e.target.closest('[data-date]');
+    if(cell)showCalDay(cell.dataset.date);
+  };
 }
-function showCalDay(ds) {
+function showCalDay(ds){
   const its=items.filter(i=>i.duedate===ds);
   const el=document.getElementById('cal-day-items');
   if(!its.length){el.innerHTML='';return;}
@@ -1047,37 +1000,37 @@ function showCalDay(ds) {
 }
 function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
 function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
-function openEdit(id) {
+
+function openEdit(id){
   const item=items.find(i=>i.id===id);if(!item)return;
   editId=id;
-  ['datetime','project','contractor','action','responsible','duedate'].forEach(f=>{ document.getElementById('e-'+f).value=item[f]||''; });
+  ['datetime','project','contractor','action','responsible','duedate'].forEach(f=>{document.getElementById('e-'+f).value=item[f]||'';});
   document.getElementById('edit-modal').classList.add('open');
 }
 function closeModal(){document.getElementById('edit-modal').classList.remove('open');editId=null;}
-function exportExcel() {
+
+// Export — iOS PWA safe: use blob URL opened in new tab instead of direct download
+function exportExcel(){
   if(!items.length){showToast('No items to export');return;}
   const data=items.map(i=>({'Date/Time':i.datetime?new Date(i.datetime).toLocaleString():'','Project':i.project||'','Contractor/Consultant':i.contractor||'','Action Item':i.action||'','Party Responsible':i.responsible||'','Due Date':i.duedate?formatDate(i.duedate):'','Status':statusOf(i).charAt(0).toUpperCase()+statusOf(i).slice(1)}));
   const ws=XLSX.utils.json_to_sheet(data),wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Action Items');
-  XLSX.writeFile(wb,`action-items-${new Date().toISOString().slice(0,10)}.xlsx`);
-  showToast('Exported to Excel!');
+  // iOS PWA can't use writeFile directly — write to array buffer and open as blob
+  try{
+    const wbout=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+    const blob=new Blob([wbout],{type:'application/octet-stream'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url; a.download=`action-items-${new Date().toISOString().slice(0,10)}.xlsx`;
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},1000);
+    showToast('Exported to Excel!');
+  }catch(e){showToast('Export failed — try from desktop');}
 }
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
 loadAll();
-
-// ── Service Worker (offline shell + CDN caching) ─────────────
-if ('serviceWorker' in navigator) {
-  const swCode = `
-const CACHE='action-tracker-v1';
-const ASSETS=['https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'];
-self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)));self.skipWaiting();});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))));self.clients.claim();});
-self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request)));});
-  `;
-  const blob = new Blob([swCode],{type:'application/javascript'});
-  navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
-}
 </script>
 </body>
 </html>
