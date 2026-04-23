@@ -837,7 +837,7 @@ function showConfirmDialog(msg,onYes){
   confirmCallback=onYes;
   document.getElementById('confirm-dialog-msg').textContent=msg;
   document.getElementById('confirm-dialog').classList.add('open');
-  document.getElementById('confirm-dialog-yes').onclick=()=>{closeConfirmDialog();if(confirmCallback)confirmCallback();};
+  document.getElementById('confirm-dialog-yes').onclick=()=>{const cb=confirmCallback;closeConfirmDialog();if(cb)cb();};
 }
 function closeConfirmDialog(){document.getElementById('confirm-dialog').classList.remove('open');confirmCallback=null;}
 
