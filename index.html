@@ -14,10 +14,9 @@
 <link rel="apple-touch-icon" id="pwa-icon">
 <link rel="manifest" id="pwa-manifest">
 <script>
-// Altius brand icon — rendered from SVG source
 (function(){
-  var iconURL = 'data:image/png;base64,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';
-  document.getElementById('pwa-icon').href = iconURL;
+  var iconURL='data:image/png;base64,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';
+  document.getElementById('pwa-icon').href=iconURL;
   var m={name:'Altius',short_name:'Altius',description:'Altius — Action Item Tracker',start_url:'./',display:'standalone',orientation:'portrait',background_color:'#929374',theme_color:'#929374',icons:[{src:iconURL,sizes:'180x180',type:'image/png'}]};
   var b=new Blob([JSON.stringify(m)],{type:'application/json'});
   document.getElementById('pwa-manifest').href=URL.createObjectURL(b);
@@ -25,196 +24,254 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-  :root {
-    --primary:#929374; --primary-light:#EEEEE0; --accent:#626256; --accent-light:#EAEAE0;
-    --surface:#FFFFFF; --bg:#F0F0E8; --border:#D4D4C4; --text:#1A2033; --text-muted:#6B7590;
-    --danger:#C0392B; --success:#1D7A4E; --radius:12px; --radius-sm:8px;
-    --safe-top: env(safe-area-inset-top, 0px);
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-  }
-  * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-  html { height:100%; }
-  body { font-family:-apple-system,'SF Pro Text',sans-serif; background:var(--bg); color:var(--text); min-height:100%; padding-bottom:var(--safe-bottom); }
+:root {
+  --primary:#929374; --primary-light:#EEEEE0; --accent:#626256; --accent-light:#EAEAE0;
+  --surface:#FFFFFF; --bg:#F0F0E8; --border:#D4D4C4; --text:#1A2033; --text-muted:#6B7590;
+  --danger:#C0392B; --success:#1D7A4E; --warning:#E8A020;
+  --radius:12px; --radius-sm:8px;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{height:100%;}
+body{font-family:-apple-system,'SF Pro Text',sans-serif;background:var(--bg);color:var(--text);min-height:100%;padding-bottom:var(--safe-bottom);}
 
-  /* Header — accounts for notch/dynamic island */
-  .header { background:var(--primary); color:white; padding:10px 20px 10px; padding-top:calc(10px + var(--safe-top)); position:sticky; top:0; z-index:100; }
-  .header-row { display:flex; align-items:center; justify-content:space-between; }
-  .sync-indicator { font-size:11px; opacity:0.85; display:flex; align-items:center; gap:5px; }
-  .sync-dot { width:7px; height:7px; border-radius:50%; background:#4ade80; flex-shrink:0; }
-  .sync-dot.syncing { background:var(--accent); animation:pulse 1s infinite; }
-  .sync-dot.error { background:#f87171; }
-  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
-  .header p { font-size:11px; opacity:0.75; margin-top:2px; color:white; }
+/* Header */
+.header{background:var(--primary);color:white;padding:10px 20px 10px;padding-top:calc(10px + var(--safe-top));position:sticky;top:0;z-index:100;}
+.header-row{display:flex;align-items:center;justify-content:space-between;}
+.sync-indicator{font-size:11px;opacity:0.85;display:flex;align-items:center;gap:5px;}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;}
+.sync-dot.syncing{background:var(--accent);animation:pulse 1s infinite;}
+.sync-dot.error{background:#f87171;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.header p{font-size:11px;opacity:0.75;margin-top:2px;color:white;}
 
-  /* Nav */
-  .nav { background:var(--surface); border-bottom:1px solid var(--border); display:flex; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
-  .nav::-webkit-scrollbar { display:none; }
-  /* CarPlay: 44pt minimum tap targets */
-  .nav-btn { flex:none; padding:14px 16px; font-size:12px; font-weight:500; color:var(--text-muted); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; min-height:44px; }
-  .nav-btn.active { color:var(--primary); border-bottom-color:var(--primary); }
+/* Nav */
+.nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.nav::-webkit-scrollbar{display:none;}
+.nav-btn{flex:none;padding:14px 14px;font-size:12px;font-weight:500;color:var(--text-muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;min-height:44px;}
+.nav-btn.active{color:var(--primary);border-bottom-color:var(--primary);}
 
-  .content { padding:16px; max-width:600px; margin:0 auto; }
+.content{padding:16px;max-width:600px;margin:0 auto;}
 
-  /* Voice UI */
-  .voice-center { display:flex; flex-direction:column; align-items:center; padding:28px 16px 20px; }
-  .voice-ring { position:relative; width:130px; height:130px; display:flex; align-items:center; justify-content:center; margin-bottom:18px; }
-  .voice-ring-bg { position:absolute; top:0; left:0; right:0; bottom:0; border-radius:50%; border:2px solid var(--border); }
-  /* Fixed: replaced inset:0 with explicit positioning for iOS 14 */
-  .voice-ring-anim  { position:absolute; top:0; left:0; right:0; bottom:0; border-radius:50%; border:2px solid var(--primary); opacity:0; }
-  .voice-ring-anim2 { position:absolute; top:0; left:0; right:0; bottom:0; border-radius:50%; border:2px solid var(--primary); opacity:0; }
-  .voice-ring-anim.active  { animation:ripple 1.4s ease-out infinite; }
-  .voice-ring-anim2.active { animation:ripple 1.4s ease-out infinite 0.5s; }
-  @keyframes ripple { 0%{transform:scale(1);opacity:0.6}100%{transform:scale(1.6);opacity:0} }
-  /* CarPlay: 100px button is well above 44pt minimum */
-  .mic-btn { width:100px; height:100px; border-radius:50%; border:none; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; background:var(--primary); box-shadow:0 4px 20px rgba(146,147,116,0.5); position:relative; z-index:1; transition:background 0.2s, box-shadow 0.2s; -webkit-appearance:none; }
-  .mic-btn.recording  { background:var(--danger);  box-shadow:0 4px 20px rgba(192,57,43,0.4); }
-  .mic-btn.processing { background:var(--accent);  box-shadow:0 4px 20px rgba(232,160,32,0.4); }
-  .mic-btn.confirm    { background:var(--success);  box-shadow:0 4px 20px rgba(98,98,86,0.4); }
-  .mic-btn.alias-mode { background:#7c3aed; box-shadow:0 4px 20px rgba(124,58,237,0.4); }
-  .mic-btn svg { width:32px; height:32px; fill:white; pointer-events:none; }
-  .mic-label { font-size:10px; color:white; font-weight:700; letter-spacing:0.5px; text-align:center; line-height:1.3; padding:0 8px; pointer-events:none; }
-  .voice-status { font-size:14px; color:var(--text-muted); text-align:center; min-height:20px; margin-bottom:10px; }
-  .voice-status.listening   { color:var(--danger); font-weight:500; }
-  .voice-status.processing  { color:var(--accent); font-weight:500; }
-  .voice-status.confirm-mode{ color:var(--success); font-weight:500; }
-  .voice-status.alias-mode  { color:#7c3aed; font-weight:500; }
-  .transcript-box { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:12px; font-size:14px; line-height:1.5; color:var(--text-muted); font-style:italic; min-height:60px; width:100%; }
-  .transcript-box.has-text { color:var(--text); font-style:normal; }
-  .tip { font-size:12px; color:var(--text-muted); text-align:center; line-height:1.6; padding:0 8px; }
-  .tip strong { color:var(--text); }
+/* Voice UI */
+.voice-center{display:flex;flex-direction:column;align-items:center;padding:28px 16px 20px;}
+.voice-ring{position:relative;width:130px;height:130px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+.voice-ring-bg{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;border:2px solid var(--border);}
+.voice-ring-anim{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;border:2px solid var(--primary);opacity:0;}
+.voice-ring-anim2{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;border:2px solid var(--primary);opacity:0;}
+.voice-ring-anim.active{animation:ripple 1.4s ease-out infinite;}
+.voice-ring-anim2.active{animation:ripple 1.4s ease-out infinite 0.5s;}
+@keyframes ripple{0%{transform:scale(1);opacity:0.6}100%{transform:scale(1.6);opacity:0}}
+.mic-btn{width:100px;height:100px;border-radius:50%;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--primary);box-shadow:0 4px 20px rgba(146,147,116,0.5);position:relative;z-index:1;transition:background 0.2s,box-shadow 0.2s;-webkit-appearance:none;touch-action:none;user-select:none;-webkit-user-select:none;}
+.mic-btn.recording{background:var(--danger);box-shadow:0 4px 20px rgba(192,57,43,0.4);}
+.mic-btn.processing{background:var(--accent);box-shadow:0 4px 20px rgba(98,98,86,0.4);}
+.mic-btn.confirm{background:var(--success);box-shadow:0 4px 20px rgba(29,122,78,0.4);}
+.mic-btn.alias-mode{background:#7c3aed;box-shadow:0 4px 20px rgba(124,58,237,0.4);}
+.mic-btn svg{width:32px;height:32px;fill:white;pointer-events:none;}
+.mic-label{font-size:10px;color:white;font-weight:700;letter-spacing:0.5px;text-align:center;line-height:1.3;padding:0 8px;pointer-events:none;}
+.voice-status{font-size:14px;color:var(--text-muted);text-align:center;min-height:20px;margin-bottom:10px;}
+.voice-status.listening{color:var(--danger);font-weight:500;}
+.voice-status.processing{color:var(--accent);font-weight:500;}
+.voice-status.confirm-mode{color:var(--success);font-weight:500;}
+.voice-status.alias-mode{color:#7c3aed;font-weight:500;}
+.transcript-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:12px;font-size:14px;line-height:1.5;color:var(--text-muted);font-style:italic;min-height:60px;width:100%;}
+.transcript-box.has-text{color:var(--text);font-style:normal;}
+.tip{font-size:12px;color:var(--text-muted);text-align:center;line-height:1.6;padding:0 8px;}
+.tip strong{color:var(--text);}
 
-  /* Alias banner */
-  .alias-banner { background:#f3f0ff; border:1.5px solid #a78bfa; border-radius:var(--radius-sm); padding:14px; margin-top:12px; }
-  .alias-banner-title { font-size:13px; font-weight:700; color:#5b21b6; margin-bottom:6px; display:flex; align-items:center; gap:6px; }
-  .alias-banner-body  { font-size:13px; color:#4c1d95; line-height:1.6; margin-bottom:10px; }
-  .alias-banner-body strong { font-weight:700; }
-  .alias-banner-actions { display:flex; gap:8px; flex-wrap:wrap; }
-  /* CarPlay: alias buttons need 44pt height */
-  .alias-btn { padding:12px 16px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer; border:none; min-height:44px; }
-  .alias-btn-yes  { background:#7c3aed; color:white; }
-  .alias-btn-new  { background:#e9d5ff; color:#5b21b6; }
-  .alias-btn-skip { background:transparent; color:var(--text-muted); border:1px solid var(--border); }
+/* Alias banner */
+.alias-banner{background:#f3f0ff;border:1.5px solid #a78bfa;border-radius:var(--radius-sm);padding:14px;margin-top:12px;}
+.alias-banner-title{font-size:13px;font-weight:700;color:#5b21b6;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.alias-banner-body{font-size:13px;color:#4c1d95;line-height:1.6;margin-bottom:10px;}
+.alias-banner-body strong{font-weight:700;}
+.alias-banner-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.alias-btn{padding:12px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;min-height:44px;}
+.alias-btn-yes{background:#7c3aed;color:white;}
+.alias-btn-new{background:#e9d5ff;color:#5b21b6;}
+.alias-btn-skip{background:transparent;color:var(--text-muted);border:1px solid var(--border);}
 
-  /* Confirm card */
-  .confirm-card { background:var(--surface); border-radius:var(--radius); border:1.5px solid var(--primary); padding:16px; margin-top:8px; }
-  .confirm-title { font-size:13px; font-weight:600; color:var(--primary); margin-bottom:14px; display:flex; align-items:center; gap:6px; }
-  .cf-row { display:flex; align-items:flex-start; gap:10px; margin-bottom:11px; padding-bottom:11px; border-bottom:0.5px solid var(--border); }
-  .cf-row:last-of-type { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-  .cf-icon { font-size:16px; flex-shrink:0; margin-top:2px; }
-  .cf-body { flex:1; min-width:0; }
-  .cf-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--text-muted); margin-bottom:2px; }
-  .cf-value { font-size:14px; color:var(--text); line-height:1.4; word-break:break-word; }
-  .cf-value.empty { color:var(--text-muted); font-style:italic; }
-  .cf-inferred { display:inline-block; font-size:10px; background:var(--primary-light); color:var(--primary); padding:1px 6px; border-radius:4px; font-weight:600; margin-left:5px; }
-  .cf-changed  { display:inline-block; font-size:10px; background:#e6f4ec; color:var(--success); padding:1px 6px; border-radius:4px; font-weight:600; margin-left:5px; }
-  .cf-resolved { display:inline-block; font-size:10px; background:#f3f0ff; color:#5b21b6; padding:1px 6px; border-radius:4px; font-weight:600; margin-left:5px; }
-  .confirm-banner { background:#e6f4ec; border:1px solid #a8d5bc; border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:12px; font-size:13px; color:var(--success); line-height:1.5; }
-  .confirm-banner strong { display:block; margin-bottom:2px; font-size:14px; }
-  .confirm-actions { display:flex; gap:10px; margin-top:14px; }
-  .btn-save    { flex:1; padding:14px; background:var(--primary); color:white; border:none; border-radius:var(--radius-sm); font-size:15px; font-weight:600; cursor:pointer; min-height:44px; }
-  .btn-discard { flex:none; padding:14px 16px; background:transparent; color:var(--text-muted); border:1px solid var(--border); border-radius:var(--radius-sm); font-size:14px; cursor:pointer; min-height:44px; }
+/* Confirm card */
+.confirm-card{background:var(--surface);border-radius:var(--radius);border:1.5px solid var(--primary);padding:16px;margin-top:8px;}
+.confirm-title{font-size:13px;font-weight:600;color:var(--primary);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+.cf-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:11px;padding-bottom:11px;border-bottom:0.5px solid var(--border);}
+.cf-row:last-of-type{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.cf-icon{font-size:16px;flex-shrink:0;margin-top:2px;}
+.cf-body{flex:1;min-width:0;}
+.cf-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);margin-bottom:2px;}
+.cf-value{font-size:14px;color:var(--text);line-height:1.4;word-break:break-word;}
+.cf-value.empty{color:var(--text-muted);font-style:italic;}
+.cf-inferred{display:inline-block;font-size:10px;background:var(--primary-light);color:var(--primary);padding:1px 6px;border-radius:4px;font-weight:600;margin-left:5px;}
+.cf-changed{display:inline-block;font-size:10px;background:#e6f4ec;color:var(--success);padding:1px 6px;border-radius:4px;font-weight:600;margin-left:5px;}
+.cf-resolved{display:inline-block;font-size:10px;background:#f3f0ff;color:#5b21b6;padding:1px 6px;border-radius:4px;font-weight:600;margin-left:5px;}
+.confirm-banner{background:#e6f4ec;border:1px solid #a8d5bc;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:12px;font-size:13px;color:var(--success);line-height:1.5;}
+.confirm-banner strong{display:block;margin-bottom:2px;font-size:14px;}
+.confirm-actions{display:flex;gap:10px;margin-top:14px;}
+.btn-save{flex:1;padding:14px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;min-height:44px;}
+.btn-discard{flex:none;padding:14px 16px;background:transparent;color:var(--text-muted);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;cursor:pointer;min-height:44px;}
 
-  /* Aliases tab */
-  .alias-type-header { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin:16px 0 8px; }
-  .alias-item { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:8px; display:flex; align-items:center; gap:10px; }
-  .alias-text { flex:1; min-width:0; }
-  .alias-from { font-size:14px; font-weight:500; color:var(--text); }
-  .alias-to   { font-size:12px; color:var(--text-muted); margin-top:2px; }
-  .alias-type-badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; flex-shrink:0; }
-  .alias-type-project    { background:var(--primary-light); color:var(--primary); }
-  .alias-type-contractor { background:var(--accent-light); color:#7a4800; }
-  .alias-type-responsible{ background:#e6f4ec; color:var(--success); }
-  .alias-type-general    { background:#f3f0ff; color:#5b21b6; }
-  /* CarPlay: delete button min 44pt */
-  .alias-delete { background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:18px; padding:8px; min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .alias-add-card { background:var(--surface); border:1px dashed var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
-  .alias-add-title { font-size:13px; font-weight:600; color:var(--primary); margin-bottom:12px; }
-  .alias-form-row { display:flex; gap:8px; margin-bottom:10px; align-items:center; }
-  .alias-form-row input, .alias-form-row select { flex:1; padding:10px 12px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:14px; color:var(--text); background:var(--bg); -webkit-appearance:none; min-height:44px; }
-  .alias-form-arrow { color:var(--text-muted); font-size:18px; flex-shrink:0; }
+/* Type badge on confirm card */
+.type-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-right:6px;}
+.type-task{background:#E8F0FA;color:#1D4E89;}
+.type-meeting{background:#E6F4EC;color:#1D7A4E;}
+.type-event{background:#FDF3E0;color:#8a5a00;}
 
-  /* Shared */
-  .btn { display:block; width:100%; padding:14px; border-radius:var(--radius-sm); font-size:15px; font-weight:600; cursor:pointer; border:none; text-align:center; min-height:44px; }
-  .btn-primary { background:var(--primary); color:white; }
-  .btn-accent  { background:var(--accent); color:white; }
-  .btn-outline { background:transparent; color:var(--primary); border:1.5px solid var(--primary); }
-  /* CarPlay: btn-sm still needs 44pt height */
-  .btn-sm { padding:10px 16px; font-size:13px; width:auto; display:inline-flex; align-items:center; border-radius:var(--radius-sm); min-height:44px; }
-  .btn-danger { background:var(--danger); color:white; }
+/* Swipeable item tiles */
+.item-wrap{position:relative;overflow:hidden;border-radius:var(--radius);margin-bottom:10px;}
+.item{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);padding:14px;cursor:pointer;position:relative;z-index:1;transition:transform 0.2s ease;touch-action:pan-y;}
+.item:active{background:#fafaf8;}
+.item-actions-swipe{position:absolute;right:0;top:0;bottom:0;display:flex;align-items:stretch;border-radius:0 var(--radius) var(--radius) 0;overflow:hidden;}
+.swipe-btn{display:flex;align-items:center;justify-content:center;width:80px;font-size:13px;font-weight:600;color:white;border:none;cursor:pointer;flex-direction:column;gap:4px;}
+.swipe-btn-edit{background:var(--primary);}
+.swipe-btn-delete{background:var(--danger);}
+.swipe-btn svg{width:20px;height:20px;fill:white;}
 
-  .item { background:var(--surface); border-radius:var(--radius); border:1px solid var(--border); padding:14px; margin-bottom:10px; }
-  .item-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
-  .item-action { font-size:14px; font-weight:500; flex:1; line-height:1.4; }
-  .badge { font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; white-space:nowrap; margin-left:8px; }
-  .badge-overdue { background:#fdecea; color:var(--danger); }
-  .badge-soon    { background:var(--accent-light); color:#8a5a00; }
-  .badge-ok      { background:#e6f4ec; color:var(--success); }
-  .item-meta { font-size:12px; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
-  /* CarPlay: item action buttons 44pt */
-  .item-actions { display:flex; gap:8px; margin-top:10px; }
-  .item-btn { padding:10px 18px; font-size:13px; font-weight:600; border-radius:var(--radius-sm); cursor:pointer; min-height:44px; min-width:44px; display:inline-flex; align-items:center; justify-content:center; }
-  .item-btn-edit   { background:transparent; color:var(--primary); border:1.5px solid var(--primary); }
-  .item-btn-delete { background:var(--danger); color:white; border:none; }
+.item-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.item-title-row{display:flex;align-items:center;gap:6px;flex:1;flex-wrap:wrap;}
+.item-item{font-size:14px;font-weight:500;line-height:1.4;}
+.badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.badge-overdue{background:#fdecea;color:var(--danger);}
+.badge-soon{background:var(--accent-light);color:#8a5a00;}
+.badge-ok{background:#e6f4ec;color:var(--success);}
+.item-meta{font-size:12px;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:8px;}
 
-  .search-box { position:relative; margin-bottom:14px; }
-  .search-box input { padding-left:38px; }
-  .search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); pointer-events:none; }
-  input, select, textarea { width:100%; padding:11px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:16px; color:var(--text); background:var(--bg); -webkit-appearance:none; min-height:44px; }
-  input:focus, select:focus, textarea:focus { outline:none; border-color:var(--primary); background:white; }
-  textarea { resize:vertical; min-height:80px; }
+/* Full-screen item detail card */
+.detail-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:250;display:none;align-items:flex-end;}
+.detail-overlay.open{display:flex;}
+.detail-card{background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;padding:20px;padding-bottom:calc(20px + var(--safe-bottom));width:100%;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.detail-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.detail-title{font-size:17px;font-weight:700;color:var(--text);}
+.detail-close{background:var(--bg);border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--text-muted);}
+.detail-row{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--border);}
+.detail-row:last-of-type{border-bottom:none;}
+.detail-icon{font-size:18px;flex-shrink:0;width:28px;text-align:center;}
+.detail-body{flex:1;min-width:0;}
+.detail-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);margin-bottom:3px;}
+.detail-field{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;color:var(--text);background:var(--bg);-webkit-appearance:none;min-height:40px;}
+.detail-field:focus{outline:none;border-color:var(--primary);background:white;}
+.detail-field-select{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:15px;color:var(--text);background:var(--bg);-webkit-appearance:none;min-height:40px;}
+.detail-field-select:focus{outline:none;border-color:var(--primary);background:white;}
+textarea.detail-field{min-height:80px;resize:vertical;}
+.detail-actions{display:flex;gap:10px;margin-top:20px;}
+.detail-save{flex:1;padding:13px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;min-height:44px;}
+.detail-delete{flex:none;padding:13px 16px;background:var(--danger);color:white;border:none;border-radius:var(--radius-sm);font-size:14px;cursor:pointer;min-height:44px;}
 
-  .section-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); margin:16px 0 8px; }
-  .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
-  .cal-day-name { text-align:center; font-size:10px; font-weight:600; color:var(--text-muted); padding:4px 0; }
-  /* CarPlay: calendar cells need to be at least 44pt tall */
-  .cal-cell { min-height:44px; border-radius:6px; border:1px solid var(--border); background:var(--surface); padding:4px; cursor:pointer; }
-  .cal-cell.today     { border-color:var(--primary); background:var(--primary-light); }
-  .cal-cell.has-items { background:var(--accent-light); border-color:var(--accent); }
-  .cal-cell.other-month { opacity:0.3; }
-  .cal-num { font-size:11px; font-weight:500; }
-  .cal-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); margin-top:2px; }
-  .cal-nav { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
-  .cal-nav button { background:none; border:1px solid var(--border); border-radius:6px; padding:10px 16px; cursor:pointer; font-size:14px; min-height:44px; }
-  .cal-month { font-size:15px; font-weight:600; }
+/* Shared */
+.btn{display:block;width:100%;padding:14px;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;border:none;text-align:center;min-height:44px;}
+.btn-primary{background:var(--primary);color:white;}
+.btn-accent{background:var(--accent);color:white;}
+.btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary);}
+.btn-sm{padding:10px 16px;font-size:13px;width:auto;display:inline-flex;align-items:center;border-radius:var(--radius-sm);min-height:44px;}
+.btn-danger{background:var(--danger);color:white;}
 
-  .filter-row { display:flex; gap:8px; margin-bottom:14px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
-  .filter-row::-webkit-scrollbar { display:none; }
-  .filter-chip { flex:none; padding:10px 16px; border-radius:20px; font-size:12px; font-weight:500; border:1px solid var(--border); background:var(--surface); cursor:pointer; min-height:44px; display:inline-flex; align-items:center; }
-  .filter-chip.active { background:var(--primary); color:white; border-color:var(--primary); }
+.search-box{position:relative;margin-bottom:14px;}
+.search-box input{padding-left:38px;}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);pointer-events:none;}
+input,select,textarea{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:16px;color:var(--text);background:var(--bg);-webkit-appearance:none;min-height:44px;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);background:white;}
+textarea{resize:vertical;min-height:80px;}
 
-  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
-  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; text-align:center; }
-  .stat-num { font-size:24px; font-weight:700; color:var(--primary); }
-  .stat-label { font-size:11px; color:var(--text-muted); margin-top:2px; }
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:16px 0 8px;}
 
-  .group-header { background:var(--primary-light); border-radius:var(--radius-sm); padding:10px 14px; margin-bottom:8px; margin-top:14px; }
-  .group-title { font-size:13px; font-weight:600; color:var(--primary); }
-  .group-count { font-size:11px; color:var(--text-muted); }
+/* Calendar */
+.cal-view-switch{display:flex;gap:0;margin-bottom:12px;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.cal-view-btn{flex:1;padding:8px;font-size:12px;font-weight:600;color:var(--text-muted);background:var(--surface);border:none;cursor:pointer;min-height:36px;}
+.cal-view-btn.active{background:var(--primary);color:white;}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-nav button{background:none;border:1px solid var(--border);border-radius:6px;padding:8px 14px;cursor:pointer;font-size:14px;min-height:44px;}
+.cal-title{font-size:15px;font-weight:600;}
+/* Month view */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-day-name{text-align:center;font-size:10px;font-weight:600;color:var(--text-muted);padding:4px 0;}
+.cal-cell{min-height:52px;border-radius:6px;border:1px solid var(--border);background:var(--surface);padding:4px;cursor:pointer;display:flex;flex-direction:column;}
+.cal-cell.today{border-color:var(--primary);background:var(--primary-light);}
+.cal-cell.has-items{border-color:var(--accent);}
+.cal-cell.other-month{opacity:0.3;}
+.cal-num{font-size:11px;font-weight:500;}
+.cal-dots{display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;}
+.cal-dot{width:5px;height:5px;border-radius:50%;}
+.cal-dot-task{background:#1D4E89;}
+.cal-dot-meeting{background:#1D7A4E;}
+.cal-dot-event{background:#E8A020;}
+/* Week view */
+.week-grid{display:grid;grid-template-columns:44px repeat(7,1fr);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.week-header-cell{background:var(--primary-light);padding:6px 4px;text-align:center;border-bottom:1px solid var(--border);border-right:1px solid var(--border);font-size:10px;font-weight:600;color:var(--primary);}
+.week-header-cell.today-col{background:var(--primary);color:white;}
+.week-time-label{background:var(--bg);padding:0 4px;display:flex;align-items:flex-start;justify-content:flex-end;font-size:9px;color:var(--text-muted);border-right:1px solid var(--border);border-bottom:1px solid var(--border);height:44px;padding-top:3px;}
+.week-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);height:44px;position:relative;background:var(--surface);}
+.week-cell.today-col{background:#fafaf5;}
+.week-event{position:absolute;left:1px;right:1px;border-radius:3px;padding:1px 3px;font-size:9px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer;z-index:1;}
+.week-event-task{background:#E8F0FA;color:#1D4E89;border-left:2px solid #1D4E89;}
+.week-event-meeting{background:#E6F4EC;color:#1D7A4E;border-left:2px solid #1D7A4E;}
+.week-event-event{background:#FDF3E0;color:#8a5a00;border-left:2px solid #E8A020;}
+/* Day view */
+.day-grid{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+.day-time-row{display:grid;grid-template-columns:48px 1fr;border-bottom:1px solid var(--border);min-height:52px;}
+.day-time-label{background:var(--bg);padding:4px 6px;display:flex;align-items:flex-start;justify-content:flex-end;font-size:10px;color:var(--text-muted);border-right:1px solid var(--border);}
+.day-cell{padding:2px 4px;position:relative;background:var(--surface);}
+.day-event{border-radius:4px;padding:3px 6px;font-size:11px;font-weight:600;margin-bottom:2px;cursor:pointer;}
+.day-event-task{background:#E8F0FA;color:#1D4E89;border-left:3px solid #1D4E89;}
+.day-event-meeting{background:#E6F4EC;color:#1D7A4E;border-left:3px solid #1D7A4E;}
+.day-event-event{background:#FDF3E0;color:#8a5a00;border-left:3px solid #E8A020;}
 
-  .toast { position:fixed; bottom:calc(24px + var(--safe-bottom)); left:50%; transform:translateX(-50%); background:#1A2033; color:white; padding:12px 20px; border-radius:20px; font-size:13px; z-index:1000; opacity:0; transition:opacity 0.3s; pointer-events:none; white-space:nowrap; max-width:90vw; text-align:center; }
-  .toast.show { opacity:1; }
+.filter-row{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.filter-row::-webkit-scrollbar{display:none;}
+.filter-chip{flex:none;padding:10px 16px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border);background:var(--surface);cursor:pointer;min-height:44px;display:inline-flex;align-items:center;}
+.filter-chip.active{background:var(--primary);color:white;border-color:var(--primary);}
 
-  /* Modal — fixed to viewport, iOS keyboard safe */
-  .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:200; display:none; align-items:flex-end; -webkit-overflow-scrolling:touch; }
-  .modal-overlay.open { display:flex; }
-  .modal { background:var(--surface); border-radius:var(--radius) var(--radius) 0 0; padding:20px; padding-bottom:calc(20px + var(--safe-bottom)); width:100%; max-height:88vh; overflow-y:auto; -webkit-overflow-scrolling:touch; }
-  .modal-title { font-size:16px; font-weight:600; margin-bottom:16px; }
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center;}
+.stat-num{font-size:24px;font-weight:700;color:var(--primary);}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:2px;}
 
-  /* Custom confirm dialog — replaces window.confirm() which is blocked in iOS PWA */
-  .confirm-dialog-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:300; display:none; align-items:center; justify-content:center; padding:20px; }
-  .confirm-dialog-overlay.open { display:flex; }
-  .confirm-dialog { background:var(--surface); border-radius:var(--radius); padding:24px; width:100%; max-width:320px; text-align:center; }
-  .confirm-dialog-title { font-size:17px; font-weight:600; margin-bottom:8px; }
-  .confirm-dialog-msg   { font-size:14px; color:var(--text-muted); margin-bottom:20px; line-height:1.5; }
-  .confirm-dialog-actions { display:flex; gap:10px; }
-  .confirm-dialog-actions button { flex:1; padding:12px; border-radius:var(--radius-sm); font-size:15px; font-weight:600; cursor:pointer; min-height:44px; }
+.group-header{background:var(--primary-light);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:8px;margin-top:14px;}
+.group-title{font-size:13px;font-weight:600;color:var(--primary);}
+.group-count{font-size:11px;color:var(--text-muted);}
 
-  .form-group { margin-bottom:14px; }
-  label { display:block; font-size:12px; font-weight:500; color:var(--text-muted); margin-bottom:5px; text-transform:uppercase; letter-spacing:0.5px; }
-  .empty { text-align:center; padding:40px 20px; color:var(--text-muted); }
-  .empty-icon { font-size:40px; margin-bottom:12px; }
-  .export-row { margin-bottom:14px; }
-  .hidden { display:none !important; }
+/* Alias tab */
+.alias-type-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:16px 0 8px;}
+.alias-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.alias-text{flex:1;min-width:0;}
+.alias-from{font-size:14px;font-weight:500;color:var(--text);}
+.alias-to{font-size:12px;color:var(--text-muted);margin-top:2px;}
+.alias-type-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;flex-shrink:0;}
+.alias-type-project{background:var(--primary-light);color:var(--primary);}
+.alias-type-contractor{background:var(--accent-light);color:#7a4800;}
+.alias-type-responsible{background:#e6f4ec;color:var(--success);}
+.alias-type-general{background:#f3f0ff;color:#5b21b6;}
+.alias-delete{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;padding:8px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.alias-add-card{background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.alias-add-title{font-size:13px;font-weight:600;color:var(--primary);margin-bottom:12px;}
+.alias-form-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
+.alias-form-row input,.alias-form-row select{flex:1;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;color:var(--text);background:var(--bg);-webkit-appearance:none;min-height:44px;}
+.alias-form-arrow{color:var(--text-muted);font-size:18px;flex-shrink:0;}
+
+/* Projects tab */
+.project-add-card{background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+.project-add-title{font-size:13px;font-weight:600;color:var(--primary);margin-bottom:12px;}
+.project-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+.project-name{flex:1;font-size:14px;font-weight:500;color:var(--text);}
+.project-count{font-size:11px;color:var(--text-muted);}
+.project-delete{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;padding:8px;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+.toast{position:fixed;bottom:calc(24px + var(--safe-bottom));left:50%;transform:translateX(-50%);background:#1A2033;color:white;padding:12px 20px;border-radius:20px;font-size:13px;z-index:1000;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;}
+
+/* Custom confirm dialog */
+.confirm-dialog-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:300;display:none;align-items:center;justify-content:center;padding:20px;}
+.confirm-dialog-overlay.open{display:flex;}
+.confirm-dialog{background:var(--surface);border-radius:var(--radius);padding:24px;width:100%;max-width:320px;text-align:center;}
+.confirm-dialog-title{font-size:17px;font-weight:600;margin-bottom:8px;}
+.confirm-dialog-msg{font-size:14px;color:var(--text-muted);margin-bottom:20px;line-height:1.5;}
+.confirm-dialog-actions{display:flex;gap:10px;}
+.confirm-dialog-actions button{flex:1;padding:12px;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;min-height:44px;}
+
+.form-group{margin-bottom:14px;}
+label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+.empty{text-align:center;padding:40px 20px;color:var(--text-muted);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.export-row{margin-bottom:14px;}
+.hidden{display:none !important;}
 </style>
 </head>
 <body>
@@ -236,6 +293,7 @@
   <button class="nav-btn" onclick="showTab('project')">By Project</button>
   <button class="nav-btn" onclick="showTab('contractor')">By Contractor</button>
   <button class="nav-btn" onclick="showTab('calendar')">Calendar</button>
+  <button class="nav-btn" onclick="showTab('projects')">Projects</button>
   <button class="nav-btn" onclick="showTab('aliases')">Aliases</button>
 </div>
 
@@ -246,20 +304,19 @@
     <div class="voice-center">
       <div class="voice-ring">
         <div class="voice-ring-bg"></div>
-        <div class="voice-ring-anim"  id="ring1"></div>
+        <div class="voice-ring-anim" id="ring1"></div>
         <div class="voice-ring-anim2" id="ring2"></div>
-        <button class="mic-btn" id="mic-btn" onclick="handleMicTap()">
+        <button class="mic-btn" id="mic-btn">
           <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zm-1 3a1 1 0 0 1 2 0v8a1 1 0 0 1-2 0V4zm6 8a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.93V21h2v-2.07A7 7 0 0 0 19 12h-2z"/></svg>
           <span class="mic-label" id="mic-label">TAP TO SPEAK</span>
         </button>
       </div>
-      <div class="voice-status" id="voice-status">Tap the mic and describe your action item</div>
+      <div class="voice-status" id="voice-status">Tap the mic and describe your item</div>
       <div class="transcript-box" id="transcript-box">Your speech will appear here...</div>
       <p class="tip" id="voice-tip">
         Speak naturally — for example:<br>
-        <strong>"Remind Legendary to submit their payment application. Due end of month. Sarah is responsible."</strong><br><br>
-        You can also teach the app:<br>
-        <strong>"Remember that Legendary means Bluewater Marina"</strong>
+        <strong>"Meeting with Legendary next Friday to review the payment application for Bluewater Marina. Sarah is responsible."</strong><br><br>
+        Claude will detect the type (Task / Meeting / Event) and match your project automatically.
       </p>
     </div>
 
@@ -281,20 +338,21 @@
     <div class="confirm-card hidden" id="confirm-card">
       <div class="confirm-title">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--primary)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-        Inferred action item
+        Inferred item
       </div>
+      <div class="cf-row"><div class="cf-icon">🏷</div><div class="cf-body"><div class="cf-label">Type</div><div class="cf-value" id="cv-type"></div></div></div>
       <div class="cf-row"><div class="cf-icon">🕐</div><div class="cf-body"><div class="cf-label">Date &amp; Time logged</div><div class="cf-value" id="cv-datetime"></div></div></div>
       <div class="cf-row"><div class="cf-icon">📁</div><div class="cf-body"><div class="cf-label">Project</div><div class="cf-value" id="cv-project"></div></div></div>
       <div class="cf-row"><div class="cf-icon">🏗</div><div class="cf-body"><div class="cf-label">Contractor / Consultant</div><div class="cf-value" id="cv-contractor"></div></div></div>
-      <div class="cf-row"><div class="cf-icon">✅</div><div class="cf-body"><div class="cf-label">Action Item</div><div class="cf-value" id="cv-action"></div></div></div>
+      <div class="cf-row"><div class="cf-icon">📝</div><div class="cf-body"><div class="cf-label">Item</div><div class="cf-value" id="cv-item"></div></div></div>
       <div class="cf-row"><div class="cf-icon">👤</div><div class="cf-body"><div class="cf-label">Party Responsible</div><div class="cf-value" id="cv-responsible"></div></div></div>
       <div class="cf-row"><div class="cf-icon">📅</div><div class="cf-body"><div class="cf-label">Due Date</div><div class="cf-value" id="cv-duedate"></div></div></div>
       <div class="confirm-banner hidden" id="confirm-banner">
         <strong>Does this look correct?</strong>
-        Tap the mic and say <em>"yes, save it"</em> — or describe any changes.
+        Hold the mic and say <em>"yes, save it"</em> — or describe any changes.
       </div>
       <div class="confirm-actions">
-        <button class="btn-save" onclick="confirmSave()">Save Action Item</button>
+        <button class="btn-save" onclick="confirmSave()">Save Item</button>
         <button class="btn-discard" onclick="discardAll()">Discard</button>
       </div>
     </div>
@@ -307,24 +365,26 @@
       <div class="stat-card"><div class="stat-num" id="stat-overdue" style="color:var(--danger)">0</div><div class="stat-label">Overdue</div></div>
     </div>
     <div class="export-row"><button class="btn btn-accent btn-sm" onclick="exportExcel()">Export to Excel</button></div>
-    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="search-all" placeholder="Search action items..." oninput="renderAll()"></div>
+    <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="search-all" placeholder="Search items..." oninput="renderAll()"></div>
     <div class="filter-row">
       <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
+      <button class="filter-chip" onclick="setFilter('task',this)">Tasks</button>
+      <button class="filter-chip" onclick="setFilter('meeting',this)">Meetings</button>
+      <button class="filter-chip" onclick="setFilter('event',this)">Events</button>
       <button class="filter-chip" onclick="setFilter('overdue',this)">Overdue</button>
       <button class="filter-chip" onclick="setFilter('soon',this)">Due Soon</button>
-      <button class="filter-chip" onclick="setFilter('ok',this)">On Track</button>
     </div>
     <div id="list-all"></div>
   </div>
 
-  <!-- PROJECT TAB -->
+  <!-- BY PROJECT TAB -->
   <div id="tab-project" class="hidden">
     <div class="export-row"><button class="btn btn-accent btn-sm" onclick="exportExcel()">Export to Excel</button></div>
     <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="search-project" placeholder="Search projects..." oninput="renderByProject()"></div>
     <div id="list-project"></div>
   </div>
 
-  <!-- CONTRACTOR TAB -->
+  <!-- BY CONTRACTOR TAB -->
   <div id="tab-contractor" class="hidden">
     <div class="export-row"><button class="btn btn-accent btn-sm" onclick="exportExcel()">Export to Excel</button></div>
     <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="search-contractor" placeholder="Search contractors..." oninput="renderByContractor()"></div>
@@ -333,13 +393,30 @@
 
   <!-- CALENDAR TAB -->
   <div id="tab-calendar" class="hidden">
+    <div class="cal-view-switch">
+      <button class="cal-view-btn active" onclick="setCalView('month',this)">Month</button>
+      <button class="cal-view-btn" onclick="setCalView('week',this)">Week</button>
+      <button class="cal-view-btn" onclick="setCalView('day',this)">Day</button>
+    </div>
     <div class="cal-nav">
       <button onclick="calPrev()">&#8592;</button>
-      <span class="cal-month" id="cal-month-label"></span>
+      <span class="cal-title" id="cal-title-label"></span>
       <button onclick="calNext()">&#8594;</button>
     </div>
-    <div class="cal-grid" id="cal-grid"></div>
-    <div id="cal-day-items" style="margin-top:16px"></div>
+    <div id="cal-body"></div>
+  </div>
+
+  <!-- PROJECTS TAB -->
+  <div id="tab-projects" class="hidden">
+    <div class="project-add-card">
+      <div class="project-add-title">Add a project</div>
+      <div class="alias-form-row">
+        <input type="text" id="new-project-name" placeholder="Project name (e.g. Bluewater Marina)">
+        <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="addProjectManually()">Add</button>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Projects are used by Claude to match your speech to the correct project automatically.</p>
+    </div>
+    <div id="project-list"></div>
   </div>
 
   <!-- ALIASES TAB -->
@@ -360,31 +437,83 @@
         </select>
         <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="addAliasManually()">Add</button>
       </div>
-      <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Or say it on the Log tab: <em>"Remember that Legendary means Bluewater Marina"</em></p>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Or say it: <em>"Remember that Legendary means Bluewater Marina"</em></p>
     </div>
     <div id="alias-list"></div>
   </div>
 
 </div>
 
-<!-- Edit Modal -->
-<div class="modal-overlay" id="edit-modal">
-  <div class="modal">
-    <div class="modal-title">Edit Action Item</div>
-    <div class="form-group"><label>Date &amp; Time</label><input type="datetime-local" id="e-datetime"></div>
-    <div class="form-group"><label>Project</label><input type="text" id="e-project"></div>
-    <div class="form-group"><label>Contractor / Consultant</label><input type="text" id="e-contractor"></div>
-    <div class="form-group"><label>Action Item</label><textarea id="e-action"></textarea></div>
-    <div class="form-group"><label>Party Responsible</label><input type="text" id="e-responsible"></div>
-    <div class="form-group"><label>Due Date</label><input type="date" id="e-duedate"></div>
-    <div style="display:flex;gap:10px;margin-top:8px">
-      <button class="btn btn-primary" onclick="saveEdit()">Save</button>
-      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+<!-- Item Detail / Edit overlay -->
+<div class="detail-overlay" id="detail-overlay">
+  <div class="detail-card">
+    <div class="detail-header">
+      <div class="detail-title">Edit Item</div>
+      <button class="detail-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">🏷</div>
+      <div class="detail-body">
+        <div class="detail-label">Type</div>
+        <select class="detail-field-select" id="d-type">
+          <option value="task">Task</option>
+          <option value="meeting">Meeting</option>
+          <option value="event">Event</option>
+        </select>
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">🕐</div>
+      <div class="detail-body">
+        <div class="detail-label">Date &amp; Time logged</div>
+        <input type="datetime-local" class="detail-field" id="d-datetime">
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">📁</div>
+      <div class="detail-body">
+        <div class="detail-label">Project</div>
+        <select class="detail-field-select" id="d-project">
+          <option value="">— None —</option>
+        </select>
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">🏗</div>
+      <div class="detail-body">
+        <div class="detail-label">Contractor / Consultant</div>
+        <input type="text" class="detail-field" id="d-contractor" placeholder="Optional">
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">📝</div>
+      <div class="detail-body">
+        <div class="detail-label">Item</div>
+        <textarea class="detail-field" id="d-item"></textarea>
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">👤</div>
+      <div class="detail-body">
+        <div class="detail-label">Party Responsible</div>
+        <input type="text" class="detail-field" id="d-responsible" placeholder="Optional">
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">📅</div>
+      <div class="detail-body">
+        <div class="detail-label">Due Date</div>
+        <input type="date" class="detail-field" id="d-duedate">
+      </div>
+    </div>
+    <div class="detail-actions">
+      <button class="detail-save" onclick="saveDetail()">Save Changes</button>
+      <button class="detail-delete" onclick="deleteDetailItem()">Delete</button>
     </div>
   </div>
 </div>
 
-<!-- Custom confirm dialog — replaces window.confirm() blocked in iOS PWA -->
+<!-- Custom confirm dialog -->
 <div class="confirm-dialog-overlay" id="confirm-dialog">
   <div class="confirm-dialog">
     <div class="confirm-dialog-title" id="confirm-dialog-title">Confirm</div>
@@ -399,9 +528,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Config — swap PROXY_URL for your Cloudflare Worker URL ───
-const PROXY_URL  = 'https://altius-proxy.bannon-matthew.workers.dev/';
-// All Supabase calls routed through Cloudflare Worker to avoid CORS/auth issues
+const PROXY_URL = 'https://altius-proxy.bannon-matthew.workers.dev/';
+
 async function sbCall(action, body={}) {
   const res = await fetch(PROXY_URL, {
     method: 'POST',
@@ -414,33 +542,36 @@ async function sbCall(action, body={}) {
 }
 
 // ── State ────────────────────────────────────────────────────
-let items=[], aliases=[], currentStatusFilter='all';
-let calYear, calMonth, editId=null, currentTab='log';
+let items=[], aliases=[], projects=[], currentStatusFilter='all';
+let calYear, calMonth, calView='month', calWeekStart=null;
+let detailId=null, currentTab='log';
 let recognition=null, isRecording=false;
-let appMode='initial'; // initial|recording|processing|confirm|alias-pending
+let appMode='initial';
 let currentData={}, prevData={}, pendingAlias=null;
-let recordingStart=0; // track minimum recording duration
+let recordingStart=0;
 
 const nd=new Date(); calYear=nd.getFullYear(); calMonth=nd.getMonth();
+calWeekStart = getWeekStart(new Date());
 
-// ── Sync status ──────────────────────────────────────────────
+// ── Sync ─────────────────────────────────────────────────────
 function setSyncStatus(s){
   document.getElementById('sync-dot').className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');
   document.getElementById('sync-label').textContent=s==='syncing'?'Syncing...':s==='error'?'Offline':'Synced';
 }
 
-// ── Load data ────────────────────────────────────────────────
 async function loadAll(){
   setSyncStatus('syncing');
-  try {
-    const [items_data, aliases_data] = await Promise.all([
+  try{
+    const [id,al,pr]=await Promise.all([
       sbCall('sb-get-items'),
-      sbCall('sb-get-aliases')
+      sbCall('sb-get-aliases'),
+      sbCall('sb-get-projects')
     ]);
-    items=items_data; aliases=aliases_data;
+    items=id; aliases=al; projects=pr;
     setSyncStatus('ok');
-  } catch(e){ setSyncStatus('error'); showToast('Connection error'); }
+  }catch(e){setSyncStatus('error');showToast('Connection error');}
   updateHeader();
+  populateProjectDropdown();
 }
 
 function updateHeader(){
@@ -448,225 +579,196 @@ function updateHeader(){
   document.getElementById('header-sub').textContent=`${items.length} item${items.length!==1?'s':''} · ${ov} overdue`;
 }
 
-// ── Alias helpers ────────────────────────────────────────────
+function populateProjectDropdown(){
+  const sel=document.getElementById('d-project');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— None —</option>';
+  projects.forEach(p=>{
+    const o=document.createElement('option');
+    o.value=p.name; o.textContent=p.name;
+    sel.appendChild(o);
+  });
+  sel.value=cur;
+}
+
+// ── Alias helpers ─────────────────────────────────────────────
 function buildAliasContext(){
-  if(!aliases.length) return 'No aliases defined yet.';
+  if(!aliases.length)return'No aliases defined yet.';
   return aliases.map(a=>`"${a.alias}" → "${a.canonical}" (${a.type})`).join('\n');
 }
-function knownProjects()   {return[...new Set(items.map(i=>i.project).filter(Boolean))];}
+function projectNames(){return projects.map(p=>p.name);}
 function knownContractors(){return[...new Set(items.map(i=>i.contractor).filter(Boolean))];}
 function knownResponsible(){return[...new Set(items.map(i=>i.responsible).filter(Boolean))];}
 function getCandidates(field){
-  if(field==='project')    return knownProjects();
-  if(field==='contractor') return knownContractors();
+  if(field==='project')return projectNames();
+  if(field==='contractor')return knownContractors();
   if(field==='responsible')return knownResponsible();
-  return[...knownProjects(),...knownContractors()];
+  return[...projectNames(),...knownContractors()];
 }
 
 async function saveAlias(aliasText,canonical,type){
   const rec={id:Date.now().toString(),alias:aliasText,canonical,type,created:new Date().toISOString()};
   try{
-    await sbCall('sb-save-alias', rec);
+    await sbCall('sb-save-alias',rec);
     aliases.push(rec);
     showToast(`Alias saved: "${aliasText}" → "${canonical}"`);
-    if(currentTab==='aliases') renderAliases();
+    if(currentTab==='aliases')renderAliases();
   }catch(e){showToast('Could not save alias');}
 }
 
-// ── Claude API via proxy ─────────────────────────────────────
+// ── Claude ────────────────────────────────────────────────────
 async function callClaude(prompt){
-  try {
-    const res = await fetch(PROXY_URL, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
-        messages: [{role:'user', content:prompt}]
-      })
+  try{
+    const res=await fetch(PROXY_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})
     });
-
-    const text = await res.text();
-
-    if (!res.ok) {
-      console.error('Proxy error', res.status, text);
-      showToast('AI error ' + res.status + ' — check Cloudflare Worker');
-      throw new Error('API error: ' + res.status + ' ' + text.slice(0,120));
-    }
-
+    const text=await res.text();
+    if(!res.ok){showToast('AI error '+res.status);throw new Error('API error: '+res.status);}
     let data;
-    try { data = JSON.parse(text); }
-    catch(e) {
-      console.error('JSON parse failed:', text.slice(0,200));
-      showToast('Bad response from Worker — check Worker logs');
-      throw new Error('Bad JSON: ' + text.slice(0,80));
-    }
-
-    // Handle Anthropic error response object
-    if (data.type === 'error') {
-      console.error('Claude error:', data.error);
-      showToast('Claude error: ' + (data.error?.message||'unknown'));
-      throw new Error('Claude error: ' + data.error?.message);
-    }
-
-    return data.content?.find(b=>b.type==='text')?.text || '';
-
-  } catch(e) {
-    if (!e.message?.includes('Claude error') && !e.message?.includes('API error') && !e.message?.includes('Bad JSON')) {
-      console.error('Network error:', e);
-      showToast('Network error — is Cloudflare Worker deployed?');
+    try{data=JSON.parse(text);}
+    catch(e){showToast('Bad response from Worker');throw new Error('Bad JSON');}
+    if(data.type==='error'){showToast('Claude error: '+(data.error?.message||'unknown'));throw new Error('Claude error');}
+    return data.content?.find(b=>b.type==='text')?.text||'';
+  }catch(e){
+    if(!e.message?.includes('Claude error')&&!e.message?.includes('API error')&&!e.message?.includes('Bad JSON')){
+      showToast('Network error — check Cloudflare Worker');
     }
     throw e;
   }
 }
 
-// ── Mic tap handler ──────────────────────────────────────────
+// ── Device detection & mic setup ─────────────────────────────
+const IS_TOUCH=navigator.maxTouchPoints>0&&/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+function initMicButton(){
+  const btn=document.getElementById('mic-btn');
+  if(IS_TOUCH){
+    btn.addEventListener('touchstart',e=>{e.preventDefault();handleMicHoldStart();},{passive:false});
+    btn.addEventListener('touchend',e=>{e.preventDefault();handleMicHoldEnd();},{passive:false});
+    btn.addEventListener('touchcancel',e=>{e.preventDefault();handleMicHoldEnd();},{passive:false});
+    document.getElementById('mic-label').textContent='HOLD TO SPEAK';
+  }else{
+    btn.addEventListener('click',handleMicTap);
+  }
+}
+
+function handleMicHoldStart(){
+  if(appMode==='processing'||appMode==='alias-pending')return;
+  if(appMode==='recording')return;
+  if(appMode==='confirm'){startConfirmRecording();}else{startInitialRecording();}
+}
+function handleMicHoldEnd(){
+  if(appMode!=='recording')return;
+  setTimeout(()=>{if(recognition)recognition.stop();},400);
+}
 function handleMicTap(){
-  if(appMode==='recording')    {stopRecording();return;}
-  if(appMode==='processing')   return;
+  if(appMode==='recording'){stopRecording();return;}
+  if(appMode==='processing')return;
   if(appMode==='alias-pending')return;
-  if(appMode==='confirm')      {startConfirmRecording();return;}
+  if(appMode==='confirm'){startConfirmRecording();return;}
   startInitialRecording();
 }
 function stopRecording(){
-  // iOS: enforce minimum 1 second before allowing stop to prevent accidental cutoff
   const elapsed=Date.now()-recordingStart;
-  if(elapsed<1000){setTimeout(()=>{if(recognition)recognition.stop();},1000-elapsed);}
+  if(elapsed<800){setTimeout(()=>{if(recognition)recognition.stop();},800-elapsed);}
   else{if(recognition)recognition.stop();}
 }
 
-// ── Speech recognition factory ───────────────────────────────
-function makeSR(onFinal, onEnd, label){
+function makeSR(onEnd,label){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){showToast('Voice not supported — use Safari on iPhone');return null;}
   const r=new SR();
-  r.continuous=true;
-  r.interimResults=true;
-  r.lang='en-US';
-  // iOS: maxAlternatives=1 is most stable
-  r.maxAlternatives=1;
-  let finalText='', silenceTimer=null;
-
-  r.onstart=()=>{
-    recordingStart=Date.now();
-    setMicState('recording','TAP TO STOP',label||'Listening...');
-  };
-
+  r.continuous=true; r.interimResults=true; r.lang='en-US'; r.maxAlternatives=1;
+  let finalText='',silenceTimer=null;
+  r.onstart=()=>{recordingStart=Date.now();setMicState('recording','TAP TO STOP',label||'Listening...');};
   r.onresult=e=>{
-    // Reset silence timer — iOS often fires onend too early
-    if(silenceTimer){clearTimeout(silenceTimer);}
-    let interim=''; finalText='';
+    if(silenceTimer)clearTimeout(silenceTimer);
+    let interim='';finalText='';
     for(let i=0;i<e.results.length;i++){
-      if(e.results[i].isFinal) finalText+=e.results[i][0].transcript+' ';
+      if(e.results[i].isFinal)finalText+=e.results[i][0].transcript+' ';
       else interim+=e.results[i][0].transcript;
     }
     const display=finalText+interim;
     const box=document.getElementById('transcript-box');
     box.textContent=display;
     box.classList.toggle('has-text',display.trim().length>0);
-    // Auto-stop after 2.5s silence (iOS workaround)
     silenceTimer=setTimeout(()=>{if(recognition)recognition.stop();},2500);
   };
-
-  r.onend=()=>{
-    if(silenceTimer)clearTimeout(silenceTimer);
-    isRecording=false; recognition=null;
-    onEnd(finalText.trim());
-  };
-
-  r.onerror=e=>{
-    if(silenceTimer)clearTimeout(silenceTimer);
-    isRecording=false; recognition=null;
-    if(e.error!=='no-speech'&&e.error!=='aborted') showToast('Voice error: '+e.error);
-    onEnd(finalText.trim());
-  };
+  r.onend=()=>{if(silenceTimer)clearTimeout(silenceTimer);isRecording=false;recognition=null;onEnd(finalText.trim());};
+  r.onerror=e=>{if(silenceTimer)clearTimeout(silenceTimer);isRecording=false;recognition=null;if(e.error!=='no-speech'&&e.error!=='aborted')showToast('Voice error: '+e.error);onEnd(finalText.trim());};
   return r;
 }
 
-// ── Initial recording ────────────────────────────────────────
 function startInitialRecording(){
   appMode='recording';
   document.getElementById('transcript-box').textContent='';
   document.getElementById('transcript-box').classList.remove('has-text');
   document.getElementById('confirm-card').classList.add('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
-
-  recognition=makeSR(null,(finalText)=>{
-    if(finalText){
-      appMode='processing';
-      setMicState('processing','PROCESSING','AI is parsing your input...');
-      parseInitial(finalText);
-    }else{
-      appMode='initial';
-      setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
-    }
+  recognition=makeSR(finalText=>{
+    if(finalText){appMode='processing';setMicState('processing','PROCESSING','AI is parsing your input...');parseInitial(finalText);}
+    else{appMode='initial';setMicState('idle','TAP TO SPEAK','Tap the mic and describe your item');}
   },'Listening...');
   if(recognition){isRecording=true;recognition.start();}
 }
 
-// ── Confirm recording ────────────────────────────────────────
 function startConfirmRecording(){
   appMode='recording';
   document.getElementById('transcript-box').textContent='';
   document.getElementById('transcript-box').classList.remove('has-text');
-
-  recognition=makeSR(null,(finalText)=>{
-    if(finalText){
-      appMode='processing';
-      setMicState('processing','PROCESSING','AI is interpreting your response...');
-      parseConfirmResponse(finalText);
-    }else{
-      appMode='confirm';
-      setMicState('confirm','TAP TO RESPOND','Does this look correct?');
-    }
-  },'Listening for confirmation or edits...');
+  recognition=makeSR(finalText=>{
+    if(finalText){appMode='processing';setMicState('processing','PROCESSING','AI is interpreting...');parseConfirmResponse(finalText);}
+    else{appMode='confirm';setMicState('confirm','TAP TO RESPOND','Does this look correct?');}
+  },'Listening for confirmation...');
   if(recognition){isRecording=true;recognition.start();}
 }
 
-// ── AI: parse initial ────────────────────────────────────────
+// ── Parse initial speech ──────────────────────────────────────
 async function parseInitial(transcript){
   const today=new Date().toISOString().slice(0,10);
   const nowDT=nowLocal();
-  const prompt=`You are an assistant parsing spoken action item notes into structured data.
+  const pNames=projectNames();
+
+  const prompt=`You are an assistant parsing spoken item notes into structured data.
 Today: ${today}. Current datetime: ${nowDT}.
 
-ALIAS TABLE — apply these mappings:
+ALIAS TABLE — apply these mappings automatically:
 ${buildAliasContext()}
 
-Known projects: ${knownProjects().join(', ')||'none yet'}
-Known contractors: ${knownContractors().join(', ')||'none yet'}
-Known responsible parties: ${knownResponsible().join(', ')||'none yet'}
+DEFINED PROJECTS (you MUST match to one of these — pick the closest match):
+${pNames.length?pNames.join(', '):'No projects defined yet'}
 
 INSTRUCTIONS:
-1. Extract: project, contractor, action, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
-2. Apply alias mappings automatically.
-3. If teaching an alias (e.g. "remember X means Y"), set teachAlias:{alias,canonical,type}.
-4. Flag unknown names in unknownNames:[{heard,field}].
-5. Return null for anything not mentioned.
+1. type: Determine if this is a "task" (something to be done), "meeting" (a future scheduled meeting), or "event" (something that has happened). This is MANDATORY.
+2. project: MUST be one of the defined projects above (pick closest match). If none match, set to null and flag in unknownNames.
+3. Extract: contractor, item (what needs to happen), responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
+4. Apply alias mappings automatically.
+5. If teaching an alias (e.g. "remember X means Y"), set teachAlias:{alias,canonical,type}.
+6. Flag unknown names in unknownNames:[{heard,field}].
+7. Return null for anything not mentioned.
 
 User speech: "${transcript}"
 
 Respond ONLY with valid JSON:
-{"project":null,"contractor":null,"action":null,"responsible":null,"duedate":null,"datetime":"${nowDT}","teachAlias":null,"unknownNames":[]}`;
+{"type":null,"project":null,"contractor":null,"item":null,"responsible":null,"duedate":null,"datetime":"${nowDT}","teachAlias":null,"unknownNames":[]}`;
 
   try{
     const res=await callClaude(prompt);
     const parsed=JSON.parse(res.replace(/```json|```/g,'').trim());
-
     if(parsed.teachAlias){
       const{alias:a,canonical:c,type:t}=parsed.teachAlias;
       await saveAlias(a,c,t||'general');
-      if(parsed.project&&parsed.project.toLowerCase()===a.toLowerCase()) parsed.project=c;
-      if(parsed.contractor&&parsed.contractor.toLowerCase()===a.toLowerCase()) parsed.contractor=c;
-      if(parsed.responsible&&parsed.responsible.toLowerCase()===a.toLowerCase()) parsed.responsible=c;
+      if(parsed.project&&parsed.project.toLowerCase()===a.toLowerCase())parsed.project=c;
+      if(parsed.contractor&&parsed.contractor.toLowerCase()===a.toLowerCase())parsed.contractor=c;
+      if(parsed.responsible&&parsed.responsible.toLowerCase()===a.toLowerCase())parsed.responsible=c;
     }
-
     currentData={datetime:nowDT,...parsed};
-    delete currentData.teachAlias; delete currentData.unknownNames;
+    delete currentData.teachAlias;delete currentData.unknownNames;
     prevData={};
-
     const unknowns=parsed.unknownNames||[];
-    if(unknowns.length>0&&parsed.action){
+    if(unknowns.length>0&&parsed.item){
       const unknown=unknowns[0];
       pendingAlias={heard:unknown.heard,field:unknown.field,candidates:getCandidates(unknown.field)};
       showAliasBanner(unknown.heard,unknown.field,pendingAlias.candidates);
@@ -674,69 +776,62 @@ Respond ONLY with valid JSON:
     }
     showConfirmCard(false);
   }catch(e){
-    console.error(e);
-    appMode='initial';
-    setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
+    console.error(e);appMode='initial';
+    setMicState('idle','TAP TO SPEAK','Tap the mic and describe your item');
     showToast('Could not parse — please try again');
   }
 }
 
-// ── AI: parse confirm/edit response ─────────────────────────
+// ── Parse confirm response ────────────────────────────────────
 async function parseConfirmResponse(transcript){
   const confirmWords=/\b(yes|correct|good|save|confirm|looks good|that('s| is) (right|correct|good)|perfect|go ahead|do it|yep|yeah|ok|okay)\b/i;
   if(confirmWords.test(transcript)&&transcript.trim().split(/\s+/).length<8){confirmSave();return;}
-
   const today=new Date().toISOString().slice(0,10);
-  const prompt=`You are managing an action item confirmation.
+  const prompt=`You are managing an item confirmation.
 Current data: ${JSON.stringify(currentData)}
 Today: ${today}.
 Alias table:\n${buildAliasContext()}
+Defined projects: ${projectNames().join(', ')||'none'}
 User said: "${transcript}"
 If confirmed: return {"confirmed":true}
-If edits: return full updated object with ALL fields applied. Keep existing values unless changed.
-Fields: project, contractor, action, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
+If edits: return full updated object with ALL fields. Keep existing unless changed.
+Fields: type (task/meeting/event), project, contractor, item, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
 Respond ONLY with valid JSON.`;
-
   try{
     const res=await callClaude(prompt);
     const parsed=JSON.parse(res.replace(/```json|```/g,'').trim());
     if(parsed.confirmed){confirmSave();}
     else{prevData={...currentData};currentData=parsed;showConfirmCard(true);}
   }catch(e){
-    appMode='confirm';
-    setMicState('confirm','TAP TO RESPOND','Does this look correct?');
+    appMode='confirm';setMicState('confirm','TAP TO RESPOND','Does this look correct?');
     showToast('Could not parse — please try again');
   }
 }
 
-// ── Alias banner ─────────────────────────────────────────────
+// ── Alias banner ──────────────────────────────────────────────
 function showAliasBanner(heard,field,candidates){
-  appMode='alias-pending';
-  setMicState('alias-mode','','New name detected');
+  appMode='alias-pending';setMicState('alias-mode','','New name detected');
   const banner=document.getElementById('alias-banner');
   const body=document.getElementById('alias-banner-body');
   const yesBtn=document.getElementById('alias-btn-yes');
   if(candidates.length>0){
     const list=candidates.slice(0,3).map(c=>`"${esc(c)}"`).join(', ');
     body.innerHTML=`I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this the same as one of your existing entries: ${list}?`;
-    yesBtn.textContent="Yes, it's an alias"; yesBtn.classList.remove('hidden');
+    yesBtn.textContent="Yes, it's an alias";yesBtn.classList.remove('hidden');
   }else{
-    body.innerHTML=`I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this a new entry or an alias for an existing name?`;
+    body.innerHTML=`I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this a new entry or an alias?`;
     yesBtn.classList.add('hidden');
   }
   banner.classList.remove('hidden');
-  // Use scrollTop instead of scrollIntoView to avoid iOS PWA jump bug
-  setTimeout(()=>{ banner.closest('.content')? window.scrollTo(0,banner.offsetTop-80) : null; },100);
+  setTimeout(()=>window.scrollTo(0,banner.offsetTop-80),100);
 }
-
 function handleAliasYes(){
   if(!pendingAlias)return;
   appMode='recording';
   setMicState('recording','TAP TO STOP',`Which existing ${pendingAlias.field} is "${pendingAlias.heard}"?`);
   document.getElementById('transcript-box').textContent='';
   document.getElementById('transcript-box').classList.remove('has-text');
-
-  recognition=makeSR(null,async(finalText)=>{
+  recognition=makeSR(async finalText=>{
     if(finalText){
       const prompt=`The user was asked which existing ${pendingAlias.field} the name "${pendingAlias.heard}" maps to.
 Known options: ${getCandidates(pendingAlias.field).join(', ')||'none'}.
@@ -747,8 +842,8 @@ Return ONLY JSON: {"canonical":"matched name or null"}`;
         const{canonical}=JSON.parse(res.replace(/```json|```/g,'').trim());
         if(canonical){
           await saveAlias(pendingAlias.heard,canonical,pendingAlias.field);
-          if(pendingAlias.field==='project')    currentData.project=canonical;
-          if(pendingAlias.field==='contractor') currentData.contractor=canonical;
+          if(pendingAlias.field==='project')currentData.project=canonical;
+          if(pendingAlias.field==='contractor')currentData.contractor=canonical;
           if(pendingAlias.field==='responsible')currentData.responsible=canonical;
         }
       }catch(e){console.error(e);}
@@ -762,14 +857,22 @@ Return ONLY JSON: {"canonical":"matched name or null"}`;
 function handleAliasNew(){pendingAlias=null;document.getElementById('alias-banner').classList.add('hidden');showConfirmCard(false);}
 function handleAliasSkip(){pendingAlias=null;document.getElementById('alias-banner').classList.add('hidden');showConfirmCard(false);}
 
-// ── Confirm card ─────────────────────────────────────────────
+// ── Confirm card ──────────────────────────────────────────────
+function typeBadge(type){
+  if(!type)return'';
+  const cls={task:'type-task',meeting:'type-meeting',event:'type-event'};
+  const label={task:'Task',meeting:'Meeting',event:'Event'};
+  return `<span class="type-badge ${cls[type]||''}">${label[type]||type}</span>`;
+}
+
 function showConfirmCard(showChanges){
   appMode='confirm';
   const fields=[
+    {key:'type',id:'cv-type',fmt:v=>v||null},
     {key:'datetime',id:'cv-datetime',fmt:v=>v?formatDateTime(v):null},
     {key:'project',id:'cv-project',fmt:v=>v||null},
     {key:'contractor',id:'cv-contractor',fmt:v=>v||null},
-    {key:'action',id:'cv-action',fmt:v=>v||null},
+    {key:'item',id:'cv-item',fmt:v=>v||null},
     {key:'responsible',id:'cv-responsible',fmt:v=>v||null},
     {key:'duedate',id:'cv-duedate',fmt:v=>v?formatDate(v):null},
   ];
@@ -781,12 +884,15 @@ function showConfirmCard(showChanges){
     const wasResolved=aliases.some(a=>currentData[f.key]&&a.canonical===currentData[f.key]&&a.alias.toLowerCase()!==currentData[f.key].toLowerCase());
     if(val){
       let badge='';
-      if(changed) badge=`<span class="cf-changed">updated</span>`;
-      else if(wasResolved&&!showChanges) badge=`<span class="cf-resolved">alias resolved</span>`;
-      else if(!showChanges&&f.key!=='datetime') badge=`<span class="cf-inferred">inferred</span>`;
-      el.innerHTML=esc(val)+badge; el.className='cf-value';
+      if(changed)badge=`<span class="cf-changed">updated</span>`;
+      else if(wasResolved&&!showChanges)badge=`<span class="cf-resolved">alias resolved</span>`;
+      else if(!showChanges&&f.key!=='datetime')badge=`<span class="cf-inferred">inferred</span>`;
+      if(f.key==='type')el.innerHTML=typeBadge(val)+badge;
+      else el.innerHTML=esc(val)+badge;
+      el.className='cf-value';
     }else{
-      el.innerHTML='Not mentioned'; el.className='cf-value empty';
+      el.innerHTML=f.key==='project'?'<span style="color:var(--danger);font-weight:600;">⚠ No project matched</span>':'Not mentioned';
+      el.className='cf-value empty';
     }
   });
   document.getElementById('confirm-card').classList.remove('hidden');
@@ -794,73 +900,192 @@ function showConfirmCard(showChanges){
   document.getElementById('alias-banner').classList.add('hidden');
   setMicState('confirm','TAP TO RESPOND','Does this look correct?');
   document.getElementById('voice-tip').classList.add('hidden');
-  // Safe scroll — avoid scrollIntoView smooth which breaks in iOS PWA
   setTimeout(()=>window.scrollTo({top:document.getElementById('confirm-card').offsetTop-80}),100);
 }
 
 function discardAll(){
-  appMode='initial'; currentData={}; prevData={}; pendingAlias=null;
+  appMode='initial';currentData={};prevData={};pendingAlias=null;
   document.getElementById('confirm-card').classList.add('hidden');
   document.getElementById('confirm-banner').classList.add('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
   document.getElementById('transcript-box').textContent='Your speech will appear here...';
   document.getElementById('transcript-box').classList.remove('has-text');
   document.getElementById('voice-tip').classList.remove('hidden');
-  setMicState('idle','TAP TO SPEAK','Tap the mic and describe your action item');
+  setMicState('idle','TAP TO SPEAK','Tap the mic and describe your item');
 }
 
-// ── Save ─────────────────────────────────────────────────────
+// ── Save ──────────────────────────────────────────────────────
 async function confirmSave(){
-  const action=(currentData.action||'').trim();
-  if(!action){showToast('No action item to save');return;}
-  const item={id:Date.now().toString(),datetime:currentData.datetime||nowLocal(),project:currentData.project||null,contractor:currentData.contractor||null,action,responsible:currentData.responsible||null,duedate:currentData.duedate||null,created:new Date().toISOString()};
+  const item_text=(currentData.item||'').trim();
+  if(!item_text){showToast('No item to save');return;}
+  if(!currentData.type){showToast('Could not determine type — please try again');return;}
+  const item={
+    id:Date.now().toString(),
+    datetime:currentData.datetime||nowLocal(),
+    project:currentData.project||null,
+    contractor:currentData.contractor||null,
+    item:item_text,
+    type:currentData.type,
+    responsible:currentData.responsible||null,
+    duedate:currentData.duedate||null,
+    created:new Date().toISOString()
+  };
   setSyncStatus('syncing');
   try{
-    await sbCall('sb-save-item', item);
-    setSyncStatus('ok'); await loadAll(); discardAll(); showToast('Action item saved!');
+    await sbCall('sb-save-item',item);
+    setSyncStatus('ok');await loadAll();discardAll();showToast('Item saved!');
   }catch(e){setSyncStatus('error');showToast('Save failed — check connection');}
 }
 
-// ── Edit / delete ────────────────────────────────────────────
-async function saveEdit(){
-  const patch={datetime:document.getElementById('e-datetime').value,project:document.getElementById('e-project').value.trim()||null,contractor:document.getElementById('e-contractor').value.trim()||null,action:document.getElementById('e-action').value.trim(),responsible:document.getElementById('e-responsible').value.trim()||null,duedate:document.getElementById('e-duedate').value||null};
+// ── Detail card (tap tile to open) ───────────────────────────
+function openDetail(id){
+  const it=items.find(i=>i.id===id);if(!it)return;
+  detailId=id;
+  document.getElementById('d-type').value=it.type||'task';
+  document.getElementById('d-datetime').value=it.datetime||'';
+  document.getElementById('d-project').value=it.project||'';
+  document.getElementById('d-contractor').value=it.contractor||'';
+  document.getElementById('d-item').value=it.item||'';
+  document.getElementById('d-responsible').value=it.responsible||'';
+  document.getElementById('d-duedate').value=it.duedate||'';
+  document.getElementById('detail-overlay').classList.add('open');
+}
+function closeDetail(){document.getElementById('detail-overlay').classList.remove('open');detailId=null;}
+
+async function saveDetail(){
+  if(!detailId)return;
+  const patch={
+    type:document.getElementById('d-type').value,
+    datetime:document.getElementById('d-datetime').value,
+    project:document.getElementById('d-project').value||null,
+    contractor:document.getElementById('d-contractor').value.trim()||null,
+    item:document.getElementById('d-item').value.trim(),
+    responsible:document.getElementById('d-responsible').value.trim()||null,
+    duedate:document.getElementById('d-duedate').value||null
+  };
   setSyncStatus('syncing');
   try{
-    await sbCall('sb-update-item', {id: editId, patch});
-    setSyncStatus('ok'); await loadAll(); closeModal(); renderCurrentTab(); showToast('Item updated');
+    await sbCall('sb-update-item',{id:detailId,patch});
+    setSyncStatus('ok');await loadAll();closeDetail();renderCurrentTab();showToast('Item updated');
   }catch(e){setSyncStatus('error');showToast('Update failed');}
 }
 
-// Custom confirm dialog — window.confirm() is blocked in iOS PWA standalone mode
-let confirmCallback=null;
-function showConfirmDialog(msg,onYes){
-  confirmCallback=onYes;
-  document.getElementById('confirm-dialog-msg').textContent=msg;
-  document.getElementById('confirm-dialog').classList.add('open');
-  document.getElementById('confirm-dialog-yes').onclick=()=>{const cb=confirmCallback;closeConfirmDialog();if(cb)cb();};
-}
-function closeConfirmDialog(){document.getElementById('confirm-dialog').classList.remove('open');confirmCallback=null;}
-
-async function deleteItem(id){
-  showConfirmDialog('Delete this action item? This cannot be undone.',async()=>{
+function deleteDetailItem(){
+  if(!detailId)return;
+  const id=detailId;
+  showConfirmDialog('Delete this item? This cannot be undone.',async()=>{
     setSyncStatus('syncing');
     try{
-      await sbCall('sb-delete-item', {id});
-      setSyncStatus('ok'); await loadAll(); renderCurrentTab(); showToast('Item deleted');
+      await sbCall('sb-delete-item',{id});
+      setSyncStatus('ok');await loadAll();closeDetail();renderCurrentTab();showToast('Item deleted');
     }catch(e){setSyncStatus('error');showToast('Delete failed');}
   });
 }
 
-async function deleteAlias(id){
-  showConfirmDialog('Delete this alias?',async()=>{
+// ── Swipe to reveal (iOS Mail style) ─────────────────────────
+function attachSwipe(el, itemId){
+  const inner=el.querySelector('.item');
+  if(!inner)return;
+  let startX=0,startY=0,currentX=0,swiped=false,animating=false;
+  const MAX_SWIPE=160;
+
+  const onStart=e=>{
+    if(animating)return;
+    const touch=e.touches?e.touches[0]:e;
+    startX=touch.clientX;startY=touch.clientY;currentX=0;swiped=false;
+  };
+  const onMove=e=>{
+    if(animating)return;
+    const touch=e.touches?e.touches[0]:e;
+    const dx=touch.clientX-startX;
+    const dy=touch.clientY-startY;
+    if(!swiped&&Math.abs(dy)>Math.abs(dx))return; // vertical scroll
+    if(dx>0&&currentX===0)return; // swipe right ignored
+    e.preventDefault();
+    swiped=true;
+    currentX=Math.max(-MAX_SWIPE,Math.min(0,dx));
+    inner.style.transform=`translateX(${currentX}px)`;
+  };
+  const onEnd=e=>{
+    if(!swiped)return;
+    animating=true;
+    if(currentX<-60){
+      // Snap open
+      inner.style.transition='transform 0.2s ease';
+      inner.style.transform=`translateX(-160px)`;
+      currentX=-160;
+    }else{
+      // Snap closed
+      inner.style.transition='transform 0.2s ease';
+      inner.style.transform='translateX(0)';
+      currentX=0;
+    }
+    inner.addEventListener('transitionend',()=>{inner.style.transition='';animating=false;},{once:true});
+  };
+
+  // Touch events for iPhone
+  inner.addEventListener('touchstart',onStart,{passive:true});
+  inner.addEventListener('touchmove',onMove,{passive:false});
+  inner.addEventListener('touchend',onEnd,{passive:true});
+
+  // Tap on item body (not buttons) opens detail
+  inner.addEventListener('click',e=>{
+    if(currentX!==0){
+      // Close swipe on tap if open
+      inner.style.transition='transform 0.2s ease';
+      inner.style.transform='translateX(0)';
+      currentX=0;
+      inner.addEventListener('transitionend',()=>{inner.style.transition='';},{once:true});
+      return;
+    }
+    openDetail(itemId);
+  });
+}
+
+// ── Projects tab ──────────────────────────────────────────────
+async function addProjectManually(){
+  const name=document.getElementById('new-project-name').value.trim();
+  if(!name){showToast('Enter a project name');return;}
+  if(projects.find(p=>p.name.toLowerCase()===name.toLowerCase())){showToast('Project already exists');return;}
+  const rec={id:Date.now().toString(),name,created:new Date().toISOString()};
+  try{
+    await sbCall('sb-save-project',rec);
+    projects.push(rec);
+    document.getElementById('new-project-name').value='';
+    renderProjects();populateProjectDropdown();
+    showToast(`Project "${name}" added`);
+  }catch(e){showToast('Could not save project');}
+}
+
+function renderProjects(){
+  const el=document.getElementById('project-list');
+  if(!projects.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📁</div><p>No projects yet.<br>Add your first project above.</p></div>`;return;}
+  let html='';
+  projects.sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{
+    const count=items.filter(i=>i.project===p.name).length;
+    html+=`<div class="project-item">
+      <div class="project-name">📁 ${esc(p.name)}</div>
+      <div class="project-count">${count} item${count!==1?'s':''}</div>
+      <button class="project-delete" data-id="${p.id}" aria-label="Delete project">✕</button>
+    </div>`;
+  });
+  el.innerHTML=html;
+  el.querySelectorAll('.project-delete').forEach(btn=>{
+    btn.addEventListener('click',()=>deleteProject(btn.dataset.id));
+  });
+}
+
+async function deleteProject(id){
+  showConfirmDialog('Delete this project? Items using it will not be deleted.',async()=>{
     try{
-      await sbCall('sb-delete-alias', {id});
-      aliases=aliases.filter(a=>a.id!==id); renderAliases(); showToast('Alias deleted');
+      await sbCall('sb-delete-project',{id});
+      projects=projects.filter(p=>p.id!==id);
+      renderProjects();populateProjectDropdown();showToast('Project deleted');
     }catch(e){showToast('Delete failed');}
   });
 }
 
-// ── Alias tab render ─────────────────────────────────────────
+// ── Aliases tab ───────────────────────────────────────────────
 function renderAliases(){
   const el=document.getElementById('alias-list');
   if(!aliases.length){el.innerHTML=`<div class="empty"><div class="empty-icon">🔤</div><p>No aliases yet.<br>Add one above or teach the app by voice.</p></div>`;return;}
@@ -868,14 +1093,13 @@ function renderAliases(){
   const labels={project:'Projects',contractor:'Contractors',responsible:'Responsible Parties',general:'General'};
   let html='';
   types.forEach(type=>{
-    const group=aliases.filter(a=>a.type===type); if(!group.length)return;
+    const group=aliases.filter(a=>a.type===type);if(!group.length)return;
     html+=`<div class="alias-type-header">${labels[type]}</div>`;
     group.forEach(a=>{
       html+=`<div class="alias-item"><div class="alias-text"><div class="alias-from">${esc(a.alias)}</div><div class="alias-to">→ ${esc(a.canonical)}</div></div><span class="alias-type-badge alias-type-${a.type}">${a.type}</span><button class="alias-delete" data-id="${a.id}" aria-label="Delete alias">✕</button></div>`;
     });
   });
   el.innerHTML=html;
-  // CarPlay-safe: attach events via delegation instead of inline onclick
   el.querySelectorAll('.alias-delete').forEach(btn=>{
     btn.addEventListener('click',()=>deleteAlias(btn.dataset.id));
   });
@@ -891,7 +1115,16 @@ async function addAliasManually(){
   document.getElementById('new-alias-to').value='';
 }
 
-// ── Mic visual state ─────────────────────────────────────────
+async function deleteAlias(id){
+  showConfirmDialog('Delete this alias?',async()=>{
+    try{
+      await sbCall('sb-delete-alias',{id});
+      aliases=aliases.filter(a=>a.id!==id);renderAliases();showToast('Alias deleted');
+    }catch(e){showToast('Delete failed');}
+  });
+}
+
+// ── Mic state ─────────────────────────────────────────────────
 function setMicState(state,label,statusText){
   const btn=document.getElementById('mic-btn');
   const lbl=document.getElementById('mic-label');
@@ -899,14 +1132,338 @@ function setMicState(state,label,statusText){
   const r1=document.getElementById('ring1');
   const r2=document.getElementById('ring2');
   btn.className='mic-btn'+(state==='recording'?' recording':state==='processing'?' processing':state==='confirm'?' confirm':state==='alias-mode'?' alias-mode':'');
-  lbl.textContent=label;
+  if(IS_TOUCH&&state==='idle')lbl.textContent='HOLD TO SPEAK';
+  else if(IS_TOUCH&&state==='confirm')lbl.textContent='HOLD TO RESPOND';
+  else lbl.textContent=label;
   r1.className='voice-ring-anim'+(state==='recording'?' active':'');
   r2.className='voice-ring-anim2'+(state==='recording'?' active':'');
   status.textContent=statusText;
   status.className='voice-status'+(state==='recording'?' listening':state==='processing'?' processing':state==='confirm'?' confirm-mode':state==='alias-mode'?' alias-mode':'');
 }
 
-// ── Helpers ──────────────────────────────────────────────────
+// ── Item HTML (swipeable tile) ────────────────────────────────
+function itemHTML(item,showProject=true){
+  const typeIcon={task:'✅',meeting:'📅',event:'⚡'};
+  const icon=typeIcon[item.type]||'📝';
+  return `<div class="item-wrap" data-id="${item.id}">
+    <div class="item-actions-swipe">
+      <button class="swipe-btn swipe-btn-edit" data-id="${item.id}" data-action="edit">
+        <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        Edit
+      </button>
+      <button class="swipe-btn swipe-btn-delete" data-id="${item.id}" data-action="delete">
+        <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        Delete
+      </button>
+    </div>
+    <div class="item">
+      <div class="item-top">
+        <div class="item-title-row">
+          ${typeBadge(item.type)}
+          <span class="item-item">${esc(item.item||item.action||'')}</span>
+        </div>
+        ${badgeHTML(item)}
+      </div>
+      <div class="item-meta">
+        ${showProject&&item.project?`<span>📁 ${esc(item.project)}</span>`:''}
+        ${item.contractor?`<span>🏗 ${esc(item.contractor)}</span>`:''}
+        ${item.responsible?`<span>👤 ${esc(item.responsible)}</span>`:''}
+        ${item.duedate?`<span>📅 Due ${formatDate(item.duedate)}</span>`:''}
+        <span>🕐 ${formatDateTime(item.datetime)}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderItems(container, itemList, showProject=true){
+  if(!itemList.length){
+    container.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><p>No items found</p></div>`;
+    return;
+  }
+  container.innerHTML=itemList.map(i=>itemHTML(i,showProject)).join('');
+  // Attach swipe handlers
+  container.querySelectorAll('.item-wrap').forEach(wrap=>{
+    attachSwipe(wrap,wrap.dataset.id);
+  });
+  // Swipe button delegation
+  container.querySelectorAll('[data-action="edit"]').forEach(btn=>{
+    btn.addEventListener('click',e=>{e.stopPropagation();openDetail(btn.dataset.id);});
+  });
+  container.querySelectorAll('[data-action="delete"]').forEach(btn=>{
+    btn.addEventListener('click',e=>{e.stopPropagation();deleteItemById(btn.dataset.id);});
+  });
+}
+
+async function deleteItemById(id){
+  showConfirmDialog('Delete this item? This cannot be undone.',async()=>{
+    setSyncStatus('syncing');
+    try{
+      await sbCall('sb-delete-item',{id});
+      setSyncStatus('ok');await loadAll();renderCurrentTab();showToast('Item deleted');
+    }catch(e){setSyncStatus('error');showToast('Delete failed');}
+  });
+}
+
+// ── Tabs ──────────────────────────────────────────────────────
+function showTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('[id^="tab-"]').forEach(el=>el.classList.add('hidden'));
+  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.remove('hidden');
+  ['log','all','project','contractor','calendar','projects','aliases'].forEach((t,i)=>{
+    document.querySelectorAll('.nav-btn')[i].classList.toggle('active',t===tab);
+  });
+  renderCurrentTab();
+}
+function renderCurrentTab(){
+  if(currentTab==='all')renderAll();
+  else if(currentTab==='project')renderByProject();
+  else if(currentTab==='contractor')renderByContractor();
+  else if(currentTab==='calendar')renderCalendar();
+  else if(currentTab==='projects')renderProjects();
+  else if(currentTab==='aliases')renderAliases();
+}
+
+function setFilter(f,btn){
+  currentStatusFilter=f;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');renderAll();
+}
+
+function renderAll(){
+  const q=(document.getElementById('search-all').value||'').toLowerCase();
+  let filtered=items.filter(i=>{
+    const match=!q||[i.item||i.action,i.project,i.contractor,i.responsible].join(' ').toLowerCase().includes(q);
+    if(!match)return false;
+    if(currentStatusFilter==='all')return true;
+    if(currentStatusFilter==='task'||currentStatusFilter==='meeting'||currentStatusFilter==='event')return i.type===currentStatusFilter;
+    return statusOf(i)===currentStatusFilter;
+  });
+  document.getElementById('stat-total').textContent=items.length;
+  document.getElementById('stat-overdue').textContent=items.filter(i=>statusOf(i)==='overdue').length;
+  renderItems(document.getElementById('list-all'),filtered);
+}
+
+function renderByProject(){
+  const q=(document.getElementById('search-project').value||'').toLowerCase();
+  const filtered=items.filter(i=>!q||(i.project||'').toLowerCase().includes(q)||(i.item||i.action||'').toLowerCase().includes(q));
+  const groups={};filtered.forEach(i=>{const k=i.project||'(No Project)';if(!groups[k])groups[k]=[];groups[k].push(i);});
+  const el=document.getElementById('list-project');
+  if(!Object.keys(groups).length){el.innerHTML=`<div class="empty"><div class="empty-icon">📁</div><p>No items found</p></div>`;return;}
+  el.innerHTML='';
+  Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).forEach(([p,its])=>{
+    const gh=document.createElement('div');
+    gh.className='group-header';
+    gh.innerHTML=`<div class="group-title">📁 ${esc(p)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div>`;
+    el.appendChild(gh);
+    const container=document.createElement('div');
+    el.appendChild(container);
+    renderItems(container,its,false);
+  });
+}
+
+function renderByContractor(){
+  const q=(document.getElementById('search-contractor').value||'').toLowerCase();
+  const filtered=items.filter(i=>!q||(i.contractor||'').toLowerCase().includes(q)||(i.item||i.action||'').toLowerCase().includes(q));
+  const groups={};filtered.forEach(i=>{const k=i.contractor||'(No Contractor)';if(!groups[k])groups[k]=[];groups[k].push(i);});
+  const el=document.getElementById('list-contractor');
+  if(!Object.keys(groups).length){el.innerHTML=`<div class="empty"><div class="empty-icon">🏗</div><p>No items found</p></div>`;return;}
+  el.innerHTML='';
+  Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).forEach(([c,its])=>{
+    const gh=document.createElement('div');
+    gh.className='group-header';
+    gh.innerHTML=`<div class="group-title">🏗 ${esc(c)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div>`;
+    el.appendChild(gh);
+    const container=document.createElement('div');
+    el.appendChild(container);
+    renderItems(container,its);
+  });
+}
+
+// ── Calendar ──────────────────────────────────────────────────
+function setCalView(view,btn){
+  calView=view;
+  document.querySelectorAll('.cal-view-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCalendar();
+}
+
+function getWeekStart(date){
+  const d=new Date(date);
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate()-d.getDay()); // Sunday
+  return d;
+}
+
+function calPrev(){
+  if(calView==='month'){calMonth--;if(calMonth<0){calMonth=11;calYear--;}}
+  else if(calView==='week'){calWeekStart=new Date(calWeekStart);calWeekStart.setDate(calWeekStart.getDate()-7);}
+  else if(calView==='day'){const d=new Date(calWeekStart);d.setDate(d.getDate()-1);calWeekStart=d;}
+  renderCalendar();
+}
+function calNext(){
+  if(calView==='month'){calMonth++;if(calMonth>11){calMonth=0;calYear++;}}
+  else if(calView==='week'){calWeekStart=new Date(calWeekStart);calWeekStart.setDate(calWeekStart.getDate()+7);}
+  else if(calView==='day'){const d=new Date(calWeekStart);d.setDate(d.getDate()+1);calWeekStart=d;}
+  renderCalendar();
+}
+
+function renderCalendar(){
+  const body=document.getElementById('cal-body');
+  const title=document.getElementById('cal-title-label');
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+  if(calView==='month'){
+    title.textContent=`${months[calMonth]} ${calYear}`;
+    renderMonthView(body,days,months);
+  }else if(calView==='week'){
+    const end=new Date(calWeekStart);end.setDate(end.getDate()+6);
+    title.textContent=`${months[calWeekStart.getMonth()]} ${calWeekStart.getDate()} – ${months[end.getMonth()]} ${end.getDate()}, ${end.getFullYear()}`;
+    renderWeekView(body,days);
+  }else{
+    title.textContent=calWeekStart.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+    renderDayView(body);
+  }
+}
+
+function itemsForDate(dateStr){
+  return items.filter(i=>i.duedate===dateStr||(i.datetime&&i.datetime.slice(0,10)===dateStr));
+}
+
+function dateStr(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function renderMonthView(body,days){
+  const today=new Date();today.setHours(0,0,0,0);
+  const first=new Date(calYear,calMonth,1);
+  const last=new Date(calYear,calMonth+1,0);
+  let html=days.map(d=>`<div class="cal-day-name">${d.slice(0,2)}</div>`).join('');
+  for(let i=0;i<first.getDay();i++)html+=`<div class="cal-cell other-month"></div>`;
+  for(let d=1;d<=last.getDate();d++){
+    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const cd=new Date(calYear,calMonth,d);
+    const its=itemsForDate(ds);
+    const isToday=cd.getTime()===today.getTime();
+    const cls=['cal-cell',isToday?'today':'',its.length?'has-items':''].filter(Boolean).join(' ');
+    const dots=its.slice(0,4).map(i=>`<div class="cal-dot cal-dot-${i.type||'task'}"></div>`).join('');
+    html+=`<div class="${cls}" data-date="${ds}"><div class="cal-num">${d}</div><div class="cal-dots">${dots}</div></div>`;
+  }
+  body.innerHTML=`<div class="cal-grid" id="cal-grid">${html}</div><div id="cal-day-items" style="margin-top:16px"></div>`;
+  document.getElementById('cal-grid').onclick=e=>{
+    const cell=e.target.closest('[data-date]');
+    if(cell)showCalDay(cell.dataset.date);
+  };
+}
+
+function renderWeekView(body,days){
+  const today=new Date();today.setHours(0,0,0,0);
+  const hours=Array.from({length:24},(_,i)=>i);
+  let headerHtml=`<div class="week-header-cell"></div>`;
+  const weekDays=[];
+  for(let d=0;d<7;d++){
+    const day=new Date(calWeekStart);day.setDate(day.getDate()+d);weekDays.push(day);
+    const isToday=day.getTime()===today.getTime();
+    headerHtml+=`<div class="week-header-cell${isToday?' today-col':''}">${days[d].slice(0,2)}<br>${day.getDate()}</div>`;
+  }
+  let rowsHtml='';
+  hours.forEach(h=>{
+    const label=h===0?'12am':h<12?`${h}am`:h===12?'12pm':`${h-12}pm`;
+    rowsHtml+=`<div class="week-time-label">${label}</div>`;
+    weekDays.forEach((day,di)=>{
+      const ds=dateStr(day);
+      const isToday=day.getTime()===today.getTime();
+      const its=itemsForDate(ds).filter(i=>{
+        const itemHour=i.datetime?new Date(i.datetime).getHours():null;
+        return itemHour===h;
+      });
+      const evHtml=its.map(i=>`<div class="week-event week-event-${i.type||'task'}" data-id="${i.id}">${esc(i.item||i.action||'')}</div>`).join('');
+      rowsHtml+=`<div class="week-cell${isToday?' today-col':''}">${evHtml}</div>`;
+    });
+  });
+  body.innerHTML=`<div class="week-grid" style="grid-template-columns:44px repeat(7,1fr)">${headerHtml}${rowsHtml}</div>`;
+  body.querySelectorAll('[data-id]').forEach(el=>{
+    el.addEventListener('click',()=>openDetail(el.dataset.id));
+  });
+}
+
+function renderDayView(body){
+  const today=new Date();today.setHours(0,0,0,0);
+  const day=calWeekStart;
+  const ds=dateStr(day);
+  const hours=Array.from({length:24},(_,i)=>i);
+  let html='';
+  hours.forEach(h=>{
+    const label=h===0?'12am':h<12?`${h}am`:h===12?'12pm':`${h-12}pm`;
+    const its=itemsForDate(ds).filter(i=>{
+      const itemHour=i.datetime?new Date(i.datetime).getHours():null;
+      return itemHour===h;
+    });
+    const evHtml=its.map(i=>`<div class="day-event day-event-${i.type||'task'}" data-id="${i.id}">${typeBadge(i.type)} ${esc(i.item||i.action||'')}</div>`).join('');
+    html+=`<div class="day-time-row"><div class="day-time-label">${label}</div><div class="day-cell">${evHtml}</div></div>`;
+  });
+  // All-day items (no specific time)
+  const allDay=itemsForDate(ds).filter(i=>!i.datetime||new Date(i.datetime).toDateString()!==day.toDateString());
+  if(allDay.length){
+    html=`<div class="day-time-row"><div class="day-time-label" style="font-size:8px">All day</div><div class="day-cell">${allDay.map(i=>`<div class="day-event day-event-${i.type||'task'}" data-id="${i.id}">${typeBadge(i.type)} ${esc(i.item||i.action||'')}</div>`).join('')}</div></div>`+html;
+  }
+  body.innerHTML=`<div class="day-grid">${html}</div>`;
+  body.querySelectorAll('[data-id]').forEach(el=>{
+    el.addEventListener('click',()=>openDetail(el.dataset.id));
+  });
+}
+
+function showCalDay(ds){
+  const el=document.getElementById('cal-day-items');
+  const its=itemsForDate(ds);
+  if(!its.length){el.innerHTML='';return;}
+  const label=new Date(ds+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  el.innerHTML=`<div class="section-label">${label}</div>`;
+  const container=document.createElement('div');
+  el.appendChild(container);
+  renderItems(container,its);
+}
+
+// ── Confirm dialog ────────────────────────────────────────────
+let confirmCallback=null;
+function showConfirmDialog(msg,onYes){
+  confirmCallback=onYes;
+  document.getElementById('confirm-dialog-msg').textContent=msg;
+  document.getElementById('confirm-dialog').classList.add('open');
+  document.getElementById('confirm-dialog-yes').onclick=()=>{const cb=confirmCallback;closeConfirmDialog();if(cb)cb();};
+}
+function closeConfirmDialog(){document.getElementById('confirm-dialog').classList.remove('open');confirmCallback=null;}
+
+// ── Excel export ──────────────────────────────────────────────
+function exportExcel(){
+  if(!items.length){showToast('No items to export');return;}
+  const data=items.map(i=>({
+    'Type':(i.type||'').charAt(0).toUpperCase()+(i.type||'').slice(1),
+    'Date/Time':i.datetime?new Date(i.datetime).toLocaleString():'',
+    'Project':i.project||'',
+    'Contractor/Consultant':i.contractor||'',
+    'Item':i.item||i.action||'',
+    'Party Responsible':i.responsible||'',
+    'Due Date':i.duedate?formatDate(i.duedate):'',
+    'Status':statusOf(i).charAt(0).toUpperCase()+statusOf(i).slice(1),
+    'Created':i.created?new Date(i.created).toLocaleString():''
+  }));
+  const ws=XLSX.utils.json_to_sheet(data),wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Items');
+  try{
+    const wbout=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+    const blob=new Blob([wbout],{type:'application/octet-stream'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=`altius-items-${new Date().toISOString().slice(0,10)}.xlsx`;
+    document.body.appendChild(a);a.click();
+    setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},1000);
+    showToast('Exported to Excel!');
+  }catch(e){showToast('Export failed — try from desktop');}
+}
+
+// ── Helpers ───────────────────────────────────────────────────
 function nowLocal(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,16);}
 function statusOf(item){
   if(!item.duedate)return'ok';
@@ -922,140 +1479,9 @@ function badgeHTML(item){
 function formatDate(d){if(!d)return'—';return new Date(d+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});}
 function formatDateTime(d){if(!d)return'—';return new Date(d).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'});}
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-// ── Item HTML — uses data attributes for CarPlay-safe events ─
-function itemHTML(item,showProject=true){
-  return`<div class="item">
-    <div class="item-top"><div class="item-action">${esc(item.action)}</div>${badgeHTML(item)}</div>
-    <div class="item-meta">
-      ${showProject&&item.project?`<span>📁 ${esc(item.project)}</span>`:''}
-      ${item.contractor?`<span>🏗 ${esc(item.contractor)}</span>`:''}
-      ${item.responsible?`<span>👤 ${esc(item.responsible)}</span>`:''}
-      ${item.duedate?`<span>📅 Due ${formatDate(item.duedate)}</span>`:''}
-      <span>🕐 ${formatDateTime(item.datetime)}</span>
-    </div>
-    <div class="item-actions">
-      <button class="item-btn item-btn-edit"   data-id="${item.id}" data-action="edit">Edit</button>
-      <button class="item-btn item-btn-delete" data-id="${item.id}" data-action="delete">Delete</button>
-    </div>
-  </div>`;
-}
-
-// ── Event delegation for item buttons (CarPlay safe) ─────────
-document.addEventListener('click',function(e){
-  const btn=e.target.closest('[data-action]');
-  if(!btn)return;
-  const id=btn.dataset.id;
-  const action=btn.dataset.action;
-  if(action==='edit')   openEdit(id);
-  if(action==='delete') deleteItem(id);
-});
-
-// ── Tabs ─────────────────────────────────────────────────────
-function showTab(tab){
-  currentTab=tab;
-  document.querySelectorAll('[id^="tab-"]').forEach(el=>el.classList.add('hidden'));
-  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.remove('hidden');
-  ['log','all','project','contractor','calendar','aliases'].forEach((t,i)=>{
-    document.querySelectorAll('.nav-btn')[i].classList.toggle('active',t===tab);
-  });
-  renderCurrentTab();
-}
-function renderCurrentTab(){
-  if(currentTab==='all')        renderAll();
-  else if(currentTab==='project')    renderByProject();
-  else if(currentTab==='contractor') renderByContractor();
-  else if(currentTab==='calendar')   renderCalendar();
-  else if(currentTab==='aliases')    renderAliases();
-}
-function setFilter(f,btn){currentStatusFilter=f;document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');renderAll();}
-
-function renderAll(){
-  const q=(document.getElementById('search-all').value||'').toLowerCase();
-  const filtered=items.filter(i=>{const match=!q||[i.action,i.project,i.contractor,i.responsible].join(' ').toLowerCase().includes(q);return match&&(currentStatusFilter==='all'||statusOf(i)===currentStatusFilter);});
-  document.getElementById('stat-total').textContent=items.length;
-  document.getElementById('stat-overdue').textContent=items.filter(i=>statusOf(i)==='overdue').length;
-  document.getElementById('list-all').innerHTML=filtered.length?filtered.map(i=>itemHTML(i)).join(''):`<div class="empty"><div class="empty-icon">📋</div><p>No action items found</p></div>`;
-}
-function renderByProject(){
-  const q=(document.getElementById('search-project').value||'').toLowerCase();
-  const filtered=items.filter(i=>!q||(i.project||'').toLowerCase().includes(q)||(i.action||'').toLowerCase().includes(q));
-  const groups={};filtered.forEach(i=>{const k=i.project||'(No Project)';if(!groups[k])groups[k]=[];groups[k].push(i);});
-  const el=document.getElementById('list-project');
-  if(!Object.keys(groups).length){el.innerHTML=`<div class="empty"><div class="empty-icon">📁</div><p>No items found</p></div>`;return;}
-  el.innerHTML=Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).map(([p,its])=>`<div class="group-header"><div class="group-title">📁 ${esc(p)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div></div>`+its.map(i=>itemHTML(i,false)).join('')).join('');
-}
-function renderByContractor(){
-  const q=(document.getElementById('search-contractor').value||'').toLowerCase();
-  const filtered=items.filter(i=>!q||(i.contractor||'').toLowerCase().includes(q)||(i.action||'').toLowerCase().includes(q));
-  const groups={};filtered.forEach(i=>{const k=i.contractor||'(No Contractor)';if(!groups[k])groups[k]=[];groups[k].push(i);});
-  const el=document.getElementById('list-contractor');
-  if(!Object.keys(groups).length){el.innerHTML=`<div class="empty"><div class="empty-icon">🏗</div><p>No items found</p></div>`;return;}
-  el.innerHTML=Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).map(([c,its])=>`<div class="group-header"><div class="group-title">🏗 ${esc(c)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div></div>`+its.map(i=>itemHTML(i)).join('')).join('');
-}
-function renderCalendar(){
-  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('cal-month-label').textContent=`${months[calMonth]} ${calYear}`;
-  const first=new Date(calYear,calMonth,1),last=new Date(calYear,calMonth+1,0);
-  const today=new Date();today.setHours(0,0,0,0);
-  const byDate={};items.forEach(i=>{if(i.duedate){if(!byDate[i.duedate])byDate[i.duedate]=[];byDate[i.duedate].push(i);}});
-  const days=['Su','Mo','Tu','We','Th','Fr','Sa'];
-  let html=days.map(d=>`<div class="cal-day-name">${d}</div>`).join('');
-  for(let i=0;i<first.getDay();i++)html+=`<div class="cal-cell other-month"></div>`;
-  for(let d=1;d<=last.getDate();d++){
-    const ds=`${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const cd=new Date(calYear,calMonth,d);
-    const cls=['cal-cell',cd.getTime()===today.getTime()?'today':'',byDate[ds]?.length?'has-items':''].filter(Boolean).join(' ');
-    html+=`<div class="${cls}" data-date="${ds}"><div class="cal-num">${d}</div>${byDate[ds]?.length?'<div class="cal-dot"></div>':''}</div>`;
-  }
-  document.getElementById('cal-grid').innerHTML=html;
-  document.getElementById('cal-day-items').innerHTML='';
-  // CarPlay-safe calendar tap via delegation
-  document.getElementById('cal-grid').onclick=e=>{
-    const cell=e.target.closest('[data-date]');
-    if(cell)showCalDay(cell.dataset.date);
-  };
-}
-function showCalDay(ds){
-  const its=items.filter(i=>i.duedate===ds);
-  const el=document.getElementById('cal-day-items');
-  if(!its.length){el.innerHTML='';return;}
-  const label=new Date(ds+'T00:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-  el.innerHTML=`<div class="section-label">${label}</div>`+its.map(i=>itemHTML(i)).join('');
-}
-function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;}renderCalendar();}
-function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;}renderCalendar();}
-
-function openEdit(id){
-  const item=items.find(i=>i.id===id);if(!item)return;
-  editId=id;
-  ['datetime','project','contractor','action','responsible','duedate'].forEach(f=>{document.getElementById('e-'+f).value=item[f]||'';});
-  document.getElementById('edit-modal').classList.add('open');
-}
-function closeModal(){document.getElementById('edit-modal').classList.remove('open');editId=null;}
-
-// Export — iOS PWA safe: use blob URL opened in new tab instead of direct download
-function exportExcel(){
-  if(!items.length){showToast('No items to export');return;}
-  const data=items.map(i=>({'Date/Time':i.datetime?new Date(i.datetime).toLocaleString():'','Project':i.project||'','Contractor/Consultant':i.contractor||'','Action Item':i.action||'','Party Responsible':i.responsible||'','Due Date':i.duedate?formatDate(i.duedate):'','Status':statusOf(i).charAt(0).toUpperCase()+statusOf(i).slice(1)}));
-  const ws=XLSX.utils.json_to_sheet(data),wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'Action Items');
-  // iOS PWA can't use writeFile directly — write to array buffer and open as blob
-  try{
-    const wbout=XLSX.write(wb,{bookType:'xlsx',type:'array'});
-    const blob=new Blob([wbout],{type:'application/octet-stream'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url; a.download=`action-items-${new Date().toISOString().slice(0,10)}.xlsx`;
-    document.body.appendChild(a); a.click();
-    setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},1000);
-    showToast('Exported to Excel!');
-  }catch(e){showToast('Export failed — try from desktop');}
-}
-
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
+initMicButton();
 loadAll();
 </script>
 </body>
