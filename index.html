@@ -69,7 +69,6 @@ body{font-family:-apple-system,'SF Pro Text',sans-serif;background:var(--bg);col
 .mic-btn.confirm{background:var(--success);box-shadow:0 4px 20px rgba(29,122,78,0.4);}
 .mic-btn.alias-mode{background:#7c3aed;box-shadow:0 4px 20px rgba(124,58,237,0.4);}
 .mic-btn svg{width:32px;height:32px;fill:white;pointer-events:none;}
-.mic-label{font-size:10px;color:white;font-weight:700;letter-spacing:0.5px;text-align:center;line-height:1.3;padding:0 8px;pointer-events:none;}
 .voice-status{font-size:14px;color:var(--text-muted);text-align:center;min-height:20px;margin-bottom:10px;}
 .voice-status.listening{color:var(--danger);font-weight:500;}
 .voice-status.processing{color:var(--accent);font-weight:500;}
@@ -272,6 +271,23 @@ label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margi
 .empty-icon{font-size:40px;margin-bottom:12px;}
 .export-row{margin-bottom:14px;}
 .hidden{display:none !important;}
+
+/* Silent mode toggle */
+.silent-btn{background:none;border:none;cursor:pointer;padding:6px;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;opacity:0.8;}
+.silent-btn:active{background:rgba(255,255,255,0.2);}
+.silent-btn svg{width:20px;height:20px;fill:white;}
+.silent-btn.muted svg{fill:rgba(255,255,255,0.4);}
+
+/* Claude response bubble */
+.claude-response{margin-top:12px;width:100%;}
+.claude-bubble{background:var(--surface);border:1.5px solid var(--primary);border-radius:var(--radius);padding:14px 16px;font-size:14px;line-height:1.6;color:var(--text);}
+.claude-bubble.partial{border-color:var(--warning);}
+.claude-bubble.error{border-color:var(--danger);}
+.claude-bubble-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-muted);margin-bottom:6px;}
+.claude-bubble-label.partial{color:var(--warning);}
+.claude-bubble-label.error{color:var(--danger);}
+.claude-understood{color:var(--text);}
+.claude-unclear{color:var(--danger);font-style:italic;margin-top:6px;}
 </style>
 </head>
 <body>
@@ -279,9 +295,14 @@ label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margi
 <div class="header">
   <div class="header-row">
     <img src="data:image/png;base64,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" alt="Altius" style="height:28px;width:auto;display:block;">
-    <div class="sync-indicator">
-      <div class="sync-dot" id="sync-dot"></div>
-      <span id="sync-label">Connecting...</span>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="silent-btn" id="silent-btn" onclick="toggleSilent()" title="Toggle silent mode">
+        <svg id="silent-icon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+      </button>
+      <div class="sync-indicator">
+        <div class="sync-dot" id="sync-dot"></div>
+        <span id="sync-label">Connecting...</span>
+      </div>
     </div>
   </div>
   <p id="header-sub" style="margin-top:4px;">Loading...</p>
@@ -308,16 +329,21 @@ label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margi
         <div class="voice-ring-anim2" id="ring2"></div>
         <button class="mic-btn" id="mic-btn">
           <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zm-1 3a1 1 0 0 1 2 0v8a1 1 0 0 1-2 0V4zm6 8a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.93V21h2v-2.07A7 7 0 0 0 19 12h-2z"/></svg>
-          <span class="mic-label" id="mic-label">TAP TO SPEAK</span>
+
         </button>
       </div>
       <div class="voice-status" id="voice-status">Tap the mic and describe your item</div>
       <div class="transcript-box" id="transcript-box">Your speech will appear here...</div>
       <p class="tip" id="voice-tip">
-        Speak naturally — for example:<br>
-        <strong>"Meeting with Legendary next Friday to review the payment application for Bluewater Marina. Sarah is responsible."</strong><br><br>
-        Claude will detect the type (Task / Meeting / Event) and match your project automatically.
+        Say anything naturally. Examples:<br>
+        <strong>"Log a meeting with ABC Electric next Friday"</strong><br>
+        <strong>"Add a project called Riverside Commons"</strong><br>
+        <strong>"Remember that Legendary means Bluewater Marina"</strong>
       </p>
+      <div class="claude-response hidden" id="claude-response">
+        <div class="claude-bubble-label" id="claude-response-label">Claude understood</div>
+        <div class="claude-bubble" id="claude-bubble"></div>
+      </div>
     </div>
 
     <!-- Alias prompt -->
@@ -546,19 +572,19 @@ let items=[], aliases=[], projects=[], currentStatusFilter='all';
 let calYear, calMonth, calView='month', calWeekStart=null;
 let detailId=null, currentTab='log';
 let recognition=null, isRecording=false;
-let appMode='initial';
-let currentData={}, prevData={}, pendingAlias=null;
-let recordingStart=0;
 
-const nd=new Date(); calYear=nd.getFullYear(); calMonth=nd.getMonth();
-calWeekStart = getWeekStart(new Date());
-
-// ── Sync ─────────────────────────────────────────────────────
+// ── Sync status ───────────────────────────────────────────────
 function setSyncStatus(s){
   document.getElementById('sync-dot').className='sync-dot'+(s==='syncing'?' syncing':s==='error'?' error':'');
   document.getElementById('sync-label').textContent=s==='syncing'?'Syncing...':s==='error'?'Offline':'Synced';
 }
 
+function updateHeader(){
+  const ov=items.filter(i=>statusOf(i)==='overdue').length;
+  document.getElementById('header-sub').textContent=items.length+' item'+(items.length!==1?'s':'')+' · '+ov+' overdue';
+}
+
+// ── Load all data from Supabase via Worker ────────────────────
 async function loadAll(){
   setSyncStatus('syncing');
   try{
@@ -574,49 +600,7 @@ async function loadAll(){
   populateProjectDropdown();
 }
 
-function updateHeader(){
-  const ov=items.filter(i=>statusOf(i)==='overdue').length;
-  document.getElementById('header-sub').textContent=`${items.length} item${items.length!==1?'s':''} · ${ov} overdue`;
-}
-
-function populateProjectDropdown(){
-  const sel=document.getElementById('d-project');
-  const cur=sel.value;
-  sel.innerHTML='<option value="">— None —</option>';
-  projects.forEach(p=>{
-    const o=document.createElement('option');
-    o.value=p.name; o.textContent=p.name;
-    sel.appendChild(o);
-  });
-  sel.value=cur;
-}
-
-// ── Alias helpers ─────────────────────────────────────────────
-function buildAliasContext(){
-  if(!aliases.length)return'No aliases defined yet.';
-  return aliases.map(a=>`"${a.alias}" → "${a.canonical}" (${a.type})`).join('\n');
-}
-function projectNames(){return projects.map(p=>p.name);}
-function knownContractors(){return[...new Set(items.map(i=>i.contractor).filter(Boolean))];}
-function knownResponsible(){return[...new Set(items.map(i=>i.responsible).filter(Boolean))];}
-function getCandidates(field){
-  if(field==='project')return projectNames();
-  if(field==='contractor')return knownContractors();
-  if(field==='responsible')return knownResponsible();
-  return[...projectNames(),...knownContractors()];
-}
-
-async function saveAlias(aliasText,canonical,type){
-  const rec={id:Date.now().toString(),alias:aliasText,canonical,type,created:new Date().toISOString()};
-  try{
-    await sbCall('sb-save-alias',rec);
-    aliases.push(rec);
-    showToast(`Alias saved: "${aliasText}" → "${canonical}"`);
-    if(currentTab==='aliases')renderAliases();
-  }catch(e){showToast('Could not save alias');}
-}
-
-// ── Claude ────────────────────────────────────────────────────
+// ── Claude API ────────────────────────────────────────────────
 async function callClaude(prompt){
   try{
     const res=await fetch(PROXY_URL,{
@@ -629,7 +613,12 @@ async function callClaude(prompt){
     let data;
     try{data=JSON.parse(text);}
     catch(e){showToast('Bad response from Worker');throw new Error('Bad JSON');}
-    if(data.type==='error'){showToast('Claude error: '+(data.error?.message||'unknown'));throw new Error('Claude error');}
+    if(data.type==='error'){
+      const msg=data.error?.message||'unknown';
+      const isQuota=msg.includes('quota')||msg.includes('billing')||data.error?.type==='overloaded_error';
+      showToast(isQuota?'Claude usage limit reached — try again later':'Claude error: '+msg);
+      throw new Error('Claude error: '+msg);
+    }
     return data.content?.find(b=>b.type==='text')?.text||'';
   }catch(e){
     if(!e.message?.includes('Claude error')&&!e.message?.includes('API error')&&!e.message?.includes('Bad JSON')){
@@ -639,25 +628,86 @@ async function callClaude(prompt){
   }
 }
 
-// ── Device detection & mic setup ─────────────────────────────
+// ── Voice system state ───────────────────────────────────────
+let appMode='initial'; // initial|recording|processing|confirm
+let currentData={}, prevData={};
+let recordingStart=0;
+let silentMode=localStorage.getItem('altius-silent')==='true';
+
+// ── Silent mode ───────────────────────────────────────────────
+function toggleSilent(){
+  silentMode=!silentMode;
+  localStorage.setItem('altius-silent',silentMode);
+  updateSilentIcon();
+}
+function updateSilentIcon(){
+  const btn=document.getElementById('silent-btn');
+  const icon=document.getElementById('silent-icon');
+  btn.classList.toggle('muted',silentMode);
+  btn.title=silentMode?'Silent mode on — tap to enable voice':'Voice on — tap to mute';
+  // Muted icon
+  if(silentMode){
+    icon.innerHTML='<path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>';
+  }else{
+    icon.innerHTML='<path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>';
+  }
+}
+
+// ── Text-to-speech ────────────────────────────────────────────
+function speak(text){
+  if(silentMode)return;
+  window.speechSynthesis.cancel();
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.rate=0.95; utt.pitch=1.0;
+  window.speechSynthesis.speak(utt);
+}
+
+// ── Claude response bubble ────────────────────────────────────
+function showResponseBubble(html, type='normal'){
+  const wrap=document.getElementById('claude-response');
+  const bubble=document.getElementById('claude-bubble');
+  const label=document.getElementById('claude-response-label');
+  bubble.innerHTML=html;
+  bubble.className='claude-bubble'+(type==='partial'?' partial':type==='error'?' error':'');
+  label.className='claude-bubble-label'+(type==='partial'?' partial':type==='error'?' error':'');
+  label.textContent=type==='partial'?'Partially understood':type==='error'?'Not understood':'Claude understood';
+  wrap.classList.remove('hidden');
+  setTimeout(()=>window.scrollTo({top:wrap.offsetTop-80}),100);
+}
+function hideResponseBubble(){
+  document.getElementById('claude-response').classList.add('hidden');
+}
+
+// ── Device detection & mic init ───────────────────────────────
 const IS_TOUCH=navigator.maxTouchPoints>0&&/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 function initMicButton(){
   const btn=document.getElementById('mic-btn');
+  updateSilentIcon();
   if(IS_TOUCH){
-    btn.addEventListener('touchstart',e=>{e.preventDefault();handleMicHoldStart();},{passive:false});
-    btn.addEventListener('touchend',e=>{e.preventDefault();handleMicHoldEnd();},{passive:false});
+    let touchDownTime=0;
+    const HOLD_THRESHOLD=300;
+    btn.addEventListener('touchstart',e=>{
+      e.preventDefault();
+      touchDownTime=Date.now();
+      handleMicHoldStart();
+    },{passive:false});
+    btn.addEventListener('touchend',e=>{
+      e.preventDefault();
+      const held=Date.now()-touchDownTime;
+      if(held>=HOLD_THRESHOLD) handleMicHoldEnd();
+      // Short tap — do nothing on touchend, recording continues
+    },{passive:false});
     btn.addEventListener('touchcancel',e=>{e.preventDefault();handleMicHoldEnd();},{passive:false});
-    document.getElementById('mic-label').textContent='HOLD TO SPEAK';
   }else{
     btn.addEventListener('click',handleMicTap);
   }
 }
 
 function handleMicHoldStart(){
-  if(appMode==='processing'||appMode==='alias-pending')return;
-  if(appMode==='recording')return;
-  if(appMode==='confirm'){startConfirmRecording();}else{startInitialRecording();}
+  if(appMode==='processing')return;
+  if(appMode==='recording'){stopRecording();return;}
+  if(appMode==='confirm'){startConfirmRecording();}else{startListening();}
 }
 function handleMicHoldEnd(){
   if(appMode!=='recording')return;
@@ -666,9 +716,8 @@ function handleMicHoldEnd(){
 function handleMicTap(){
   if(appMode==='recording'){stopRecording();return;}
   if(appMode==='processing')return;
-  if(appMode==='alias-pending')return;
   if(appMode==='confirm'){startConfirmRecording();return;}
-  startInitialRecording();
+  startListening();
 }
 function stopRecording(){
   const elapsed=Date.now()-recordingStart;
@@ -676,13 +725,14 @@ function stopRecording(){
   else{if(recognition)recognition.stop();}
 }
 
+// ── Speech recognition factory ────────────────────────────────
 function makeSR(onEnd,label){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){showToast('Voice not supported — use Safari on iPhone');return null;}
   const r=new SR();
-  r.continuous=true; r.interimResults=true; r.lang='en-US'; r.maxAlternatives=1;
+  r.continuous=true;r.interimResults=true;r.lang='en-US';r.maxAlternatives=1;
   let finalText='',silenceTimer=null;
-  r.onstart=()=>{recordingStart=Date.now();setMicState('recording','TAP TO STOP',label||'Listening...');};
+  r.onstart=()=>{recordingStart=Date.now();setMicState('recording',label||'Listening...');};
   r.onresult=e=>{
     if(silenceTimer)clearTimeout(silenceTimer);
     let interim='';finalText='';
@@ -701,170 +751,474 @@ function makeSR(onEnd,label){
   return r;
 }
 
-function startInitialRecording(){
+// ── Universal listener — determines intent first ──────────────
+function startListening(){
   appMode='recording';
   document.getElementById('transcript-box').textContent='';
   document.getElementById('transcript-box').classList.remove('has-text');
   document.getElementById('confirm-card').classList.add('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
+  hideResponseBubble();
   recognition=makeSR(finalText=>{
-    if(finalText){appMode='processing';setMicState('processing','PROCESSING','AI is parsing your input...');parseInitial(finalText);}
-    else{appMode='initial';setMicState('idle','TAP TO SPEAK','Tap the mic and describe your item');}
+    if(finalText){
+      appMode='processing';
+      setMicState('processing','AI is thinking...');
+      determineIntent(finalText);
+    }else{
+      appMode='initial';
+      setMicState('idle','');
+    }
   },'Listening...');
   if(recognition){isRecording=true;recognition.start();}
 }
 
+// ── Confirm recording ─────────────────────────────────────────
 function startConfirmRecording(){
   appMode='recording';
   document.getElementById('transcript-box').textContent='';
   document.getElementById('transcript-box').classList.remove('has-text');
   recognition=makeSR(finalText=>{
-    if(finalText){appMode='processing';setMicState('processing','PROCESSING','AI is interpreting...');parseConfirmResponse(finalText);}
-    else{appMode='confirm';setMicState('confirm','TAP TO RESPOND','Does this look correct?');}
+    if(finalText){
+      appMode='processing';
+      setMicState('processing','AI is interpreting...');
+      parseConfirmResponse(finalText);
+    }else{
+      appMode='confirm';
+      setMicState('confirm','Does this look correct?');
+    }
   },'Listening for confirmation...');
   if(recognition){isRecording=true;recognition.start();}
 }
 
-// ── Parse initial speech ──────────────────────────────────────
-async function parseInitial(transcript){
+// ── Intent determination — the heart of the new system ────────
+async function determineIntent(transcript){
   const today=new Date().toISOString().slice(0,10);
   const nowDT=nowLocal();
-  const pNames=projectNames();
 
-  const prompt=`You are an assistant parsing spoken item notes into structured data.
+  const prompt=`You are the intelligence behind a project management voice app called Altius.
+The user has just spoken. Determine what they want to do and extract the relevant data.
 Today: ${today}. Current datetime: ${nowDT}.
 
-ALIAS TABLE — apply these mappings automatically:
-${buildAliasContext()}
+APP CONTEXT:
+- Defined projects: ${projectNames().length?projectNames().join(', '):'None yet — user needs to add projects first'}
+- Known contractors: ${knownContractors().join(', ')||'none yet'}
+- Known responsible parties: ${knownResponsible().join(', ')||'none yet'}
+- Alias table: ${buildAliasContext()}
 
-DEFINED PROJECTS (you MUST match to one of these — pick the closest match):
-${pNames.length?pNames.join(', '):'No projects defined yet'}
+POSSIBLE INTENTS:
+1. "add_item" — logging a new task, meeting, or event
+2. "add_project" — adding a new project name
+3. "add_alias" — teaching the app that one name means another
+4. "edit_item" — changing fields on an existing item
+5. "delete_item" — removing an existing item
+6. "unknown" — you cannot determine intent, or the request makes no sense for this app
 
-INSTRUCTIONS:
-1. type: Determine if this is a "task" (something to be done), "meeting" (a future scheduled meeting), or "event" (something that has happened). This is MANDATORY.
-2. project: MUST be one of the defined projects above (pick closest match). If none match, set to null and flag in unknownNames.
-3. Extract: contractor, item (what needs to happen), responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
-4. Apply alias mappings automatically.
-5. If teaching an alias (e.g. "remember X means Y"), set teachAlias:{alias,canonical,type}.
-6. Flag unknown names in unknownNames:[{heard,field}].
-7. Return null for anything not mentioned.
+RULES:
+- Apply alias mappings automatically before returning data
+- For add_item: type must be "task", "meeting", or "event". Project MUST match one of the defined projects above (closest match). Both type and project are mandatory for add_item.
+- For add_project: extract the project name only
+- For add_alias: extract alias (what was said), canonical (what it maps to), and type (project/contractor/responsible/general)
+- For edit_item or delete_item: describe what item to find in "target_description"
+- If you understand SOME but not ALL of a request, still return the intent but set "partial":true and list unclear fields in "unclear_fields" with a plain-English explanation of what you need clarified
+- If the request is completely unintelligible or irrelevant, return intent "unknown"
 
-User speech: "${transcript}"
+User said: "${transcript}"
 
-Respond ONLY with valid JSON:
-{"type":null,"project":null,"contractor":null,"item":null,"responsible":null,"duedate":null,"datetime":"${nowDT}","teachAlias":null,"unknownNames":[]}`;
+Respond ONLY with valid JSON. Examples:
+
+Add item (full): {"intent":"add_item","partial":false,"type":"meeting","project":"Bluewater Marina","contractor":"ABC Electric","item":"Review foundation specs","responsible":"Sarah","duedate":"2026-05-02","datetime":"${nowDT}","unclear_fields":[],"clarification_needed":null}
+
+Add item (partial): {"intent":"add_item","partial":true,"type":"meeting","project":null,"contractor":"ABC Electric","item":"Review foundation specs","responsible":null,"duedate":null,"datetime":"${nowDT}","unclear_fields":["project","duedate"],"clarification_needed":"Which project is this meeting for, and when is it scheduled?"}
+
+Add project: {"intent":"add_project","partial":false,"project_name":"Riverside Commons","unclear_fields":[],"clarification_needed":null}
+
+Add alias: {"intent":"add_alias","partial":false,"alias":"Legendary","canonical":"Bluewater Marina","alias_type":"project","unclear_fields":[],"clarification_needed":null}
+
+Edit item: {"intent":"edit_item","partial":false,"target_description":"ABC Electric meeting about foundation","changes":{"duedate":"2026-05-10"},"unclear_fields":[],"clarification_needed":null}
+
+Delete item: {"intent":"delete_item","partial":false,"target_description":"the overdue task for John Smith","unclear_fields":[],"clarification_needed":null}
+
+Unknown: {"intent":"unknown","message":"I'm not sure what you'd like to do. I can help you log items, add projects, create aliases, or edit existing records."}`;
 
   try{
     const res=await callClaude(prompt);
     const parsed=JSON.parse(res.replace(/```json|```/g,'').trim());
-    if(parsed.teachAlias){
-      const{alias:a,canonical:c,type:t}=parsed.teachAlias;
-      await saveAlias(a,c,t||'general');
-      if(parsed.project&&parsed.project.toLowerCase()===a.toLowerCase())parsed.project=c;
-      if(parsed.contractor&&parsed.contractor.toLowerCase()===a.toLowerCase())parsed.contractor=c;
-      if(parsed.responsible&&parsed.responsible.toLowerCase()===a.toLowerCase())parsed.responsible=c;
-    }
-    currentData={datetime:nowDT,...parsed};
-    delete currentData.teachAlias;delete currentData.unknownNames;
-    prevData={};
-    const unknowns=parsed.unknownNames||[];
-    if(unknowns.length>0&&parsed.item){
-      const unknown=unknowns[0];
-      pendingAlias={heard:unknown.heard,field:unknown.field,candidates:getCandidates(unknown.field)};
-      showAliasBanner(unknown.heard,unknown.field,pendingAlias.candidates);
-      return;
-    }
-    showConfirmCard(false);
+    await handleIntent(parsed, transcript);
   }catch(e){
-    console.error(e);appMode='initial';
-    setMicState('idle','TAP TO SPEAK','Tap the mic and describe your item');
-    showToast('Could not parse — please try again');
+    console.error(e);
+    appMode='initial';
+    setMicState('idle','');
+    const msg="I couldn't process that. Please try again.";
+    showResponseBubble(msg,'error');
+    speak(msg);
   }
 }
 
-// ── Parse confirm response ────────────────────────────────────
+// ── Handle parsed intent ──────────────────────────────────────
+async function handleIntent(parsed, originalTranscript){
+
+  // UNKNOWN intent
+  if(parsed.intent==='unknown'){
+    appMode='initial';
+    setMicState('idle','');
+    const msg=parsed.message||"I'm not sure what you'd like to do. Try saying something like 'Log a meeting' or 'Add a project.'";
+    showResponseBubble(esc(msg),'error');
+    speak(msg);
+    return;
+  }
+
+  // PARTIAL — understood some but not all
+  if(parsed.partial){
+    appMode='initial';
+    setMicState('idle','');
+    const understood=buildUnderstoodSummary(parsed);
+    const clarify=parsed.clarification_needed||'Can you provide more detail?';
+    const html=`<div class="claude-understood">${understood}</div><div class="claude-unclear">I need more info: ${esc(clarify)}</div>`;
+    showResponseBubble(html,'partial');
+    speak(`I understood ${understood.replace(/<[^>]+>/g,'')}. ${clarify}`);
+    return;
+  }
+
+  // ADD ITEM
+  if(parsed.intent==='add_item'){
+    currentData={
+      type:parsed.type,
+      datetime:parsed.datetime||nowLocal(),
+      project:parsed.project||null,
+      contractor:parsed.contractor||null,
+      item:parsed.item||null,
+      responsible:parsed.responsible||null,
+      duedate:parsed.duedate||null
+    };
+    prevData={};
+    hideResponseBubble();
+    showConfirmCard(false);
+    return;
+  }
+
+  // ADD PROJECT
+  if(parsed.intent==='add_project'){
+    const name=parsed.project_name;
+    if(!name){showResponseBubble("I couldn't determine the project name. Please try again.",'error');appMode='initial';setMicState('idle','');return;}
+    const rec={id:Date.now().toString(),name,created:new Date().toISOString()};
+    setSyncStatus('syncing');
+    try{
+      await sbCall('sb-save-project',rec);
+      projects.push(rec);
+      populateProjectDropdown();
+      if(currentTab==='projects')renderProjects();
+      setSyncStatus('ok');
+      const msg=`Project "${name}" has been added.`;
+      showResponseBubble(esc(msg));
+      speak(msg);
+    }catch(e){
+      showResponseBubble("Couldn't save the project — check your connection.",'error');
+    }
+    appMode='initial';setMicState('idle','');
+    return;
+  }
+
+  // ADD ALIAS
+  if(parsed.intent==='add_alias'){
+    const {alias:a,canonical:c,alias_type:t}=parsed;
+    if(!a||!c){showResponseBubble("I couldn't determine the alias mapping. Try: Remember that X means Y.",'error');appMode='initial';setMicState('idle','');return;}
+    await saveAlias(a,c,t||'general');
+    const msg=`Got it — I'll remember that "${a}" means "${c}".`;
+    showResponseBubble(esc(msg));
+    speak(msg);
+    appMode='initial';setMicState('idle','');
+    return;
+  }
+
+  // EDIT ITEM
+  if(parsed.intent==='edit_item'){
+    const target=parsed.target_description;
+    const changes=parsed.changes||{};
+    // Find closest matching item
+    const found=findClosestItem(target);
+    if(!found){
+      const msg=`I couldn't find an item matching "${target}". Can you be more specific?`;
+      showResponseBubble(esc(msg),'partial');
+      speak(msg);
+      appMode='initial';setMicState('idle','');
+      return;
+    }
+    // Show what we found and what will change
+    currentData={...found,...changes};
+    prevData={...found};
+    const changeList=Object.keys(changes).map(k=>`${k}: ${changes[k]}`).join(', ');
+    const msg=`Found: "${found.item||found.action}". I'll change: ${changeList}.`;
+    showResponseBubble(esc(msg));
+    speak(msg+' Does that look correct?');
+    showConfirmCard(true);
+    return;
+  }
+
+  // DELETE ITEM
+  if(parsed.intent==='delete_item'){
+    const target=parsed.target_description;
+    const found=findClosestItem(target);
+    if(!found){
+      const msg=`I couldn't find an item matching "${target}". Can you be more specific?`;
+      showResponseBubble(esc(msg),'partial');
+      speak(msg);
+      appMode='initial';setMicState('idle','');
+      return;
+    }
+    const msg=`Found: "${found.item||found.action}". Should I delete it?`;
+    showResponseBubble(esc(msg)+'<br><br><button class="btn-save" style="max-width:140px" onclick="confirmDeleteItem(\'' + found.id + '\')">Yes, Delete</button> <button class="btn-discard" onclick="cancelDelete()">Cancel</button>');
+    speak(msg);
+    appMode='confirm';
+    return;
+  }
+}
+
+function confirmDeleteItem(id){
+  hideResponseBubble();
+  deleteItemById(id);
+  appMode='initial';setMicState('idle','');
+}
+function cancelDelete(){
+  hideResponseBubble();
+  appMode='initial';setMicState('idle','');
+  speak('Cancelled.');
+}
+
+// ── Find closest item by description ─────────────────────────
+function findClosestItem(description){
+  if(!description||!items.length)return null;
+  const q=description.toLowerCase();
+  // Score items by how many words from description appear in their fields
+  const words=q.split(/\s+/).filter(w=>w.length>2);
+  let best=null,bestScore=0;
+  items.forEach(i=>{
+    const hay=[i.item||i.action||'',i.project||'',i.contractor||'',i.responsible||''].join(' ').toLowerCase();
+    const score=words.filter(w=>hay.includes(w)).length;
+    if(score>bestScore){bestScore=score;best=i;}
+  });
+  return bestScore>0?best:null;
+}
+
+// ── Build human-readable summary of what was understood ───────
+function buildUnderstoodSummary(parsed){
+  const parts=[];
+  if(parsed.type)parts.push(`type: <strong>${parsed.type}</strong>`);
+  if(parsed.project)parts.push(`project: <strong>${esc(parsed.project)}</strong>`);
+  if(parsed.item)parts.push(`item: <strong>${esc(parsed.item)}</strong>`);
+  if(parsed.contractor)parts.push(`contractor: <strong>${esc(parsed.contractor)}</strong>`);
+  if(parsed.responsible)parts.push(`responsible: <strong>${esc(parsed.responsible)}</strong>`);
+  if(parsed.duedate)parts.push(`due: <strong>${formatDate(parsed.duedate)}</strong>`);
+  if(parsed.project_name)parts.push(`project name: <strong>${esc(parsed.project_name)}</strong>`);
+  if(parsed.alias)parts.push(`alias: <strong>${esc(parsed.alias)}</strong> → <strong>${esc(parsed.canonical)}</strong>`);
+  return parts.length?parts.join(', '):'some of your input';
+}
+
+// ── Confirm response ──────────────────────────────────────────
 async function parseConfirmResponse(transcript){
-  const confirmWords=/\b(yes|correct|good|save|confirm|looks good|that('s| is) (right|correct|good)|perfect|go ahead|do it|yep|yeah|ok|okay)\b/i;
+  const confirmWords=/(yes|correct|good|save|confirm|looks good|that('s| is) (right|correct|good)|perfect|go ahead|do it|yep|yeah|ok|okay)/i;
   if(confirmWords.test(transcript)&&transcript.trim().split(/\s+/).length<8){confirmSave();return;}
   const today=new Date().toISOString().slice(0,10);
   const prompt=`You are managing an item confirmation.
 Current data: ${JSON.stringify(currentData)}
 Today: ${today}.
-Alias table:\n${buildAliasContext()}
+Alias table: ${buildAliasContext()}
 Defined projects: ${projectNames().join(', ')||'none'}
 User said: "${transcript}"
 If confirmed: return {"confirmed":true}
-If edits: return full updated object with ALL fields. Keep existing unless changed.
+If edits: return ONLY changed fields plus confirmed:false.
 Fields: type (task/meeting/event), project, contractor, item, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
 Respond ONLY with valid JSON.`;
   try{
     const res=await callClaude(prompt);
     const parsed=JSON.parse(res.replace(/```json|```/g,'').trim());
-    if(parsed.confirmed){confirmSave();}
-    else{prevData={...currentData};currentData=parsed;showConfirmCard(true);}
-  }catch(e){
-    appMode='confirm';setMicState('confirm','TAP TO RESPOND','Does this look correct?');
-    showToast('Could not parse — please try again');
-  }
-}
-
-// ── Alias banner ──────────────────────────────────────────────
-function showAliasBanner(heard,field,candidates){
-  appMode='alias-pending';setMicState('alias-mode','','New name detected');
-  const banner=document.getElementById('alias-banner');
-  const body=document.getElementById('alias-banner-body');
-  const yesBtn=document.getElementById('alias-btn-yes');
-  if(candidates.length>0){
-    const list=candidates.slice(0,3).map(c=>`"${esc(c)}"`).join(', ');
-    body.innerHTML=`I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this the same as one of your existing entries: ${list}?`;
-    yesBtn.textContent="Yes, it's an alias";yesBtn.classList.remove('hidden');
-  }else{
-    body.innerHTML=`I heard <strong>"${esc(heard)}"</strong> as the ${field}. Is this a new entry or an alias?`;
-    yesBtn.classList.add('hidden');
-  }
-  banner.classList.remove('hidden');
-  setTimeout(()=>window.scrollTo(0,banner.offsetTop-80),100);
-}
-function handleAliasYes(){
-  if(!pendingAlias)return;
-  appMode='recording';
-  setMicState('recording','TAP TO STOP',`Which existing ${pendingAlias.field} is "${pendingAlias.heard}"?`);
-  document.getElementById('transcript-box').textContent='';
-  document.getElementById('transcript-box').classList.remove('has-text');
-  recognition=makeSR(async finalText=>{
-    if(finalText){
-      const prompt=`The user was asked which existing ${pendingAlias.field} the name "${pendingAlias.heard}" maps to.
-Known options: ${getCandidates(pendingAlias.field).join(', ')||'none'}.
-User said: "${finalText}"
-Return ONLY JSON: {"canonical":"matched name or null"}`;
-      try{
-        const res=await callClaude(prompt);
-        const{canonical}=JSON.parse(res.replace(/```json|```/g,'').trim());
-        if(canonical){
-          await saveAlias(pendingAlias.heard,canonical,pendingAlias.field);
-          if(pendingAlias.field==='project')currentData.project=canonical;
-          if(pendingAlias.field==='contractor')currentData.contractor=canonical;
-          if(pendingAlias.field==='responsible')currentData.responsible=canonical;
-        }
-      }catch(e){console.error(e);}
+    if(parsed.confirmed){
+      confirmSave();
+    }else{
+      prevData={...currentData};
+      const updates={...parsed};delete updates.confirmed;
+      Object.keys(updates).forEach(k=>{if(updates[k]!==null&&updates[k]!==undefined)currentData[k]=updates[k];});
+      showConfirmCard(true);
     }
-    pendingAlias=null;
-    document.getElementById('alias-banner').classList.add('hidden');
-    showConfirmCard(false);
-  });
-  if(recognition){isRecording=true;recognition.start();}
+  }catch(e){
+    appMode='confirm';setMicState('confirm','Does this look correct?');
+    if(e.message&&(e.message.includes('529')||e.message.includes('quota')||e.message.includes('billing'))){
+      showToast('Claude usage limit reached — try again later');
+    }else{
+      showToast('Could not parse — please try again');
+    }
+  }
 }
-function handleAliasNew(){pendingAlias=null;document.getElementById('alias-banner').classList.add('hidden');showConfirmCard(false);}
-function handleAliasSkip(){pendingAlias=null;document.getElementById('alias-banner').classList.add('hidden');showConfirmCard(false);}
 
-// ── Confirm card ──────────────────────────────────────────────
+// ── Save confirmed item ───────────────────────────────────────
+async function confirmSave(){
+  const item_text=(currentData.item||'').trim();
+  if(!item_text){showToast('No item to save');return;}
+  if(!currentData.type){showToast('Type could not be determined — please try again');return;}
+  const item={
+    id:Date.now().toString(),
+    datetime:currentData.datetime||nowLocal(),
+    project:currentData.project||null,
+    contractor:currentData.contractor||null,
+    item:item_text,
+    type:currentData.type,
+    responsible:currentData.responsible||null,
+    duedate:currentData.duedate||null,
+    created:new Date().toISOString()
+  };
+  setSyncStatus('syncing');
+  try{
+    await sbCall('sb-save-item',item);
+    setSyncStatus('ok');await loadAll();discardAll();
+    const msg='Item saved.';
+    showToast(msg);speak(msg);
+  }catch(e){setSyncStatus('error');showToast('Save failed — check connection');}
+}
+
+function discardAll(){
+  appMode='initial';currentData={};prevData={};
+  document.getElementById('confirm-card').classList.add('hidden');
+  document.getElementById('confirm-banner').classList.add('hidden');
+  document.getElementById('alias-banner').classList.add('hidden');
+  hideResponseBubble();
+  document.getElementById('transcript-box').textContent='Your speech will appear here...';
+  document.getElementById('transcript-box').classList.remove('has-text');
+  document.getElementById('voice-tip').classList.remove('hidden');
+  setMicState('idle','');
+}
+
+
+function populateProjectDropdown(){
+  const sel=document.getElementById('d-project');
+  if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— None —</option>';
+  projects.forEach(p=>{
+    const o=document.createElement('option');
+    o.value=p.name;o.textContent=p.name;sel.appendChild(o);
+  });
+  sel.value=cur;
+}
+
+// ── Projects tab ──────────────────────────────────────────────
+async function addProjectManually(){
+  const name=document.getElementById('new-project-name').value.trim();
+  if(!name){showToast('Enter a project name');return;}
+  if(projects.find(p=>p.name.toLowerCase()===name.toLowerCase())){showToast('Project already exists');return;}
+  const rec={id:Date.now().toString(),name,created:new Date().toISOString()};
+  try{
+    await sbCall('sb-save-project',rec);
+    projects.push(rec);
+    document.getElementById('new-project-name').value='';
+    renderProjects();populateProjectDropdown();
+    showToast('Project "'+name+'" added');
+  }catch(e){showToast('Could not save project');}
+}
+
+function renderProjects(){
+  const el=document.getElementById('project-list');
+  if(!projects.length){el.innerHTML='<div class="empty"><div class="empty-icon">📁</div><p>No projects yet.<br>Add your first project above.</p></div>';return;}
+  let html='';
+  projects.sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{
+    const count=items.filter(i=>i.project===p.name).length;
+    html+='<div class="project-item"><div class="project-name">📁 '+esc(p.name)+'</div><div class="project-count">'+count+' item'+(count!==1?'s':'')+'</div><button class="project-delete" data-id="'+p.id+'" aria-label="Delete project">✕</button></div>';
+  });
+  el.innerHTML=html;
+  el.querySelectorAll('.project-delete').forEach(btn=>{
+    btn.addEventListener('click',()=>deleteProject(btn.dataset.id));
+  });
+}
+
+async function deleteProject(id){
+  showConfirmDialog('Delete this project? Items using it will not be deleted.',async()=>{
+    try{
+      await sbCall('sb-delete-project',{id});
+      projects=projects.filter(p=>p.id!==id);
+      renderProjects();populateProjectDropdown();showToast('Project deleted');
+    }catch(e){showToast('Delete failed');}
+  });
+}
+
+// ── Aliases tab ───────────────────────────────────────────────
+function renderAliases(){
+  const el=document.getElementById('alias-list');
+  if(!aliases.length){el.innerHTML='<div class="empty"><div class="empty-icon">🔤</div><p>No aliases yet.<br>Add one above or teach the app by voice.</p></div>';return;}
+  const types=['project','contractor','responsible','general'];
+  const labels={project:'Projects',contractor:'Contractors',responsible:'Responsible Parties',general:'General'};
+  let html='';
+  types.forEach(type=>{
+    const group=aliases.filter(a=>a.type===type);if(!group.length)return;
+    html+='<div class="alias-type-header">'+labels[type]+'</div>';
+    group.forEach(a=>{
+      html+='<div class="alias-item"><div class="alias-text"><div class="alias-from">'+esc(a.alias)+'</div><div class="alias-to">→ '+esc(a.canonical)+'</div></div><span class="alias-type-badge alias-type-'+a.type+'">'+a.type+'</span><button class="alias-delete" data-id="'+a.id+'" aria-label="Delete alias">✕</button></div>';
+    });
+  });
+  el.innerHTML=html;
+  el.querySelectorAll('.alias-delete').forEach(btn=>{
+    btn.addEventListener('click',()=>deleteAlias(btn.dataset.id));
+  });
+}
+
+async function addAliasManually(){
+  const from=document.getElementById('new-alias-from').value.trim();
+  const to=document.getElementById('new-alias-to').value.trim();
+  const type=document.getElementById('new-alias-type').value;
+  if(!from||!to){showToast('Both fields are required');return;}
+  await saveAlias(from,to,type);
+  document.getElementById('new-alias-from').value='';
+  document.getElementById('new-alias-to').value='';
+}
+
+async function deleteAlias(id){
+  showConfirmDialog('Delete this alias?',async()=>{
+    try{
+      await sbCall('sb-delete-alias',{id});
+      aliases=aliases.filter(a=>a.id!==id);renderAliases();showToast('Alias deleted');
+    }catch(e){showToast('Delete failed');}
+  });
+}
+
+// ── Alias & project helpers ───────────────────────────────────
+function buildAliasContext(){
+  if(!aliases.length)return'No aliases defined yet.';
+  return aliases.map(a=>`"${a.alias}" → "${a.canonical}" (${a.type})`).join('\n');
+}
+function projectNames(){return projects.map(p=>p.name);}
+function knownContractors(){return[...new Set(items.map(i=>i.contractor).filter(Boolean))];}
+function knownResponsible(){return[...new Set(items.map(i=>i.responsible).filter(Boolean))];}
+
+async function saveAlias(aliasText,canonical,type){
+  const rec={id:Date.now().toString(),alias:aliasText,canonical,type,created:new Date().toISOString()};
+  try{
+    await sbCall('sb-save-alias',rec);
+    aliases.push(rec);
+    showToast(`Alias saved: "${aliasText}" → "${canonical}"`);
+    if(currentTab==='aliases')renderAliases();
+  }catch(e){showToast('Could not save alias');}
+}
+
+// ── Mic state ─────────────────────────────────────────────────
+function setMicState(state,statusText){
+  const btn=document.getElementById('mic-btn');
+  const status=document.getElementById('voice-status');
+  const r1=document.getElementById('ring1');
+  const r2=document.getElementById('ring2');
+  btn.className='mic-btn'+(state==='recording'?' recording':state==='processing'?' processing':state==='confirm'?' confirm':'');
+  r1.className='voice-ring-anim'+(state==='recording'?' active':'');
+  r2.className='voice-ring-anim2'+(state==='recording'?' active':'');
+  if(statusText!==undefined) status.textContent=statusText;
+  status.className='voice-status'+(state==='recording'?' listening':state==='processing'?' processing':state==='confirm'?' confirm-mode':'');
+}
+
+
+// ── Type badge ────────────────────────────────────────────────
 function typeBadge(type){
   if(!type)return'';
   const cls={task:'type-task',meeting:'type-meeting',event:'type-event'};
-  const label={task:'Task',meeting:'Meeting',event:'Event'};
-  return `<span class="type-badge ${cls[type]||''}">${label[type]||type}</span>`;
+  const lbl={task:'Task',meeting:'Meeting',event:'Event'};
+  return '<span class="type-badge '+(cls[type]||'')+'">'+(lbl[type]||type)+'</span>';
 }
 
+// ── Confirm card ──────────────────────────────────────────────
 function showConfirmCard(showChanges){
   appMode='confirm';
   const fields=[
@@ -884,60 +1238,27 @@ function showConfirmCard(showChanges){
     const wasResolved=aliases.some(a=>currentData[f.key]&&a.canonical===currentData[f.key]&&a.alias.toLowerCase()!==currentData[f.key].toLowerCase());
     if(val){
       let badge='';
-      if(changed)badge=`<span class="cf-changed">updated</span>`;
-      else if(wasResolved&&!showChanges)badge=`<span class="cf-resolved">alias resolved</span>`;
-      else if(!showChanges&&f.key!=='datetime')badge=`<span class="cf-inferred">inferred</span>`;
+      if(changed)badge='<span class="cf-changed">updated</span>';
+      else if(wasResolved&&!showChanges)badge='<span class="cf-resolved">alias resolved</span>';
+      else if(!showChanges&&f.key!=='datetime')badge='<span class="cf-inferred">inferred</span>';
       if(f.key==='type')el.innerHTML=typeBadge(val)+badge;
       else el.innerHTML=esc(val)+badge;
       el.className='cf-value';
     }else{
-      el.innerHTML=f.key==='project'?'<span style="color:var(--danger);font-weight:600;">⚠ No project matched</span>':'Not mentioned';
+      el.innerHTML=f.key==='project'?'<span style="color:var(--danger);font-weight:600;">No project matched</span>':'Not mentioned';
       el.className='cf-value empty';
     }
   });
   document.getElementById('confirm-card').classList.remove('hidden');
   document.getElementById('confirm-banner').classList.remove('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
-  setMicState('confirm','TAP TO RESPOND','Does this look correct?');
+  hideResponseBubble();
+  setMicState('confirm','Does this look correct?');
   document.getElementById('voice-tip').classList.add('hidden');
   setTimeout(()=>window.scrollTo({top:document.getElementById('confirm-card').offsetTop-80}),100);
 }
 
-function discardAll(){
-  appMode='initial';currentData={};prevData={};pendingAlias=null;
-  document.getElementById('confirm-card').classList.add('hidden');
-  document.getElementById('confirm-banner').classList.add('hidden');
-  document.getElementById('alias-banner').classList.add('hidden');
-  document.getElementById('transcript-box').textContent='Your speech will appear here...';
-  document.getElementById('transcript-box').classList.remove('has-text');
-  document.getElementById('voice-tip').classList.remove('hidden');
-  setMicState('idle','TAP TO SPEAK','Tap the mic and describe your item');
-}
-
-// ── Save ──────────────────────────────────────────────────────
-async function confirmSave(){
-  const item_text=(currentData.item||'').trim();
-  if(!item_text){showToast('No item to save');return;}
-  if(!currentData.type){showToast('Could not determine type — please try again');return;}
-  const item={
-    id:Date.now().toString(),
-    datetime:currentData.datetime||nowLocal(),
-    project:currentData.project||null,
-    contractor:currentData.contractor||null,
-    item:item_text,
-    type:currentData.type,
-    responsible:currentData.responsible||null,
-    duedate:currentData.duedate||null,
-    created:new Date().toISOString()
-  };
-  setSyncStatus('syncing');
-  try{
-    await sbCall('sb-save-item',item);
-    setSyncStatus('ok');await loadAll();discardAll();showToast('Item saved!');
-  }catch(e){setSyncStatus('error');showToast('Save failed — check connection');}
-}
-
-// ── Detail card (tap tile to open) ───────────────────────────
+// ── Detail card ───────────────────────────────────────────────
 function openDetail(id){
   const it=items.find(i=>i.id===id);if(!it)return;
   detailId=id;
@@ -945,7 +1266,7 @@ function openDetail(id){
   document.getElementById('d-datetime').value=it.datetime||'';
   document.getElementById('d-project').value=it.project||'';
   document.getElementById('d-contractor').value=it.contractor||'';
-  document.getElementById('d-item').value=it.item||'';
+  document.getElementById('d-item').value=it.item||it.action||'';
   document.getElementById('d-responsible').value=it.responsible||'';
   document.getElementById('d-duedate').value=it.duedate||'';
   document.getElementById('detail-overlay').classList.add('open');
@@ -982,13 +1303,13 @@ function deleteDetailItem(){
   });
 }
 
+
 // ── Swipe to reveal (iOS Mail style) ─────────────────────────
-function attachSwipe(el, itemId){
+function attachSwipe(el,itemId){
   const inner=el.querySelector('.item');
   if(!inner)return;
   let startX=0,startY=0,currentX=0,swiped=false,animating=false;
   const MAX_SWIPE=160;
-
   const onStart=e=>{
     if(animating)return;
     const touch=e.touches?e.touches[0]:e;
@@ -999,39 +1320,31 @@ function attachSwipe(el, itemId){
     const touch=e.touches?e.touches[0]:e;
     const dx=touch.clientX-startX;
     const dy=touch.clientY-startY;
-    if(!swiped&&Math.abs(dy)>Math.abs(dx))return; // vertical scroll
-    if(dx>0&&currentX===0)return; // swipe right ignored
-    e.preventDefault();
-    swiped=true;
+    if(!swiped&&Math.abs(dy)>Math.abs(dx))return;
+    if(dx>0&&currentX===0)return;
+    e.preventDefault();swiped=true;
     currentX=Math.max(-MAX_SWIPE,Math.min(0,dx));
-    inner.style.transform=`translateX(${currentX}px)`;
+    inner.style.transform='translateX('+currentX+'px)';
   };
-  const onEnd=e=>{
+  const onEnd=()=>{
     if(!swiped)return;
     animating=true;
     if(currentX<-60){
-      // Snap open
       inner.style.transition='transform 0.2s ease';
-      inner.style.transform=`translateX(-160px)`;
+      inner.style.transform='translateX(-160px)';
       currentX=-160;
     }else{
-      // Snap closed
       inner.style.transition='transform 0.2s ease';
       inner.style.transform='translateX(0)';
       currentX=0;
     }
     inner.addEventListener('transitionend',()=>{inner.style.transition='';animating=false;},{once:true});
   };
-
-  // Touch events for iPhone
   inner.addEventListener('touchstart',onStart,{passive:true});
   inner.addEventListener('touchmove',onMove,{passive:false});
   inner.addEventListener('touchend',onEnd,{passive:true});
-
-  // Tap on item body (not buttons) opens detail
   inner.addEventListener('click',e=>{
     if(currentX!==0){
-      // Close swipe on tap if open
       inner.style.transition='transform 0.2s ease';
       inner.style.transform='translateX(0)';
       currentX=0;
@@ -1040,105 +1353,6 @@ function attachSwipe(el, itemId){
     }
     openDetail(itemId);
   });
-}
-
-// ── Projects tab ──────────────────────────────────────────────
-async function addProjectManually(){
-  const name=document.getElementById('new-project-name').value.trim();
-  if(!name){showToast('Enter a project name');return;}
-  if(projects.find(p=>p.name.toLowerCase()===name.toLowerCase())){showToast('Project already exists');return;}
-  const rec={id:Date.now().toString(),name,created:new Date().toISOString()};
-  try{
-    await sbCall('sb-save-project',rec);
-    projects.push(rec);
-    document.getElementById('new-project-name').value='';
-    renderProjects();populateProjectDropdown();
-    showToast(`Project "${name}" added`);
-  }catch(e){showToast('Could not save project');}
-}
-
-function renderProjects(){
-  const el=document.getElementById('project-list');
-  if(!projects.length){el.innerHTML=`<div class="empty"><div class="empty-icon">📁</div><p>No projects yet.<br>Add your first project above.</p></div>`;return;}
-  let html='';
-  projects.sort((a,b)=>a.name.localeCompare(b.name)).forEach(p=>{
-    const count=items.filter(i=>i.project===p.name).length;
-    html+=`<div class="project-item">
-      <div class="project-name">📁 ${esc(p.name)}</div>
-      <div class="project-count">${count} item${count!==1?'s':''}</div>
-      <button class="project-delete" data-id="${p.id}" aria-label="Delete project">✕</button>
-    </div>`;
-  });
-  el.innerHTML=html;
-  el.querySelectorAll('.project-delete').forEach(btn=>{
-    btn.addEventListener('click',()=>deleteProject(btn.dataset.id));
-  });
-}
-
-async function deleteProject(id){
-  showConfirmDialog('Delete this project? Items using it will not be deleted.',async()=>{
-    try{
-      await sbCall('sb-delete-project',{id});
-      projects=projects.filter(p=>p.id!==id);
-      renderProjects();populateProjectDropdown();showToast('Project deleted');
-    }catch(e){showToast('Delete failed');}
-  });
-}
-
-// ── Aliases tab ───────────────────────────────────────────────
-function renderAliases(){
-  const el=document.getElementById('alias-list');
-  if(!aliases.length){el.innerHTML=`<div class="empty"><div class="empty-icon">🔤</div><p>No aliases yet.<br>Add one above or teach the app by voice.</p></div>`;return;}
-  const types=['project','contractor','responsible','general'];
-  const labels={project:'Projects',contractor:'Contractors',responsible:'Responsible Parties',general:'General'};
-  let html='';
-  types.forEach(type=>{
-    const group=aliases.filter(a=>a.type===type);if(!group.length)return;
-    html+=`<div class="alias-type-header">${labels[type]}</div>`;
-    group.forEach(a=>{
-      html+=`<div class="alias-item"><div class="alias-text"><div class="alias-from">${esc(a.alias)}</div><div class="alias-to">→ ${esc(a.canonical)}</div></div><span class="alias-type-badge alias-type-${a.type}">${a.type}</span><button class="alias-delete" data-id="${a.id}" aria-label="Delete alias">✕</button></div>`;
-    });
-  });
-  el.innerHTML=html;
-  el.querySelectorAll('.alias-delete').forEach(btn=>{
-    btn.addEventListener('click',()=>deleteAlias(btn.dataset.id));
-  });
-}
-
-async function addAliasManually(){
-  const from=document.getElementById('new-alias-from').value.trim();
-  const to=document.getElementById('new-alias-to').value.trim();
-  const type=document.getElementById('new-alias-type').value;
-  if(!from||!to){showToast('Both fields are required');return;}
-  await saveAlias(from,to,type);
-  document.getElementById('new-alias-from').value='';
-  document.getElementById('new-alias-to').value='';
-}
-
-async function deleteAlias(id){
-  showConfirmDialog('Delete this alias?',async()=>{
-    try{
-      await sbCall('sb-delete-alias',{id});
-      aliases=aliases.filter(a=>a.id!==id);renderAliases();showToast('Alias deleted');
-    }catch(e){showToast('Delete failed');}
-  });
-}
-
-// ── Mic state ─────────────────────────────────────────────────
-function setMicState(state,label,statusText){
-  const btn=document.getElementById('mic-btn');
-  const lbl=document.getElementById('mic-label');
-  const status=document.getElementById('voice-status');
-  const r1=document.getElementById('ring1');
-  const r2=document.getElementById('ring2');
-  btn.className='mic-btn'+(state==='recording'?' recording':state==='processing'?' processing':state==='confirm'?' confirm':state==='alias-mode'?' alias-mode':'');
-  if(IS_TOUCH&&state==='idle')lbl.textContent='HOLD TO SPEAK';
-  else if(IS_TOUCH&&state==='confirm')lbl.textContent='HOLD TO RESPOND';
-  else lbl.textContent=label;
-  r1.className='voice-ring-anim'+(state==='recording'?' active':'');
-  r2.className='voice-ring-anim2'+(state==='recording'?' active':'');
-  status.textContent=statusText;
-  status.className='voice-status'+(state==='recording'?' listening':state==='processing'?' processing':state==='confirm'?' confirm-mode':state==='alias-mode'?' alias-mode':'');
 }
 
 // ── Item HTML (swipeable tile) ────────────────────────────────
