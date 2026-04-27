@@ -74,7 +74,7 @@ body{font-family:-apple-system,'SF Pro Text',sans-serif;background:var(--bg);col
 .voice-status.processing{color:var(--accent);font-weight:500;}
 .voice-status.confirm-mode{color:var(--success);font-weight:500;}
 .voice-status.alias-mode{color:#7c3aed;font-weight:500;}
-.transcript-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:12px;font-size:14px;line-height:1.5;color:var(--text-muted);font-style:italic;min-height:60px;width:100%;}
+.transcript-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:4px;font-size:14px;line-height:1.5;color:var(--text-muted);font-style:italic;min-height:60px;width:100%;resize:vertical;font-family:inherit;}
 .transcript-box.has-text{color:var(--text);font-style:normal;}
 .tip{font-size:12px;color:var(--text-muted);text-align:center;line-height:1.6;padding:0 8px;}
 .tip strong{color:var(--text);}
@@ -333,7 +333,8 @@ label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margi
         </button>
       </div>
       <div class="voice-status" id="voice-status">Tap the mic and describe your item</div>
-      <div class="transcript-box" id="transcript-box">Your speech will appear here...</div>
+      <textarea class="transcript-box" id="transcript-box" placeholder="Your speech will appear here... or type here and press Enter or Send" rows="3"></textarea>
+      <button class="btn btn-primary" id="send-btn" onclick="handleTextSubmit()" style="width:100%;margin-bottom:12px;display:none;">Send</button>
       <p class="tip" id="voice-tip">
         Say anything naturally. Examples:<br>
         <strong>"Log a meeting with ABC Electric next Friday"</strong><br>
@@ -709,6 +710,60 @@ function releaseAudioSession(){
   }
 }
 
+
+// ── Text input (keyboard) ─────────────────────────────────────
+function showSendButton(show){
+  const btn=document.getElementById('send-btn');
+  if(btn) btn.style.display=show?'block':'none';
+}
+
+function handleTextSubmit(){
+  const box=document.getElementById('transcript-box');
+  const text=(box.value||'').trim();
+  if(!text)return;
+  if(appMode==='processing')return;
+  if(appMode==='confirm'){
+    // In confirm mode, typed text is treated as a correction
+    appMode='processing';
+    setMicState('processing','AI is interpreting...');
+    parseConfirmResponse(text);
+    return;
+  }
+  // Initial input — run through full intent pipeline
+  appMode='processing';
+  setMicState('processing','AI is thinking...');
+  document.getElementById('confirm-card').classList.add('hidden');
+  document.getElementById('alias-banner').classList.add('hidden');
+  hideResponseBubble();
+  document.getElementById('voice-tip').classList.add('hidden');
+  determineIntent(text);
+}
+
+function initTextInput(){
+  const box=document.getElementById('transcript-box');
+  if(!box)return;
+
+  // Show send button when user types
+  box.addEventListener('input',()=>{
+    const hasText=box.value.trim().length>0;
+    box.classList.toggle('has-text',hasText);
+    showSendButton(hasText);
+  });
+
+  // Enter submits (Shift+Enter adds new line)
+  box.addEventListener('keydown',e=>{
+    if(e.key==='Enter'&&!e.shiftKey){
+      e.preventDefault();
+      handleTextSubmit();
+    }
+  });
+
+  // Clear placeholder on focus
+  box.addEventListener('focus',()=>{
+    if(!box.value) box.classList.remove('has-text');
+  });
+}
+
 function initMicButton(){
   const btn=document.getElementById('mic-btn');
   updateSilentIcon();
@@ -770,8 +825,8 @@ function makeSR(onEnd,label){
     }
     const display=finalText+interim;
     const box=document.getElementById('transcript-box');
-    box.textContent=display;
-    box.classList.toggle('has-text',display.trim().length>0);
+    box.value=display;
+    box.classList.toggle('has-text',display.trim().length>0);showSendButton(display.trim().length>0);
     silenceTimer=setTimeout(()=>{if(recognition)recognition.stop();},2500);
   };
   r.onend=()=>{
@@ -788,7 +843,7 @@ function makeSR(onEnd,label){
 // ── Universal listener — determines intent first ──────────────
 function startListening(){
   appMode='recording';
-  document.getElementById('transcript-box').textContent='';
+  document.getElementById('transcript-box').value='';
   document.getElementById('transcript-box').classList.remove('has-text');
   document.getElementById('confirm-card').classList.add('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
@@ -809,7 +864,7 @@ function startListening(){
 // ── Confirm recording ─────────────────────────────────────────
 function startConfirmRecording(){
   appMode='recording';
-  document.getElementById('transcript-box').textContent='';
+  document.getElementById('transcript-box').value='';
   document.getElementById('transcript-box').classList.remove('has-text');
   recognition=makeSR(finalText=>{
     if(finalText){
@@ -1114,8 +1169,9 @@ function discardAll(){
   document.getElementById('confirm-banner').classList.add('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
   hideResponseBubble();
-  document.getElementById('transcript-box').textContent='Your speech will appear here...';
+  document.getElementById('transcript-box').value='';
   document.getElementById('transcript-box').classList.remove('has-text');
+  showSendButton(false);
   document.getElementById('voice-tip').classList.remove('hidden');
   setMicState('idle','');
 }
@@ -1730,6 +1786,7 @@ function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/<
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
 
 initMicButton();
+initTextInput();
 loadAll();
 </script>
 </body>
