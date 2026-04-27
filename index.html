@@ -662,7 +662,7 @@ async function callClaude(prompt){
 }
 
 // ── Voice system state ───────────────────────────────────────
-let appMode='initial'; // initial|recording|processing|confirm
+let appMode='initial'; // initial|recording|processing|confirm|clarifying
 let currentData={}, prevData={};
 let recordingStart=0;
 let silentMode=localStorage.getItem('altius-silent')==='true';
@@ -758,6 +758,13 @@ function handleTextSubmit(){
     parseConfirmResponse(text);
     return;
   }
+  if(appMode==='clarifying'){
+    // In clarifying mode, typed text answers the clarification question
+    appMode='processing';
+    setMicState('processing','AI is interpreting...');
+    parseClarification(text);
+    return;
+  }
   // Initial input — run through full intent pipeline
   appMode='processing';
   setMicState('processing','AI is thinking...');
@@ -819,7 +826,9 @@ function initMicButton(){
 function handleMicHoldStart(){
   if(appMode==='processing')return;
   if(appMode==='recording'){stopRecording();return;}
-  if(appMode==='confirm'){startConfirmRecording();}else{startListening();}
+  if(appMode==='confirm'){startConfirmRecording();}
+  else if(appMode==='clarifying'){startClarifyingRecording();}
+  else{startListening();}
 }
 function handleMicHoldEnd(){
   if(appMode!=='recording')return;
@@ -829,6 +838,7 @@ function handleMicTap(){
   if(appMode==='recording'){stopRecording();return;}
   if(appMode==='processing')return;
   if(appMode==='confirm'){startConfirmRecording();return;}
+  if(appMode==='clarifying'){startClarifyingRecording();return;}
   startListening();
 }
 function stopRecording(){
@@ -867,6 +877,72 @@ function makeSR(onEnd,label){
   };
   r.onerror=e=>{if(silenceTimer)clearTimeout(silenceTimer);isRecording=false;recognition=null;if(e.error!=='no-speech'&&e.error!=='aborted')showToast('Voice error: '+e.error);onEnd(finalText.trim());};
   return r;
+}
+
+
+// ── Clarifying recording ──────────────────────────────────────
+function startClarifyingRecording(){
+  appMode='recording';
+  document.getElementById('transcript-box').value='';
+  document.getElementById('transcript-box').classList.remove('has-text');
+  recognition=makeSR(finalText=>{
+    if(finalText){
+      appMode='processing';
+      setMicState('processing','AI is interpreting...');
+      parseClarification(finalText);
+    }else{
+      appMode='clarifying';
+      setMicState('idle','');
+    }
+  },'Clarifying...');
+  if(recognition){isRecording=true;recognition.start();}
+}
+
+async function parseClarification(transcript){
+  const today=new Date().toISOString().slice(0,10);
+  const prompt=`You are helping complete a partially understood item entry.
+What we have so far: ${JSON.stringify(currentData)}
+The question I asked the user: "${currentData._clarificationNeeded||'Can you clarify?'}"
+User's clarification: "${transcript}"
+Today: ${today}. Alias table: ${buildAliasContext()}
+Defined projects: ${projectNames().join(', ')||'none'}
+
+Merge the user's clarification into the existing data. Return the complete updated object.
+Fields: type (task/meeting/event), project, person1, company1, person2, company2, person3, company3, person4, company4, person5, company5, item, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
+If still missing mandatory fields (type or project), set partial:true and clarification_needed to ask again.
+Otherwise set partial:false.
+Respond ONLY with valid JSON.`;
+
+  try{
+    const res=await callClaude(prompt);
+    const parsed=JSON.parse(res.replace(/```json|```/g,'').trim());
+    // Merge into currentData
+    const intent=currentData._intent||'add_item';
+    delete parsed.partial; // handle separately
+    Object.keys(parsed).forEach(k=>{
+      if(parsed[k]!==null&&parsed[k]!==undefined&&!k.startsWith('_'))currentData[k]=parsed[k];
+    });
+    if(res.includes('"partial":true')){
+      // Still needs more info
+      currentData._clarificationNeeded=parsed.clarification_needed||'Can you provide more detail?';
+      appMode='clarifying';
+      setMicState('idle','');
+      const clarify=currentData._clarificationNeeded;
+      showResponseBubble(`<div class="claude-unclear">Still need: ${esc(clarify)}</div>`,'partial');
+      speak(clarify);
+    }else{
+      // Have enough — show confirm card
+      delete currentData._clarificationNeeded;
+      delete currentData._intent;
+      prevData={};
+      hideResponseBubble();
+      showConfirmCard(false);
+    }
+  }catch(e){
+    appMode='clarifying';
+    setMicState('idle','');
+    showToast('Could not parse — please try again');
+  }
 }
 
 // ── Universal listener — determines intent first ──────────────
@@ -988,7 +1064,22 @@ async function handleIntent(parsed, originalTranscript){
 
   // PARTIAL — understood some but not all
   if(parsed.partial){
-    appMode='initial';
+    // Store what we understood so far in currentData
+    currentData={};
+    for(let i=1;i<=5;i++){
+      currentData['person'+i]=parsed['person'+i]||null;
+      currentData['company'+i]=parsed['company'+i]||null;
+    }
+    if(parsed.type)currentData.type=parsed.type;
+    if(parsed.project)currentData.project=parsed.project;
+    if(parsed.item)currentData.item=parsed.item;
+    if(parsed.responsible)currentData.responsible=parsed.responsible;
+    if(parsed.duedate)currentData.duedate=parsed.duedate;
+    if(parsed.datetime)currentData.datetime=parsed.datetime;
+    currentData._clarificationNeeded=parsed.clarification_needed||'Can you provide more detail?';
+    currentData._intent=parsed.intent||'add_item';
+
+    appMode='clarifying';
     setMicState('idle','');
     const understood=buildUnderstoodSummary(parsed);
     const clarify=parsed.clarification_needed||'Can you provide more detail?';
@@ -1271,11 +1362,36 @@ function renderAliases(){
   let html='';
   aliases.sort((a,b)=>a.alias.localeCompare(b.alias)).forEach(a=>{
     const company=a.company?'<div class="alias-to" style="color:var(--text-muted)">🏢 '+esc(a.company)+'</div>':'';
-    html+='<div class="alias-item"><div class="alias-text"><div class="alias-from">'+esc(a.alias)+'</div><div class="alias-to">→ '+esc(a.canonical)+'</div>'+company+'</div><button class="alias-delete" data-id="'+a.id+'" aria-label="Delete alias">✕</button></div>';
+    html+='<div class="alias-item" id="alias-item-'+a.id+'"><div class="alias-text"><div class="alias-from">'+esc(a.alias)+'</div><div class="alias-to">→ '+esc(a.canonical)+'</div>'+company+'</div><div style="display:flex;gap:4px;flex-shrink:0"><button class="alias-edit" data-id="'+a.id+'" aria-label="Edit alias" style="background:var(--primary-light);border:none;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;color:var(--primary);font-weight:600;min-height:36px">Edit</button><button class="alias-delete" data-id="'+a.id+'" aria-label="Delete alias">✕</button></div></div>';
+    html+='<div class="alias-edit-form hidden" id="alias-edit-'+a.id+'" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:8px;">'
+      +'<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">'
+      +'<input type="text" class="alias-edit-from" data-id="'+a.id+'" value="'+esc(a.alias)+'" placeholder="What you say" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:14px;">'
+      +'<span style="color:var(--text-muted)">→</span>'
+      +'<input type="text" class="alias-edit-to" data-id="'+a.id+'" value="'+esc(a.canonical)+'" placeholder="Full name" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:14px;">'
+      +'</div>'
+      +'<div style="display:flex;gap:8px;align-items:center">'
+      +'<input type="text" class="alias-edit-company" data-id="'+a.id+'" value="'+(a.company?esc(a.company):'')+'" placeholder="Company (optional)" style="flex:1;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:14px;">'
+      +'<button class="alias-save-edit" data-id="'+a.id+'" style="background:var(--primary);color:white;border:none;border-radius:6px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;min-height:36px">Save</button>'
+      +'<button class="alias-cancel-edit" data-id="'+a.id+'" style="background:none;border:1px solid var(--border);border-radius:6px;padding:8px 12px;cursor:pointer;font-size:13px;min-height:36px">Cancel</button>'
+      +'</div>'
+      +'</div>';
   });
   el.innerHTML=html;
   el.querySelectorAll('.alias-delete').forEach(btn=>{
     btn.addEventListener('click',()=>deleteAlias(btn.dataset.id));
+  });
+  el.querySelectorAll('.alias-edit').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.getElementById('alias-edit-'+btn.dataset.id).classList.toggle('hidden');
+    });
+  });
+  el.querySelectorAll('.alias-cancel-edit').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.getElementById('alias-edit-'+btn.dataset.id).classList.add('hidden');
+    });
+  });
+  el.querySelectorAll('.alias-save-edit').forEach(btn=>{
+    btn.addEventListener('click',()=>saveAliasEdit(btn.dataset.id));
   });
 }
 
@@ -1288,6 +1404,26 @@ async function addAliasManually(){
   document.getElementById('new-alias-from').value='';
   document.getElementById('new-alias-to').value='';
   document.getElementById('new-alias-company').value='';
+}
+
+
+async function saveAliasEdit(id){
+  const fromEl=document.querySelector('.alias-edit-from[data-id="'+id+'"]');
+  const toEl=document.querySelector('.alias-edit-to[data-id="'+id+'"]');
+  const companyEl=document.querySelector('.alias-edit-company[data-id="'+id+'"]');
+  const newAlias=fromEl.value.trim();
+  const newCanonical=toEl.value.trim();
+  const newCompany=companyEl.value.trim()||null;
+  if(!newAlias||!newCanonical){showToast('Both name fields are required');return;}
+  const patch={alias:newAlias,canonical:newCanonical,company:newCompany};
+  try{
+    await sbCall('sb-update-alias',{id,patch});
+    // Update local aliases array
+    const idx=aliases.findIndex(a=>a.id===id);
+    if(idx>-1){aliases[idx]={...aliases[idx],...patch};}
+    renderAliases();
+    showToast('Alias updated');
+  }catch(e){showToast('Could not update alias');}
 }
 
 async function deleteAlias(id){
@@ -1328,7 +1464,7 @@ function setMicState(state,statusText){
   const status=document.getElementById('voice-status');
   const r1=document.getElementById('ring1');
   const r2=document.getElementById('ring2');
-  btn.className='mic-btn'+(state==='recording'?' recording':state==='processing'?' processing':state==='confirm'?' confirm':'');
+  btn.className='mic-btn'+(state==='recording'?' recording':state==='processing'?' processing':state==='confirm'?' confirm':state==='clarifying'?' alias-mode':'');
   r1.className='voice-ring-anim'+(state==='recording'?' active':'');
   r2.className='voice-ring-anim2'+(state==='recording'?' active':'');
   if(statusText!==undefined) status.textContent=statusText;
