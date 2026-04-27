@@ -370,7 +370,7 @@ label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margi
       <div class="cf-row"><div class="cf-icon">🏷</div><div class="cf-body"><div class="cf-label">Type</div><div class="cf-value" id="cv-type"></div></div></div>
       <div class="cf-row"><div class="cf-icon">🕐</div><div class="cf-body"><div class="cf-label">Date &amp; Time logged</div><div class="cf-value" id="cv-datetime"></div></div></div>
       <div class="cf-row"><div class="cf-icon">📁</div><div class="cf-body"><div class="cf-label">Project</div><div class="cf-value" id="cv-project"></div></div></div>
-      <div class="cf-row"><div class="cf-icon">🏗</div><div class="cf-body"><div class="cf-label">Contractor / Consultant</div><div class="cf-value" id="cv-contractor"></div></div></div>
+      <div id="cv-people-section"></div>
       <div class="cf-row"><div class="cf-icon">📝</div><div class="cf-body"><div class="cf-label">Item</div><div class="cf-value" id="cv-item"></div></div></div>
       <div class="cf-row"><div class="cf-icon">👤</div><div class="cf-body"><div class="cf-label">Party Responsible</div><div class="cf-value" id="cv-responsible"></div></div></div>
       <div class="cf-row"><div class="cf-icon">📅</div><div class="cf-body"><div class="cf-label">Due Date</div><div class="cf-value" id="cv-duedate"></div></div></div>
@@ -451,20 +451,15 @@ label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margi
     <div class="alias-add-card">
       <div class="alias-add-title">Add alias manually</div>
       <div class="alias-form-row">
-        <input type="text" id="new-alias-from" placeholder="What you say (e.g. Legendary)">
+        <input type="text" id="new-alias-from" placeholder="What you say (e.g. Brent)">
         <span class="alias-form-arrow">→</span>
-        <input type="text" id="new-alias-to" placeholder="Canonical name (e.g. Bluewater Marina)">
+        <input type="text" id="new-alias-to" placeholder="Full name (e.g. Brent Creary)">
       </div>
       <div class="alias-form-row">
-        <select id="new-alias-type">
-          <option value="project">Project</option>
-          <option value="contractor">Contractor</option>
-          <option value="responsible">Responsible party</option>
-          <option value="general">General</option>
-        </select>
+        <input type="text" id="new-alias-company" placeholder="Company (optional, e.g. ArchVeture)">
         <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="addAliasManually()">Add</button>
       </div>
-      <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Or say it: <em>"Remember that Legendary means Bluewater Marina"</em></p>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Or say it: <em>"Remember that Brent means Brent Creary from ArchVeture"</em></p>
     </div>
     <div id="alias-list"></div>
   </div>
@@ -506,12 +501,46 @@ label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margi
       </div>
     </div>
     <div class="detail-row">
-      <div class="detail-icon">🏗</div>
+      <div class="detail-icon">👤</div>
       <div class="detail-body">
-        <div class="detail-label">Contractor / Consultant</div>
-        <input type="text" class="detail-field" id="d-contractor" placeholder="Optional">
+        <div class="detail-label">Person 1</div>
+        <input type="text" class="detail-field" id="d-person1" placeholder="Full name (optional)" style="margin-bottom:6px">
+        <input type="text" class="detail-field" id="d-company1" placeholder="Company (optional)">
       </div>
     </div>
+    <div class="detail-row">
+      <div class="detail-icon">👤</div>
+      <div class="detail-body">
+        <div class="detail-label">Person 2</div>
+        <input type="text" class="detail-field" id="d-person2" placeholder="Full name (optional)" style="margin-bottom:6px">
+        <input type="text" class="detail-field" id="d-company2" placeholder="Company (optional)">
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">👤</div>
+      <div class="detail-body">
+        <div class="detail-label">Person 3</div>
+        <input type="text" class="detail-field" id="d-person3" placeholder="Full name (optional)" style="margin-bottom:6px">
+        <input type="text" class="detail-field" id="d-company3" placeholder="Company (optional)">
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">👤</div>
+      <div class="detail-body">
+        <div class="detail-label">Person 4</div>
+        <input type="text" class="detail-field" id="d-person4" placeholder="Full name (optional)" style="margin-bottom:6px">
+        <input type="text" class="detail-field" id="d-company4" placeholder="Company (optional)">
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">👤</div>
+      <div class="detail-body">
+        <div class="detail-label">Person 5</div>
+        <input type="text" class="detail-field" id="d-person5" placeholder="Full name (optional)" style="margin-bottom:6px">
+        <input type="text" class="detail-field" id="d-company5" placeholder="Company (optional)">
+      </div>
+    </div>
+
     <div class="detail-row">
       <div class="detail-icon">📝</div>
       <div class="detail-body">
@@ -890,7 +919,7 @@ Today: ${today}. Current datetime: ${nowDT}.
 
 APP CONTEXT:
 - Defined projects: ${projectNames().length?projectNames().join(', '):'None yet — user needs to add projects first'}
-- Known contractors: ${knownContractors().join(', ')||'none yet'}
+- Known companies: ${knownCompanies().join(', ')||'none yet'}
 - Known responsible parties: ${knownResponsible().join(', ')||'none yet'}
 - Alias table: ${buildAliasContext()}
 
@@ -905,8 +934,9 @@ POSSIBLE INTENTS:
 RULES:
 - Apply alias mappings automatically before returning data
 - For add_item: type must be "task", "meeting", or "event". Project MUST match one of the defined projects above (closest match). Both type and project are mandatory for add_item.
+- Extract up to 5 people from speech. For each person, use alias table to resolve full name and company. Use fields person1/company1 through person5/company5.
 - For add_project: extract the project name only
-- For add_alias: extract alias (what was said), canonical (what it maps to), and type (project/contractor/responsible/general)
+- For add_alias: extract alias (what was said), canonical (what it maps to), and company (what company they work for, if mentioned)
 - For edit_item or delete_item: describe what item to find in "target_description"
 - If you understand SOME but not ALL of a request, still return the intent but set "partial":true and list unclear fields in "unclear_fields" with a plain-English explanation of what you need clarified
 - If the request is completely unintelligible or irrelevant, return intent "unknown"
@@ -915,13 +945,13 @@ User said: "${transcript}"
 
 Respond ONLY with valid JSON. Examples:
 
-Add item (full): {"intent":"add_item","partial":false,"type":"meeting","project":"Bluewater Marina","contractor":"ABC Electric","item":"Review foundation specs","responsible":"Sarah","duedate":"2026-05-02","datetime":"${nowDT}","unclear_fields":[],"clarification_needed":null}
+Add item (full): {"intent":"add_item","partial":false,"type":"meeting","project":"Bluewater Marina","person1":"Brent Creary","company1":"ArchVeture","person2":"Sarah Jones","company2":"ABC Electric","item":"Review foundation specs","responsible":"Sarah Jones","duedate":"2026-05-02","datetime":"${nowDT}","unclear_fields":[],"clarification_needed":null}
 
-Add item (partial): {"intent":"add_item","partial":true,"type":"meeting","project":null,"contractor":"ABC Electric","item":"Review foundation specs","responsible":null,"duedate":null,"datetime":"${nowDT}","unclear_fields":["project","duedate"],"clarification_needed":"Which project is this meeting for, and when is it scheduled?"}
+Add item (partial): {"intent":"add_item","partial":true,"type":"meeting","project":null,"person1":"Brent Creary","company1":"ArchVeture","item":"Review foundation specs","responsible":null,"duedate":null,"datetime":"${nowDT}","unclear_fields":["project","duedate"],"clarification_needed":"Which project is this meeting for, and when is it scheduled?"}
 
 Add project: {"intent":"add_project","partial":false,"project_name":"Riverside Commons","unclear_fields":[],"clarification_needed":null}
 
-Add alias: {"intent":"add_alias","partial":false,"alias":"Legendary","canonical":"Bluewater Marina","alias_type":"project","unclear_fields":[],"clarification_needed":null}
+Add alias: {"intent":"add_alias","partial":false,"alias":"Brent","canonical":"Brent Creary","company":"ArchVeture","unclear_fields":[],"clarification_needed":null}
 
 Edit item: {"intent":"edit_item","partial":false,"target_description":"ABC Electric meeting about foundation","changes":{"duedate":"2026-05-10"},"unclear_fields":[],"clarification_needed":null}
 
@@ -974,11 +1004,14 @@ async function handleIntent(parsed, originalTranscript){
       type:parsed.type,
       datetime:parsed.datetime||nowLocal(),
       project:parsed.project||null,
-      contractor:parsed.contractor||null,
       item:parsed.item||null,
       responsible:parsed.responsible||null,
       duedate:parsed.duedate||null
     };
+    for(let i=1;i<=5;i++){
+      currentData['person'+i]=parsed['person'+i]||null;
+      currentData['company'+i]=parsed['company'+i]||null;
+    }
     prevData={};
     hideResponseBubble();
     showConfirmCard(false);
@@ -1009,10 +1042,10 @@ async function handleIntent(parsed, originalTranscript){
 
   // ADD ALIAS
   if(parsed.intent==='add_alias'){
-    const {alias:a,canonical:c,alias_type:t}=parsed;
+    const {alias:a,canonical:c,company:co}=parsed;
     if(!a||!c){showResponseBubble("I couldn't determine the alias mapping. Try: Remember that X means Y.",'error');appMode='initial';setMicState('idle','');return;}
-    await saveAlias(a,c,t||'general');
-    const msg=`Got it — I'll remember that "${a}" means "${c}".`;
+    await saveAlias(a,c,co||null);
+    const msg=co?`Got it — I'll remember that "${a}" means "${c}" from "${co}".`:`Got it — I'll remember that "${a}" means "${c}".`;
     showResponseBubble(esc(msg));
     speak(msg);
     appMode='initial';setMicState('idle','');
@@ -1081,7 +1114,7 @@ function findClosestItem(description){
   const words=q.split(/\s+/).filter(w=>w.length>2);
   let best=null,bestScore=0;
   items.forEach(i=>{
-    const hay=[i.item||i.action||'',i.project||'',i.contractor||'',i.responsible||''].join(' ').toLowerCase();
+    const hay=[i.item||i.action||'',i.project||'',i.person1||'',i.company1||'',i.person2||'',i.company2||'',i.responsible||''].join(' ').toLowerCase();
     const score=words.filter(w=>hay.includes(w)).length;
     if(score>bestScore){bestScore=score;best=i;}
   });
@@ -1094,7 +1127,7 @@ function buildUnderstoodSummary(parsed){
   if(parsed.type)parts.push(`type: <strong>${parsed.type}</strong>`);
   if(parsed.project)parts.push(`project: <strong>${esc(parsed.project)}</strong>`);
   if(parsed.item)parts.push(`item: <strong>${esc(parsed.item)}</strong>`);
-  if(parsed.contractor)parts.push(`contractor: <strong>${esc(parsed.contractor)}</strong>`);
+  if(parsed.person1)parts.push(`person: <strong>${esc(parsed.person1)}</strong>${parsed.company1?' from <strong>'+esc(parsed.company1)+'</strong>':''}`);if(parsed.person2)parts.push(`also: <strong>${esc(parsed.person2)}</strong>`);
   if(parsed.responsible)parts.push(`responsible: <strong>${esc(parsed.responsible)}</strong>`);
   if(parsed.duedate)parts.push(`due: <strong>${formatDate(parsed.duedate)}</strong>`);
   if(parsed.project_name)parts.push(`project name: <strong>${esc(parsed.project_name)}</strong>`);
@@ -1115,7 +1148,7 @@ Defined projects: ${projectNames().join(', ')||'none'}
 User said: "${transcript}"
 If confirmed: return {"confirmed":true}
 If edits: return ONLY changed fields plus confirmed:false.
-Fields: type (task/meeting/event), project, contractor, item, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
+Fields: type (task/meeting/event), project, person1, company1, person2, company2, person3, company3, person4, company4, person5, company5, item, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
 Respond ONLY with valid JSON.`;
   try{
     const res=await callClaude(prompt);
@@ -1147,13 +1180,16 @@ async function confirmSave(){
     id:Date.now().toString(),
     datetime:currentData.datetime||nowLocal(),
     project:currentData.project||null,
-    contractor:currentData.contractor||null,
     item:item_text,
     type:currentData.type,
     responsible:currentData.responsible||null,
     duedate:currentData.duedate||null,
     created:new Date().toISOString()
   };
+  for(let i=1;i<=5;i++){
+    item['person'+i]=currentData['person'+i]||null;
+    item['company'+i]=currentData['company'+i]||null;
+  }
   setSyncStatus('syncing');
   try{
     await sbCall('sb-save-item',item);
@@ -1232,15 +1268,10 @@ async function deleteProject(id){
 function renderAliases(){
   const el=document.getElementById('alias-list');
   if(!aliases.length){el.innerHTML='<div class="empty"><div class="empty-icon">🔤</div><p>No aliases yet.<br>Add one above or teach the app by voice.</p></div>';return;}
-  const types=['project','contractor','responsible','general'];
-  const labels={project:'Projects',contractor:'Contractors',responsible:'Responsible Parties',general:'General'};
   let html='';
-  types.forEach(type=>{
-    const group=aliases.filter(a=>a.type===type);if(!group.length)return;
-    html+='<div class="alias-type-header">'+labels[type]+'</div>';
-    group.forEach(a=>{
-      html+='<div class="alias-item"><div class="alias-text"><div class="alias-from">'+esc(a.alias)+'</div><div class="alias-to">→ '+esc(a.canonical)+'</div></div><span class="alias-type-badge alias-type-'+a.type+'">'+a.type+'</span><button class="alias-delete" data-id="'+a.id+'" aria-label="Delete alias">✕</button></div>';
-    });
+  aliases.sort((a,b)=>a.alias.localeCompare(b.alias)).forEach(a=>{
+    const company=a.company?'<div class="alias-to" style="color:var(--text-muted)">🏢 '+esc(a.company)+'</div>':'';
+    html+='<div class="alias-item"><div class="alias-text"><div class="alias-from">'+esc(a.alias)+'</div><div class="alias-to">→ '+esc(a.canonical)+'</div>'+company+'</div><button class="alias-delete" data-id="'+a.id+'" aria-label="Delete alias">✕</button></div>';
   });
   el.innerHTML=html;
   el.querySelectorAll('.alias-delete').forEach(btn=>{
@@ -1251,11 +1282,12 @@ function renderAliases(){
 async function addAliasManually(){
   const from=document.getElementById('new-alias-from').value.trim();
   const to=document.getElementById('new-alias-to').value.trim();
-  const type=document.getElementById('new-alias-type').value;
-  if(!from||!to){showToast('Both fields are required');return;}
-  await saveAlias(from,to,type);
+  const company=document.getElementById('new-alias-company').value.trim();
+  if(!from||!to){showToast('Both name fields are required');return;}
+  await saveAlias(from,to,company);
   document.getElementById('new-alias-from').value='';
   document.getElementById('new-alias-to').value='';
+  document.getElementById('new-alias-company').value='';
 }
 
 async function deleteAlias(id){
@@ -1270,18 +1302,22 @@ async function deleteAlias(id){
 // ── Alias & project helpers ───────────────────────────────────
 function buildAliasContext(){
   if(!aliases.length)return'No aliases defined yet.';
-  return aliases.map(a=>`"${a.alias}" → "${a.canonical}" (${a.type})`).join('\n');
+  return aliases.map(a=>{
+    const company=a.company?` from ${a.company}`:'';
+    return `"${a.alias}" → "${a.canonical}"${company}`;
+  }).join('\n');
 }
 function projectNames(){return projects.map(p=>p.name);}
-function knownContractors(){return[...new Set(items.map(i=>i.contractor).filter(Boolean))];}
+function knownCompanies(){return[...new Set([...items.map(i=>i.company1),...items.map(i=>i.company2),...items.map(i=>i.company3)].filter(Boolean))];}
 function knownResponsible(){return[...new Set(items.map(i=>i.responsible).filter(Boolean))];}
 
-async function saveAlias(aliasText,canonical,type){
-  const rec={id:Date.now().toString(),alias:aliasText,canonical,type,created:new Date().toISOString()};
+async function saveAlias(aliasText,canonical,company){
+  const rec={id:Date.now().toString(),alias:aliasText,canonical,company:company||null,created:new Date().toISOString()};
   try{
     await sbCall('sb-save-alias',rec);
     aliases.push(rec);
-    showToast(`Alias saved: "${aliasText}" → "${canonical}"`);
+    const msg=company?`Alias saved: "${aliasText}" → "${canonical}" (${company})`:`Alias saved: "${aliasText}" → "${canonical}"`;
+    showToast(msg);
     if(currentTab==='aliases')renderAliases();
   }catch(e){showToast('Could not save alias');}
 }
@@ -1315,7 +1351,6 @@ function showConfirmCard(showChanges){
     {key:'type',id:'cv-type',fmt:v=>v||null},
     {key:'datetime',id:'cv-datetime',fmt:v=>v?formatDateTime(v):null},
     {key:'project',id:'cv-project',fmt:v=>v||null},
-    {key:'contractor',id:'cv-contractor',fmt:v=>v||null},
     {key:'item',id:'cv-item',fmt:v=>v||null},
     {key:'responsible',id:'cv-responsible',fmt:v=>v||null},
     {key:'duedate',id:'cv-duedate',fmt:v=>v?formatDate(v):null},
@@ -1339,6 +1374,19 @@ function showConfirmCard(showChanges){
       el.className='cf-value empty';
     }
   });
+  // Render people section
+  const peopleEl=document.getElementById('cv-people-section');
+  let peopleHtml='';
+  for(let i=1;i<=5;i++){
+    const p=currentData['person'+i];
+    const c=currentData['company'+i];
+    if(p||c){
+      const badge=showChanges&&(p!==prevData['person'+i]||c!==prevData['company'+i])?'<span class="cf-changed">updated</span>':'<span class="cf-inferred">inferred</span>';
+      peopleHtml+=`<div class="cf-row"><div class="cf-icon">👤</div><div class="cf-body"><div class="cf-label">Person ${i}</div><div class="cf-value">${esc(p||'')}${c?' <span style="color:var(--text-muted)">· '+esc(c)+'</span>':''}${!showChanges?badge:''}</div></div></div>`;
+    }
+  }
+  if(peopleHtml)peopleEl.innerHTML=peopleHtml;
+  else peopleEl.innerHTML='';
   document.getElementById('confirm-card').classList.remove('hidden');
   document.getElementById('confirm-banner').classList.remove('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
@@ -1355,10 +1403,13 @@ function openDetail(id){
   document.getElementById('d-type').value=it.type||'task';
   document.getElementById('d-datetime').value=it.datetime||'';
   document.getElementById('d-project').value=it.project||'';
-  document.getElementById('d-contractor').value=it.contractor||'';
   document.getElementById('d-item').value=it.item||it.action||'';
   document.getElementById('d-responsible').value=it.responsible||'';
   document.getElementById('d-duedate').value=it.duedate||'';
+  for(let i=1;i<=5;i++){
+    document.getElementById('d-person'+i).value=it['person'+i]||'';
+    document.getElementById('d-company'+i).value=it['company'+i]||'';
+  }
   document.getElementById('detail-overlay').classList.add('open');
 }
 function closeDetail(){document.getElementById('detail-overlay').classList.remove('open');detailId=null;}
@@ -1369,11 +1420,14 @@ async function saveDetail(){
     type:document.getElementById('d-type').value,
     datetime:document.getElementById('d-datetime').value,
     project:document.getElementById('d-project').value||null,
-    contractor:document.getElementById('d-contractor').value.trim()||null,
     item:document.getElementById('d-item').value.trim(),
     responsible:document.getElementById('d-responsible').value.trim()||null,
     duedate:document.getElementById('d-duedate').value||null
   };
+  for(let i=1;i<=5;i++){
+    patch['person'+i]=document.getElementById('d-person'+i).value.trim()||null;
+    patch['company'+i]=document.getElementById('d-company'+i).value.trim()||null;
+  }
   setSyncStatus('syncing');
   try{
     await sbCall('sb-update-item',{id:detailId,patch});
@@ -1470,7 +1524,7 @@ function itemHTML(item,showProject=true){
       </div>
       <div class="item-meta">
         ${showProject&&item.project?`<span>📁 ${esc(item.project)}</span>`:''}
-        ${item.contractor?`<span>🏗 ${esc(item.contractor)}</span>`:''}
+        
         ${item.responsible?`<span>👤 ${esc(item.responsible)}</span>`:''}
         ${item.duedate?`<span>📅 Due ${formatDate(item.duedate)}</span>`:''}
         <span>🕐 ${formatDateTime(item.datetime)}</span>
@@ -1537,7 +1591,7 @@ function setFilter(f,btn){
 function renderAll(){
   const q=(document.getElementById('search-all').value||'').toLowerCase();
   let filtered=items.filter(i=>{
-    const match=!q||[i.item||i.action,i.project,i.contractor,i.responsible].join(' ').toLowerCase().includes(q);
+    const match=!q||[i.item||i.action,i.project,i.person1,i.company1,i.person2,i.company2,i.responsible].join(' ').toLowerCase().includes(q);
     if(!match)return false;
     if(currentStatusFilter==='all')return true;
     if(currentStatusFilter==='task'||currentStatusFilter==='meeting'||currentStatusFilter==='event')return i.type===currentStatusFilter;
@@ -1568,15 +1622,15 @@ function renderByProject(){
 
 function renderByContractor(){
   const q=(document.getElementById('search-contractor').value||'').toLowerCase();
-  const filtered=items.filter(i=>!q||(i.contractor||'').toLowerCase().includes(q)||(i.item||i.action||'').toLowerCase().includes(q));
-  const groups={};filtered.forEach(i=>{const k=i.contractor||'(No Contractor)';if(!groups[k])groups[k]=[];groups[k].push(i);});
+  const filtered=items.filter(i=>!q||[i.company1,i.company2,i.person1,i.person2,i.item||i.action].join(' ').toLowerCase().includes(q));
+  const groups={};filtered.forEach(i=>{const k=i.company1||i.company2||'(No Company)';if(!groups[k])groups[k]=[];groups[k].push(i);});
   const el=document.getElementById('list-contractor');
   if(!Object.keys(groups).length){el.innerHTML=`<div class="empty"><div class="empty-icon">🏗</div><p>No items found</p></div>`;return;}
   el.innerHTML='';
   Object.entries(groups).sort(([a],[b])=>a.localeCompare(b)).forEach(([c,its])=>{
     const gh=document.createElement('div');
     gh.className='group-header';
-    gh.innerHTML=`<div class="group-title">🏗 ${esc(c)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div>`;
+    gh.innerHTML=`<div class="group-title">🏢 ${esc(c)}</div><div class="group-count">${its.length} item${its.length!==1?'s':''}</div>`;
     el.appendChild(gh);
     const container=document.createElement('div');
     el.appendChild(container);
@@ -1742,17 +1796,23 @@ function closeConfirmDialog(){document.getElementById('confirm-dialog').classLis
 // ── Excel export ──────────────────────────────────────────────
 function exportExcel(){
   if(!items.length){showToast('No items to export');return;}
-  const data=items.map(i=>({
-    'Type':(i.type||'').charAt(0).toUpperCase()+(i.type||'').slice(1),
-    'Date/Time':i.datetime?new Date(i.datetime).toLocaleString():'',
-    'Project':i.project||'',
-    'Contractor/Consultant':i.contractor||'',
-    'Item':i.item||i.action||'',
-    'Party Responsible':i.responsible||'',
-    'Due Date':i.duedate?formatDate(i.duedate):'',
-    'Status':statusOf(i).charAt(0).toUpperCase()+statusOf(i).slice(1),
-    'Created':i.created?new Date(i.created).toLocaleString():''
-  }));
+  const data=items.map(i=>{
+    const row={
+      'Type':(i.type||'').charAt(0).toUpperCase()+(i.type||'').slice(1),
+      'Date/Time':i.datetime?new Date(i.datetime).toLocaleString():'',
+      'Project':i.project||'',
+      'Item':i.item||i.action||'',
+      'Party Responsible':i.responsible||'',
+      'Due Date':i.duedate?formatDate(i.duedate):'',
+      'Status':statusOf(i).charAt(0).toUpperCase()+statusOf(i).slice(1),
+    };
+    for(let n=1;n<=5;n++){
+      row['Person '+n]=i['person'+n]||'';
+      row['Company '+n]=i['company'+n]||'';
+    }
+    row['Created']=i.created?new Date(i.created).toLocaleString():'';
+    return row;
+  });
   const ws=XLSX.utils.json_to_sheet(data),wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Items');
   try{
