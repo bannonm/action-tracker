@@ -569,7 +569,10 @@ async function sbCall(action, body={}) {
 
 // ── State ────────────────────────────────────────────────────
 let items=[], aliases=[], projects=[], currentStatusFilter='all';
-let calYear, calMonth, calView='month', calWeekStart=null;
+let calView='month';
+const _now=new Date();
+let calYear=_now.getFullYear(), calMonth=_now.getMonth();
+let calWeekStart=(function(){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-d.getDay());return d;})();
 let detailId=null, currentTab='log';
 let recognition=null, isRecording=false;
 
