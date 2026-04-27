@@ -1393,6 +1393,12 @@ function renderAliases(){
   el.querySelectorAll('.alias-save-edit').forEach(btn=>{
     btn.addEventListener('click',()=>saveAliasEdit(btn.dataset.id));
   });
+  // Enter key in any alias edit field triggers save
+  el.querySelectorAll('.alias-edit-from,.alias-edit-to,.alias-edit-company').forEach(input=>{
+    input.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){e.preventDefault();saveAliasEdit(input.dataset.id);}
+    });
+  });
 }
 
 async function addAliasManually(){
