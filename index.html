@@ -684,6 +684,31 @@ function hideResponseBubble(){
 // ── Device detection & mic init ───────────────────────────────
 const IS_TOUCH=navigator.maxTouchPoints>0&&/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+
+// ── Audio session release (CarPlay resume workaround) ─────────
+// After SpeechRecognition ends, iOS holds the audio session open
+// briefly treating it like a call. We play a silent audio buffer
+// to signal to iOS that we're done with the microphone and audio
+// routing should return to whatever was playing before.
+function releaseAudioSession(){
+  try{
+    const AudioContext=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContext)return;
+    const ctx=new AudioContext();
+    // Create a tiny silent buffer and play it
+    const buf=ctx.createBuffer(1,1,22050);
+    const src=ctx.createBufferSource();
+    src.buffer=buf;
+    src.connect(ctx.destination);
+    src.start(0);
+    // Close the context shortly after — this releases the audio session
+    src.onended=()=>{ ctx.close(); };
+  }catch(e){
+    // Non-critical — silently ignore if not supported
+    console.log('Audio session release not supported:', e.message);
+  }
+}
+
 function initMicButton(){
   const btn=document.getElementById('mic-btn');
   updateSilentIcon();
@@ -749,7 +774,13 @@ function makeSR(onEnd,label){
     box.classList.toggle('has-text',display.trim().length>0);
     silenceTimer=setTimeout(()=>{if(recognition)recognition.stop();},2500);
   };
-  r.onend=()=>{if(silenceTimer)clearTimeout(silenceTimer);isRecording=false;recognition=null;onEnd(finalText.trim());};
+  r.onend=()=>{
+    if(silenceTimer)clearTimeout(silenceTimer);
+    isRecording=false;recognition=null;
+    // Release audio session so CarPlay resumes media playback
+    releaseAudioSession();
+    onEnd(finalText.trim());
+  };
   r.onerror=e=>{if(silenceTimer)clearTimeout(silenceTimer);isRecording=false;recognition=null;if(e.error!=='no-speech'&&e.error!=='aborted')showToast('Voice error: '+e.error);onEnd(finalText.trim());};
   return r;
 }
