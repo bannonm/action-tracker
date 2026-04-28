@@ -197,18 +197,18 @@ textarea{resize:vertical;min-height:80px;}
 .week-header-cell{background:var(--primary-light);padding:6px 4px;text-align:center;border-bottom:1px solid var(--border);border-right:1px solid var(--border);font-size:10px;font-weight:600;color:var(--primary);}
 .week-header-cell.today-col{background:var(--accent);color:white;}
 .week-time-label{background:var(--bg);padding:0 4px;display:flex;align-items:flex-start;justify-content:flex-end;font-size:9px;color:var(--text-muted);border-right:1px solid var(--border);border-bottom:1px solid var(--border);height:44px;padding-top:3px;}
-.week-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);height:44px;position:relative;background:var(--surface);}
+.week-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);height:52px;position:relative;background:var(--surface);overflow:visible;}
 .week-cell.today-col{background:#fafaf5;}
-.week-event{position:absolute;left:1px;right:1px;border-radius:3px;padding:1px 3px;font-size:9px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer;z-index:1;}
+.week-event{position:absolute;left:1px;right:1px;border-radius:3px;padding:2px 4px;font-size:9px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;cursor:pointer;z-index:2;min-height:20px;}
 .week-event-task{background:#E6F6F8;color:#14325A;border-left:2px solid #14325A;}
 .week-event-meeting{background:#E6F4EC;color:#1D7A4E;border-left:2px solid #1D7A4E;}
 .week-event-event{background:#FDF3E0;color:#8a5a00;border-left:2px solid #E8A020;}
 /* Day view */
 .day-grid{border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
-.day-time-row{display:grid;grid-template-columns:48px 1fr;border-bottom:1px solid var(--border);min-height:52px;}
+.day-time-row{display:grid;grid-template-columns:48px 1fr;border-bottom:1px solid var(--border);min-height:52px;position:relative;}
 .day-time-label{background:var(--bg);padding:4px 6px;display:flex;align-items:flex-start;justify-content:flex-end;font-size:10px;color:var(--text-muted);border-right:1px solid var(--border);}
 .day-cell{padding:2px 4px;position:relative;background:var(--surface);}
-.day-event{border-radius:4px;padding:3px 6px;font-size:11px;font-weight:600;margin-bottom:2px;cursor:pointer;}
+.day-event{border-radius:4px;padding:6px 8px;font-size:11px;font-weight:500;margin-bottom:2px;cursor:pointer;line-height:1.4;}
 .day-event-task{background:#E6F6F8;color:#14325A;border-left:3px solid #14325A;}
 .day-event-meeting{background:#E6F4EC;color:#1D7A4E;border-left:3px solid #1D7A4E;}
 .day-event-event{background:#FDF3E0;color:#8a5a00;border-left:3px solid #E8A020;}
@@ -425,7 +425,9 @@ label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margi
         Inferred item
       </div>
       <div class="cf-row"><div class="cf-icon">🏷</div><div class="cf-body"><div class="cf-label">Type</div><div class="cf-value" id="cv-type"></div></div></div>
-      <div class="cf-row"><div class="cf-icon">🕐</div><div class="cf-body"><div class="cf-label">Date &amp; Time logged</div><div class="cf-value" id="cv-datetime"></div></div></div>
+      <div class="cf-row"><div class="cf-icon">🕐</div><div class="cf-body"><div class="cf-label">Date logged</div><div class="cf-value" id="cv-datetime"></div></div></div>
+      <div class="cf-row"><div class="cf-icon">▶️</div><div class="cf-body"><div class="cf-label">Start Time</div><div class="cf-value" id="cv-starttime"></div></div></div>
+      <div class="cf-row"><div class="cf-icon">⏹️</div><div class="cf-body"><div class="cf-label">End Time</div><div class="cf-value" id="cv-endtime"></div></div></div>
       <div class="cf-row"><div class="cf-icon">📁</div><div class="cf-body"><div class="cf-label">Project</div><div class="cf-value" id="cv-project"></div></div></div>
       <div id="cv-people-section"></div>
       <div class="cf-row"><div class="cf-icon">📝</div><div class="cf-body"><div class="cf-label">Item</div><div class="cf-value" id="cv-item"></div></div></div>
@@ -544,8 +546,22 @@ label{display:block;font-size:12px;font-weight:500;color:var(--text-muted);margi
     <div class="detail-row">
       <div class="detail-icon">🕐</div>
       <div class="detail-body">
-        <div class="detail-label">Date &amp; Time logged</div>
+        <div class="detail-label">Date logged</div>
         <input type="datetime-local" class="detail-field" id="d-datetime">
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">▶️</div>
+      <div class="detail-body">
+        <div class="detail-label">Start Time</div>
+        <input type="datetime-local" class="detail-field" id="d-starttime">
+      </div>
+    </div>
+    <div class="detail-row">
+      <div class="detail-icon">⏹️</div>
+      <div class="detail-body">
+        <div class="detail-label">End Time</div>
+        <input type="datetime-local" class="detail-field" id="d-endtime">
       </div>
     </div>
     <div class="detail-row">
@@ -660,6 +676,7 @@ let calView='month';
 const _now=new Date();
 let calYear=_now.getFullYear(), calMonth=_now.getMonth();
 let calWeekStart=(function(){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-d.getDay());return d;})();
+let selectedCalDate=null; // tracks last tapped day in month view
 let detailId=null, currentTab='log';
 let recognition=null, isRecording=false;
 
@@ -1068,6 +1085,7 @@ RULES:
 - Apply alias mappings automatically before returning data
 - For add_item: type must be "task", "meeting", or "event". Project MUST match one of the defined projects above (closest match). Both type and project are mandatory for add_item.
 - Extract up to 5 people from speech. For each person, use alias table to resolve full name and company. Use fields person1/company1 through person5/company5.
+- For starttime and endtime: extract from speech like "7am to 1pm today" or "from 9am to 5pm next Friday". Format as YYYY-MM-DDTHH:MM. If only a start time is mentioned, set starttime but leave endtime null. If a duration is mentioned (e.g. "2 hour meeting"), calculate endtime from starttime + duration.
 - For add_project: extract the project name only
 - For add_alias: extract alias (what was said), canonical (what it maps to), and company (what company they work for, if mentioned)
 - For edit_item or delete_item: describe what item to find in "target_description"
@@ -1078,7 +1096,7 @@ User said: "${transcript}"
 
 Respond ONLY with valid JSON. Examples:
 
-Add item (full): {"intent":"add_item","partial":false,"type":"meeting","project":"Bluewater Marina","person1":"Brent Creary","company1":"ArchVeture","person2":"Sarah Jones","company2":"ABC Electric","item":"Review foundation specs","responsible":"Sarah Jones","duedate":"2026-05-02","datetime":"${nowDT}","unclear_fields":[],"clarification_needed":null}
+Add item (full): {"intent":"add_item","partial":false,"type":"meeting","project":"Bluewater Marina","person1":"Brent Creary","company1":"ArchVeture","person2":"Sarah Jones","company2":"ABC Electric","item":"Review foundation specs","responsible":"Sarah Jones","duedate":"2026-05-02","starttime":"2026-05-02T09:00","endtime":"2026-05-02T10:00","datetime":"${nowDT}","unclear_fields":[],"clarification_needed":null}
 
 Add item (partial): {"intent":"add_item","partial":true,"type":"meeting","project":null,"person1":"Brent Creary","company1":"ArchVeture","item":"Review foundation specs","responsible":null,"duedate":null,"datetime":"${nowDT}","unclear_fields":["project","duedate"],"clarification_needed":"Which project is this meeting for, and when is it scheduled?"}
 
@@ -1151,6 +1169,8 @@ async function handleIntent(parsed, originalTranscript){
     currentData={
       type:parsed.type,
       datetime:parsed.datetime||nowLocal(),
+      starttime:parsed.starttime||parsed.datetime||nowLocal(),
+      endtime:parsed.endtime||null,
       project:parsed.project||null,
       item:parsed.item||null,
       responsible:parsed.responsible||null,
@@ -1327,6 +1347,8 @@ async function confirmSave(){
   const item={
     id:Date.now().toString(),
     datetime:currentData.datetime||nowLocal(),
+    starttime:currentData.starttime||currentData.datetime||nowLocal(),
+    endtime:currentData.endtime||null,
     project:currentData.project||null,
     item:item_text,
     type:currentData.type,
@@ -1549,6 +1571,8 @@ function showConfirmCard(showChanges){
   const fields=[
     {key:'type',id:'cv-type',fmt:v=>v||null},
     {key:'datetime',id:'cv-datetime',fmt:v=>v?formatDateTime(v):null},
+    {key:'starttime',id:'cv-starttime',fmt:v=>v?formatDateTime(v):null},
+    {key:'endtime',id:'cv-endtime',fmt:v=>v?formatDateTime(v):null},
     {key:'project',id:'cv-project',fmt:v=>v||null},
     {key:'item',id:'cv-item',fmt:v=>v||null},
     {key:'responsible',id:'cv-responsible',fmt:v=>v||null},
@@ -1601,6 +1625,8 @@ function openDetail(id){
   detailId=id;
   document.getElementById('d-type').value=it.type||'task';
   document.getElementById('d-datetime').value=it.datetime||'';
+  document.getElementById('d-starttime').value=it.starttime||it.datetime||'';
+  document.getElementById('d-endtime').value=it.endtime||'';
   document.getElementById('d-project').value=it.project||'';
   document.getElementById('d-item').value=it.item||it.action||'';
   document.getElementById('d-responsible').value=it.responsible||'';
@@ -1618,6 +1644,8 @@ async function saveDetail(){
   const patch={
     type:document.getElementById('d-type').value,
     datetime:document.getElementById('d-datetime').value,
+    starttime:document.getElementById('d-starttime').value||null,
+    endtime:document.getElementById('d-endtime').value||null,
     project:document.getElementById('d-project').value||null,
     item:document.getElementById('d-item').value.trim(),
     responsible:document.getElementById('d-responsible').value.trim()||null,
@@ -1842,6 +1870,14 @@ function setCalView(view,btn){
   calView=view;
   document.querySelectorAll('.cal-view-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
+  // If switching to day or week view and user tapped a day in month view, navigate there
+  if(selectedCalDate && (view==='day' || view==='week')){
+    const d=new Date(selectedCalDate+'T00:00:00');
+    calWeekStart=new Date(d);
+    calWeekStart.setHours(0,0,0,0);
+    if(view==='week') calWeekStart.setDate(calWeekStart.getDate()-calWeekStart.getDay());
+    calYear=d.getFullYear(); calMonth=d.getMonth();
+  }
   renderCalendar();
 }
 
@@ -1885,7 +1921,11 @@ function renderCalendar(){
 }
 
 function itemsForDate(dateStr){
-  return items.filter(i=>i.duedate===dateStr||(i.datetime&&i.datetime.slice(0,10)===dateStr));
+  return items.filter(i=>
+    i.duedate===dateStr||
+    (i.starttime&&i.starttime.slice(0,10)===dateStr)||
+    (i.datetime&&i.datetime.slice(0,10)===dateStr)
+  );
 }
 
 function dateStr(d){
@@ -1932,10 +1972,23 @@ function renderWeekView(body,days){
       const ds=dateStr(day);
       const isToday=day.getTime()===today.getTime();
       const its=itemsForDate(ds).filter(i=>{
-        const itemHour=i.datetime?new Date(i.datetime).getHours():null;
+        const st=i.starttime||i.datetime;
+        const itemHour=st?new Date(st).getHours():null;
         return itemHour===h;
       });
-      const evHtml=its.map(i=>`<div class="week-event week-event-${i.type||'task'}" data-id="${i.id}">${esc(i.item||i.action||'')}</div>`).join('');
+      const evHtml=its.map(i=>{
+        const st=i.starttime||i.datetime;
+        const et=i.endtime;
+        const startH=st?new Date(st).getHours():h;
+        const startMin=st?new Date(st).getMinutes():0;
+        const endH=et?new Date(et).getHours():startH+1;
+        const endMin=et?new Date(et).getMinutes():0;
+        const spanRows=Math.max(1,endH-startH+(endMin>0?1:0));
+        const topPct=(startMin/60)*100;
+        const heightPct=Math.max(100,(endH*60+endMin-(startH*60+startMin))/60*100);
+        const timeLabel=st?new Date(st).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}):'';
+        return `<div class="week-event week-event-${i.type||'task'}" data-id="${i.id}" style="top:${topPct}%;min-height:${Math.min(heightPct,200)}%">${timeLabel} ${esc(i.item||i.action||'')}</div>`;
+      }).join('');
       rowsHtml+=`<div class="week-cell${isToday?' today-col':''}">${evHtml}</div>`;
     });
   });
@@ -1954,10 +2007,25 @@ function renderDayView(body){
   hours.forEach(h=>{
     const label=h===0?'12am':h<12?`${h}am`:h===12?'12pm':`${h-12}pm`;
     const its=itemsForDate(ds).filter(i=>{
-      const itemHour=i.datetime?new Date(i.datetime).getHours():null;
+      const st=i.starttime||i.datetime;
+      const itemHour=st?new Date(st).getHours():null;
       return itemHour===h;
     });
-    const evHtml=its.map(i=>`<div class="day-event day-event-${i.type||'task'}" data-id="${i.id}">${typeBadge(i.type)} ${esc(i.item||i.action||'')}</div>`).join('');
+    const evHtml=its.map(i=>{
+      const st=i.starttime||i.datetime;
+      const et=i.endtime;
+      const startMin=st?new Date(st).getMinutes():0;
+      const startH=st?new Date(st).getHours():h;
+      const endH=et?new Date(et).getHours():startH+1;
+      const endMin=et?new Date(et).getMinutes():0;
+      const durationMins=et?(endH*60+endMin)-(startH*60+startMin):60;
+      const heightPx=Math.max(44,durationMins*0.9);
+      const topPx=(startMin/60)*52;
+      const startLabel=st?new Date(st).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}):'';
+      const endLabel=et?new Date(et).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true}):'';
+      const timeRange=endLabel?`${startLabel} – ${endLabel}`:startLabel;
+      return `<div class="day-event day-event-${i.type||'task'}" data-id="${i.id}" style="min-height:${heightPx}px;margin-top:${topPx}px">${typeBadge(i.type)} <strong>${timeRange}</strong><br>${esc(i.item||i.action||'')}</div>`;
+    }).join('');
     html+=`<div class="day-time-row"><div class="day-time-label">${label}</div><div class="day-cell">${evHtml}</div></div>`;
   });
   // All-day items (no specific time)
@@ -1972,6 +2040,7 @@ function renderDayView(body){
 }
 
 function showCalDay(ds){
+  selectedCalDate=ds; // remember for day view navigation
   const el=document.getElementById('cal-day-items');
   const its=itemsForDate(ds);
   if(!its.length){el.innerHTML='';return;}
@@ -1998,7 +2067,10 @@ function exportExcel(){
   const data=items.map(i=>{
     const row={
       'Type':(i.type||'').charAt(0).toUpperCase()+(i.type||'').slice(1),
-      'Date/Time':i.datetime?new Date(i.datetime).toLocaleString():'',
+      'Date logged':i.datetime?new Date(i.datetime).toLocaleString():'',
+      'Start Time':i.starttime?new Date(i.starttime).toLocaleString():'',
+      'End Time':i.endtime?new Date(i.endtime).toLocaleString():'',
+      'Duration':i.starttime&&i.endtime?Math.round((new Date(i.endtime)-new Date(i.starttime))/60000)+' min':'',
       'Project':i.project||'',
       'Item':i.item||i.action||'',
       'Party Responsible':i.responsible||'',
@@ -2047,6 +2119,22 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 initMicButton();
 initTextInput();
 loadAll();
+
+// Request microphone permission on load so iOS prompts once at startup
+// rather than interrupting mid-recording
+(function requestMicPermission(){
+  if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+    navigator.mediaDevices.getUserMedia({audio:true})
+      .then(stream=>{
+        // Permission granted — immediately stop the stream, we just needed the grant
+        stream.getTracks().forEach(t=>t.stop());
+      })
+      .catch(()=>{
+        // Permission denied or not available — voice input won't work
+        // App will still function via text input
+      });
+  }
+})();
 </script>
 </body>
 </html>
