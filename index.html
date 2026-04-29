@@ -51,10 +51,12 @@ body{font-family:-apple-system,'SF Pro Text',sans-serif;background:var(--bg);col
 /* ── Screen container ── */
 .screen-container{
   position:fixed;
-  top:calc(52px + var(--safe-top));
-  bottom:calc(var(--tab-height) + var(--safe-bottom));
+  top:0;
+  bottom:0;
   left:0;right:0;
   overflow:hidden;
+  padding-top:calc(52px + var(--safe-top));
+  padding-bottom:calc(var(--tab-height) + var(--safe-bottom));
 }
 .screen{
   position:absolute;top:0;left:0;right:0;bottom:0;
@@ -80,12 +82,13 @@ body{font-family:-apple-system,'SF Pro Text',sans-serif;background:var(--bg);col
 /* ── Tab bar ── */
 .tab-bar{
   position:fixed;bottom:0;left:0;right:0;
-  height:calc(var(--tab-height) + var(--safe-bottom));
   background:var(--surface);
   border-top:1px solid var(--border);
   display:flex;align-items:flex-start;justify-content:space-around;
-  padding-top:8px;
-  padding-bottom:max(var(--safe-bottom), 0px);
+  padding-top:10px;
+  padding-bottom:env(safe-area-inset-bottom, 8px);
+  padding-left:env(safe-area-inset-left, 0px);
+  padding-right:env(safe-area-inset-right, 0px);
   z-index:100;
   box-sizing:border-box;
 }
@@ -539,45 +542,23 @@ textarea{resize:vertical;min-height:80px;}
       </div>
 
       <div class="settings-section">
-        <div class="settings-section-title">Projects</div>
-        <div class="project-add-card">
-          <div class="project-add-title">Add a project</div>
-          <div class="alias-form-row">
-            <input type="text" id="new-project-name" placeholder="Project name (e.g. Bluewater Marina)">
-            <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="addProjectManually()">Add</button>
+        <div class="settings-section-title">Data</div>
+        <div class="settings-row" onclick="openSubPage('projects')" style="cursor:pointer;">
+          <div class="settings-label">📁 Projects</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="settings-value" id="projects-count"></div>
+            <div class="settings-chevron">›</div>
           </div>
         </div>
-        <div id="project-list"></div>
+        <div class="settings-row" onclick="openSubPage('aliases')" style="cursor:pointer;">
+          <div class="settings-label">🔤 Aliases</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div class="settings-value" id="aliases-count"></div>
+            <div class="settings-chevron">›</div>
+          </div>
+        </div>
       </div>
 
-      <div class="settings-section">
-        <div class="settings-section-title">Aliases</div>
-        <div class="alias-add-card">
-          <div class="alias-add-title">Add alias manually</div>
-          <div class="alias-form-row">
-            <input type="text" id="new-alias-from" placeholder="What you say (e.g. Brent)">
-            <span class="alias-form-arrow">→</span>
-            <input type="text" id="new-alias-to" placeholder="Full name (e.g. Brent Creary)">
-          </div>
-          <div class="alias-form-row">
-            <input type="text" id="new-alias-company" placeholder="Company (optional)">
-          </div>
-          <div class="alias-form-row">
-            <input type="email" id="new-alias-email" placeholder="Email for calendar invites (optional)">
-            <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="addAliasManually()">Add</button>
-          </div>
-          <p style="font-size:12px;color:var(--text-muted);margin-top:4px">Or say: <em>"Remember that Brent means Brent Creary from ArchVeture"</em></p>
-        </div>
-        <div id="alias-list"></div>
-      </div>
-
-      <div class="settings-section">
-        <div class="settings-section-title">Help</div>
-        <div class="settings-row" onclick="openInstructions()" style="cursor:pointer;">
-          <div class="settings-label">App Instructions</div>
-          <div class="settings-chevron">›</div>
-        </div>
-      </div>
       <div class="settings-section">
         <div class="settings-section-title">Help</div>
         <div class="settings-row" onclick="openInstructions()" style="cursor:pointer;">
@@ -872,6 +853,7 @@ async function loadAll(){
   updateHeader();
   populateProjectDropdown();
   renderAll(); // Always re-render after load
+  updateSettingsCounts();
 }
 
 // ── Claude API ────────────────────────────────────────────────
@@ -1598,7 +1580,7 @@ async function addProjectManually(){
     await sbCall('sb-save-project',rec);
     projects.push(rec);
     document.getElementById('new-project-name').value='';
-    renderProjects();populateProjectDropdown();
+    renderProjects();populateProjectDropdown();updateSettingsCounts();
     showToast('Project "'+name+'" added');
   }catch(e){showToast('Could not save project');}
 }
@@ -1622,7 +1604,7 @@ async function deleteProject(id){
     try{
       await sbCall('sb-delete-project',{id});
       projects=projects.filter(p=>p.id!==id);
-      renderProjects();populateProjectDropdown();showToast('Project deleted');
+      renderProjects();populateProjectDropdown();updateSettingsCounts();showToast('Project deleted');
     }catch(e){showToast('Delete failed');}
   });
 }
@@ -2353,6 +2335,23 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 initMicButton();
 initTextInput();
 updateSilentIcon();
+
+// Measure actual header height and adjust screen container
+function adjustLayout(){
+  const header=document.querySelector('.header');
+  const tabBar=document.querySelector('.tab-bar');
+  const container=document.querySelector('.screen-container');
+  if(header&&container){
+    const hh=header.getBoundingClientRect().height;
+    const th=tabBar?tabBar.getBoundingClientRect().height:72;
+    container.style.paddingTop=hh+'px';
+    container.style.paddingBottom=th+'px';
+  }
+}
+// Run after layout settles
+setTimeout(adjustLayout,100);
+window.addEventListener('resize',adjustLayout);
+
 showScreen('items');
 // Init voice list after voices load
 if(window.speechSynthesis){
@@ -2389,21 +2388,40 @@ function generateICS(item){
   const attendees=[];
   for(let i=1;i<=5;i++){
     if(item['person'+i]){
-      const alias=aliases.find(a=>a.canonical===item['person'+i]);
+      const personName=item['person'+i];
+      // Check aliases array for matching canonical name with email
+      const alias=aliases.find(a=>a.canonical===personName||a.alias===personName);
       const email=alias?.email||'';
-      if(email) attendees.push(`ATTENDEE;CN="${item['person'+i]}":mailto:${email}`);
+      if(email){
+        // RFC 5545 compliant ATTENDEE line
+        attendees.push('ATTENDEE;CUTYPE=INDIVIDUAL;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;CN='+personName+':mailto:'+email);
+      }
     }
   }
+  // Add organizer if we have a responsible party with email
+  const orgAlias=item.responsible?aliases.find(a=>a.canonical===item.responsible||a.alias===item.responsible):null;
+  const orgLine=orgAlias?.email?'ORGANIZER;CN='+item.responsible+':mailto:'+orgAlias.email:'';
+
   const ics=[
-    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Altius//EN',
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Altius//Altius App//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:REQUEST',
     'BEGIN:VEVENT',
-    `DTSTART:${fmt(st)}`,
-    `DTEND:${fmt(et)}`,
-    `SUMMARY:${item.item||item.action||'Altius Event'}`,
-    `DESCRIPTION:${item.item||''}`,
-    `LOCATION:${item.project||''}`,
+    'UID:altius-'+item.id+'@altius.app',
+    'DTSTAMP:'+fmt(new Date().toISOString()),
+    'DTSTART:'+fmt(st),
+    'DTEND:'+fmt(et),
+    'SUMMARY:'+(item.item||item.action||'Altius Event').replace(/,/g,'\,'),
+    'DESCRIPTION:'+(item.item||'').replace(/,/g,'\,'),
+    'LOCATION:'+(item.project||'').replace(/,/g,'\,'),
+    ...(orgLine?[orgLine]:[]),
     ...attendees,
-    'END:VEVENT','END:VCALENDAR'
+    'STATUS:CONFIRMED',
+    'SEQUENCE:0',
+    'END:VEVENT',
+    'END:VCALENDAR'
   ].join('\r\n');
   const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});
   const url=URL.createObjectURL(blob);
@@ -2569,6 +2587,23 @@ function maybeGenerateInviteAfterSave(item){
 // ── openInvitePicker alias ────────────────────────────────────
 function openInvitePicker(){openMeetingInvitePicker();}
 
+
+// ── Settings sub-pages ─────────────────────────────────────
+function openSubPage(page){
+  document.getElementById('subpage-'+page).classList.add('open');
+  if(page==='projects'){renderProjects();updateSettingsCounts();}
+  if(page==='aliases'){renderAliases();updateSettingsCounts();}
+}
+function closeSubPage(page){
+  document.getElementById('subpage-'+page).classList.remove('open');
+}
+function updateSettingsCounts(){
+  const pc=document.getElementById('projects-count');
+  const ac=document.getElementById('aliases-count');
+  if(pc)pc.textContent=projects.length+' project'+(projects.length!==1?'s':'');
+  if(ac)ac.textContent=aliases.length+' alias'+(aliases.length!==1?'es':'');
+}
+
 // ── Mic overlay tap outside to close ─────────────────────────
 function handleMicOverlayTap(e){
   if(e.target===document.getElementById('mic-overlay')){
@@ -2619,9 +2654,7 @@ async function confirmSave(){
 }
 
 // ── Instructions page ─────────────────────────────────────────
-function openInstructions(){
-  document.getElementById('instructions-overlay').classList.add('open');
-}
+
 function closeInstructions(){
   document.getElementById('instructions-overlay').classList.remove('open');
 }
@@ -2721,6 +2754,52 @@ document.addEventListener('click',function(e){
       <p style="margin-bottom:6px;">• <strong>Editing items</strong> — tap any item tile to open the full edit card.</p>
       <p style="margin-bottom:6px;">• <strong>Swipe left</strong> on any item to reveal Edit, Share, and Delete.</p>
     </div>
+  </div>
+</div>
+
+<!-- Projects sub-page -->
+<div class="detail-overlay" id="subpage-projects">
+  <div class="detail-card" style="max-height:92vh;">
+    <div class="detail-header">
+      <div class="detail-title">Projects</div>
+      <button class="detail-close" onclick="closeSubPage('projects')">✕</button>
+    </div>
+    <div class="project-add-card">
+      <div class="project-add-title">Add a project</div>
+      <div class="alias-form-row">
+        <input type="text" id="new-project-name" placeholder="Project name (e.g. Bluewater Marina)">
+        <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="addProjectManually()">Add</button>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:6px">Projects are matched automatically from your speech.</p>
+    </div>
+    <div id="project-list"></div>
+  </div>
+</div>
+
+<!-- Aliases sub-page -->
+<div class="detail-overlay" id="subpage-aliases">
+  <div class="detail-card" style="max-height:92vh;">
+    <div class="detail-header">
+      <div class="detail-title">Aliases</div>
+      <button class="detail-close" onclick="closeSubPage('aliases')">✕</button>
+    </div>
+    <div class="alias-add-card">
+      <div class="alias-add-title">Add alias manually</div>
+      <div class="alias-form-row">
+        <input type="text" id="new-alias-from" placeholder="What you say (e.g. Brent)">
+        <span class="alias-form-arrow">→</span>
+        <input type="text" id="new-alias-to" placeholder="Full name (e.g. Brent Creary)">
+      </div>
+      <div class="alias-form-row">
+        <input type="text" id="new-alias-company" placeholder="Company (optional)">
+      </div>
+      <div class="alias-form-row">
+        <input type="email" id="new-alias-email" placeholder="Email for calendar invites (optional)">
+        <button class="btn btn-primary btn-sm" style="flex-shrink:0" onclick="addAliasManually()">Add</button>
+      </div>
+      <p style="font-size:12px;color:var(--text-muted);margin-top:4px">Or say: <em>"Remember that Brent means Brent Creary from ArchVeture"</em></p>
+    </div>
+    <div id="alias-list"></div>
   </div>
 </div>
 </body>
