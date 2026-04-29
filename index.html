@@ -85,8 +85,9 @@ body{font-family:-apple-system,'SF Pro Text',sans-serif;background:var(--bg);col
   border-top:1px solid var(--border);
   display:flex;align-items:flex-start;justify-content:space-around;
   padding-top:8px;
-  padding-bottom:var(--safe-bottom);
+  padding-bottom:max(var(--safe-bottom), 0px);
   z-index:100;
+  box-sizing:border-box;
 }
 .tab-btn{
   display:flex;flex-direction:column;align-items:center;gap:3px;
@@ -502,11 +503,11 @@ textarea{resize:vertical;min-height:80px;}
           <div class="share-option-desc">Download all items as a spreadsheet and share via iOS</div>
         </div>
       </div>
-      <div class="share-option" onclick="showToast('Select an item to create a meeting invite')">
+      <div class="share-option" onclick="openMeetingInvitePicker()">
         <div class="share-icon-circle" style="background:#E6F4EC;">📅</div>
         <div class="share-option-text">
           <div class="share-option-title">Meeting Invite</div>
-          <div class="share-option-desc">Create an ICS calendar invite from an item — tap an item tile first</div>
+          <div class="share-option-desc">Select an item to create an ICS calendar invite</div>
         </div>
       </div>
       <div class="share-option" style="opacity:0.5;cursor:default;">
@@ -570,6 +571,20 @@ textarea{resize:vertical;min-height:80px;}
         <div id="alias-list"></div>
       </div>
 
+      <div class="settings-section">
+        <div class="settings-section-title">Help</div>
+        <div class="settings-row" onclick="openInstructions()" style="cursor:pointer;">
+          <div class="settings-label">App Instructions</div>
+          <div class="settings-chevron">›</div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <div class="settings-section-title">Help</div>
+        <div class="settings-row" onclick="openInstructions()" style="cursor:pointer;">
+          <div class="settings-label">App Instructions</div>
+          <div class="settings-chevron">›</div>
+        </div>
+      </div>
       <div class="settings-section">
         <div class="settings-section-title">App Info</div>
         <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">1.0.0</div></div>
@@ -685,6 +700,91 @@ textarea{resize:vertical;min-height:80px;}
   </div>
 </div>
 
+
+
+<!-- Instructions overlay -->
+<div class="confirm-dialog-overlay" id="instructions-overlay" style="z-index:280;align-items:flex-end;padding:0;">
+  <div style="background:var(--surface);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div style="font-size:17px;font-weight:700;color:var(--text);">App Instructions</div>
+      <button onclick="closeInstructions()" style="background:#E6F6F8;border:none;border-radius:50%;width:32px;height:32px;font-size:18px;color:var(--primary);cursor:pointer;">✕</button>
+    </div>
+    <div style="overflow-y:auto;padding:20px;-webkit-overflow-scrolling:touch;">
+
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin-bottom:8px;">What is Altius?</div>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px;">Altius is a voice-first project log for construction and development professionals. Use it to capture action items, meetings, and site events in real time — from the field, in your truck, or in a meeting room. Every item is timestamped, linked to a project, and synced across all your devices instantly.</p>
+
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin-bottom:8px;">Logging an Item</div>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:8px;">Tap the microphone button at the bottom of the screen. Speak naturally — Claude AI parses your speech into structured fields. You'll see a confirmation card before anything is saved. Tap Save or say "yes" to confirm.</p>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px;">You can also type directly in the text box if voice is not practical.</p>
+
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin-bottom:8px;">Item Types</div>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:4px;"><strong>Task</strong> — something that needs to be done. Claude assigns this when you describe a follow-up or deliverable.</p>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:4px;"><strong>Meeting</strong> — a future or recurring meeting. Include who is attending and when.</p>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px;"><strong>Event</strong> — something that has already happened. Use this for site visits, incidents, inspections, or conversations you want on record.</p>
+
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin-bottom:8px;">Voice Commands Reference</div>
+
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">LOG AN ITEM</div>
+        <p style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic;">"Meeting with Brent and Sarah from Legendary next Friday to review the foundation RFI. Due end of month."</p>
+      </div>
+
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">LOG WITH TIME RANGE</div>
+        <p style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic;">"Create an event from 7am to 1pm today — site inspection at Bluewater Marina with ABC Electric."</p>
+      </div>
+
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">ADD A PROJECT</div>
+        <p style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic;">"Add a new project called Riverside Commons."</p>
+      </div>
+
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">TEACH AN ALIAS</div>
+        <p style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic;">"Remember that Legendary means Bluewater Marina."</p>
+        <p style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic;">"Remember that Brent means Brent Creary from ArchVeture."</p>
+      </div>
+
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">EDIT AN ITEM</div>
+        <p style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic;">"Change the due date on the ABC Electric foundation meeting to May 15th."</p>
+      </div>
+
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">DELETE AN ITEM</div>
+        <p style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic;">"Delete the task about the RFI for Bluewater Marina."</p>
+      </div>
+
+      <div style="background:var(--bg);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:4px;">CREATE MEETING INVITE</div>
+        <p style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic;">"Schedule a meeting with Brent next Tuesday at 2pm and send a calendar invite."</p>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin-bottom:8px;">Aliases</div>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px;">Aliases let you use shorthand names that Altius automatically resolves. Say "Legendary" and Altius logs it as "Bluewater Marina." Add aliases in Settings or by voice. Include email addresses to enable automatic population of calendar invites.</p>
+
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin-bottom:8px;">Calendar</div>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:16px;">Switch between Month, Week, and Day views. Tap a day in Month view then switch to Day view to jump directly to that date. Events with start and end times appear as time blocks in Week and Day view.</p>
+
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--primary);margin-bottom:8px;">Share & Export</div>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:4px;"><strong>Export to Excel</strong> — downloads all items as a spreadsheet including all people, companies, times, and duration. Use for billing analysis and reporting.</p>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:24px;"><strong>Meeting Invite</strong> — select any item to generate an ICS calendar file. iOS opens it directly in your Calendar app, pre-populated with attendees whose email addresses are stored in your alias list.</p>
+
+    </div>
+  </div>
+</div>
+<!-- Meeting invite picker overlay -->
+<div class="confirm-dialog-overlay" id="invite-picker-overlay" style="z-index:280;">
+  <div style="background:var(--surface);border-radius:var(--radius);width:100%;max-width:400px;max-height:70vh;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:16px;font-weight:700;color:var(--text);">Select Item</div>
+      <button onclick="document.getElementById('invite-picker-overlay').classList.remove('open')" style="background:none;border:none;font-size:20px;color:var(--text-muted);cursor:pointer;min-width:44px;min-height:44px;">✕</button>
+    </div>
+    <input type="text" id="invite-search" placeholder="Search items..." oninput="renderInvitePicker()" style="margin:12px;border-radius:var(--radius-sm);border:1px solid var(--border);padding:10px;font-size:14px;width:calc(100% - 24px);">
+    <div id="invite-list" style="overflow-y:auto;padding:0 12px 12px;"></div>
+  </div>
+</div>
 <!-- Confirm dialog -->
 <div class="confirm-dialog-overlay" id="confirm-dialog">
   <div class="confirm-dialog">
@@ -771,6 +871,7 @@ async function loadAll(){
   }catch(e){setSyncStatus('error');showToast('Connection error');}
   updateHeader();
   populateProjectDropdown();
+  renderAll(); // Always re-render after load
 }
 
 // ── Claude API ────────────────────────────────────────────────
@@ -1171,6 +1272,7 @@ RULES:
 - For starttime and endtime: extract from speech like "7am to 1pm today" or "from 9am to 5pm next Friday". Format as YYYY-MM-DDTHH:MM. If only a start time is mentioned, set starttime but leave endtime null. If a duration is mentioned (e.g. "2 hour meeting"), calculate endtime from starttime + duration.
 - For add_project: extract the project name only
 - For add_alias: extract alias (what was said), canonical (what it maps to), and company (what company they work for, if mentioned)
+- If the user mentions creating/sending a calendar invite or meeting invite, set createInvite:true in the response
 - For edit_item or delete_item: describe what item to find in "target_description"
 - If you understand SOME but not ALL of a request, still return the intent but set "partial":true and list unclear fields in "unclear_fields" with a plain-English explanation of what you need clarified
 - If the request is completely unintelligible or irrelevant, return intent "unknown"
@@ -1220,6 +1322,9 @@ async function handleIntent(parsed, originalTranscript){
     return;
   }
 
+  // Check for meeting invite request in any intent
+  if(parsed.createInvite) _pendingInvite=true;
+
   // PARTIAL — understood some but not all
   if(parsed.partial){
     // Store what we understood so far in currentData
@@ -1257,7 +1362,8 @@ async function handleIntent(parsed, originalTranscript){
       project:parsed.project||null,
       item:parsed.item||null,
       responsible:parsed.responsible||null,
-      duedate:parsed.duedate||null
+      duedate:parsed.duedate||null,
+      _createInvite:parsed.createInvite||false
     };
     for(let i=1;i<=5;i++){
       currentData['person'+i]=parsed['person'+i]||null;
@@ -1446,9 +1552,13 @@ async function confirmSave(){
   setSyncStatus('syncing');
   try{
     await sbCall('sb-save-item',item);
-    setSyncStatus('ok');await loadAll();discardAll();
+    setSyncStatus('ok');await loadAll();
+    const shouldInvite=currentData._createInvite;
+    discardAll();
+    closeMicOverlay();
     const msg='Item saved.';
     showToast(msg);speak(msg);
+    if(shouldInvite){maybeGenerateInviteAfterSave(item);}
   }catch(e){setSyncStatus('error');showToast('Save failed — check connection');}
 }
 
@@ -1824,6 +1934,10 @@ function itemHTML(item,showProject=true){
         <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
         Edit
       </button>
+      <button class="swipe-btn" style="background:#14BEC8;" data-id="${item.id}" data-action="share">
+        <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+        Share
+      </button>
       <button class="swipe-btn swipe-btn-delete" data-id="${item.id}" data-action="delete">
         <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
         Delete
@@ -1865,6 +1979,9 @@ function renderItems(container, itemList, showProject=true){
   container.querySelectorAll('[data-action="delete"]').forEach(btn=>{
     btn.addEventListener('click',e=>{e.stopPropagation();deleteItemById(btn.dataset.id);});
   });
+  container.querySelectorAll('[data-action="share"]').forEach(btn=>{
+    btn.addEventListener('click',e=>{e.stopPropagation();openShareForItem(btn.dataset.id);});
+  });
 }
 
 async function deleteItemById(id){
@@ -1889,12 +2006,9 @@ function showTab(tab){
   renderCurrentTab();
 }
 function renderCurrentTab(){
-  if(currentScreen==='all')renderAll();
-  else if(currentScreen==='project')renderByProject();
-  else if(currentScreen==='contractor')renderByContractor();
+  if(currentScreen==='items')renderAll();
   else if(currentScreen==='calendar')renderCalendar();
-  else if(currentScreen==='projects')renderProjects();
-  else if(currentScreen==='aliases')renderAliases();
+  else if(currentScreen==='settings'){renderProjects();renderAliases();}
 }
 
 // Filter chips removed — replaced by sort button
@@ -2238,14 +2352,18 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 
 initMicButton();
 initTextInput();
-loadAll();
+updateSilentIcon();
+showScreen('items');
 // Init voice list after voices load
 if(window.speechSynthesis){
   window.speechSynthesis.onvoiceschanged=loadVoiceList;
-  loadVoiceList();
+  setTimeout(loadVoiceList,500);
 }
-updateSilentIcon();
-showScreen('items');
+// Load data — renderAll called automatically after load
+loadAll().then(()=>{
+  renderAll();
+  renderCalendar();
+}).catch(()=>{});
 
 // Request microphone permission on load so iOS prompts once at startup
 // rather than interrupting mid-recording
@@ -2387,6 +2505,70 @@ function closeMicOverlay(){
 }
 
 
+
+// ── Meeting invite picker ─────────────────────────────────────
+function openMeetingInvitePicker(){
+  document.getElementById('invite-picker-overlay').classList.add('open');
+  document.getElementById('invite-search').value='';
+  renderInvitePicker();
+}
+function closeInvitePicker(){
+  document.getElementById('invite-picker-overlay').classList.remove('open');
+}
+function renderInvitePicker(){
+  const q=(document.getElementById('invite-search').value||'').toLowerCase();
+  const el=document.getElementById('invite-item-list');
+  const filtered=items.filter(i=>
+    !q||[i.item||i.action,i.project,i.person1,i.company1].join(' ').toLowerCase().includes(q)
+  ).slice(0,30);
+  if(!filtered.length){
+    el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><p>No items found</p></div>';
+    return;
+  }
+  el.innerHTML=filtered.map(i=>`
+    <div onclick="selectInviteItem('${i.id}')" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;cursor:pointer;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        ${typeBadge(i.type)}
+        <span style="font-size:14px;font-weight:500;">${esc(i.item||i.action||'')}</span>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);">
+        ${i.project?'📁 '+esc(i.project):''}
+        ${i.starttime?' · ▶️ '+formatDateTime(i.starttime):''}
+      </div>
+    </div>
+  `).join('');
+}
+function selectInviteItem(id){
+  const it=items.find(i=>i.id===id);
+  if(!it)return;
+  closeInvitePicker();
+  generateICS(it);
+}
+
+// ── Instructions ──────────────────────────────────────────────
+function openInstructions(){
+  document.getElementById('instructions-overlay').classList.add('open');
+}
+function closeInstructions(){
+  document.getElementById('instructions-overlay').classList.remove('open');
+}
+
+// ── Voice-triggered meeting invite ────────────────────────────
+// Called after confirmSave if user said "send a meeting invite"
+function maybeGenerateInviteAfterSave(item){
+  setTimeout(()=>{
+    showConfirmDialog(
+      'Would you like to create a calendar invite for this item?',
+      ()=>generateICS(item)
+    );
+    // Override delete button text to Yes/No
+    document.getElementById('confirm-dialog-yes').textContent='Create Invite';
+  },600);
+}
+
+// ── openInvitePicker alias ────────────────────────────────────
+function openInvitePicker(){openMeetingInvitePicker();}
+
 // ── Mic overlay tap outside to close ─────────────────────────
 function handleMicOverlayTap(e){
   if(e.target===document.getElementById('mic-overlay')){
@@ -2394,6 +2576,54 @@ function handleMicOverlayTap(e){
       closeMicOverlay();
     }
   }
+}
+
+
+// ── Meeting invite picker ─────────────────────────────────────
+function openMeetingInvitePicker(){
+  document.getElementById('invite-picker-overlay').classList.add('open');
+  document.getElementById('invite-search').value='';
+  renderInvitePicker();
+}
+function renderInvitePicker(){
+  const q=(document.getElementById('invite-search').value||'').toLowerCase();
+  const list=document.getElementById('invite-list');
+  const filtered=items.filter(i=>!q||[i.item||i.action,i.project,i.person1].join(' ').toLowerCase().includes(q));
+  if(!filtered.length){list.innerHTML='<p style="color:var(--text-muted);text-align:center;padding:20px;">No items found</p>';return;}
+  list.innerHTML=filtered.slice(0,30).map(i=>`
+    <div onclick="selectItemForInvite('${i.id}')" style="padding:12px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;background:var(--surface);">
+      <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;">${esc(i.item||i.action||'')}</div>
+      <div style="font-size:11px;color:var(--text-muted);">${i.project?'📁 '+esc(i.project)+' · ':''}${i.starttime?'▶️ '+formatDateTime(i.starttime):''}</div>
+    </div>`).join('');
+}
+function selectItemForInvite(id){
+  const it=items.find(i=>i.id===id);
+  if(!it)return;
+  document.getElementById('invite-picker-overlay').classList.remove('open');
+  generateICS(it);
+}
+
+// ── Auto meeting invite after save ───────────────────────────
+let _pendingInvite=false;
+const _origConfirmSave=confirmSave;
+async function confirmSave(){
+  const wantInvite=_pendingInvite;
+  _pendingInvite=false;
+  await _origConfirmSave.apply(this,arguments);
+  if(wantInvite){
+    // Find the item we just saved (most recent)
+    await loadAll();
+    const latest=items.sort((a,b)=>new Date(b.created||0)-new Date(a.created||0))[0];
+    if(latest) setTimeout(()=>generateICS(latest),500);
+  }
+}
+
+// ── Instructions page ─────────────────────────────────────────
+function openInstructions(){
+  document.getElementById('instructions-overlay').classList.add('open');
+}
+function closeInstructions(){
+  document.getElementById('instructions-overlay').classList.remove('open');
 }
 
 // ── Close sort dropdown when tapping outside ──────────────────
@@ -2415,26 +2645,83 @@ document.addEventListener('click',function(e){
   },{passive:true});
 })();
 
-// ── Add share button to item swipe actions ────────────────────
-// Patch renderItems to add share to swipe
-const _origRenderItems=renderItems;
-function renderItems(container,itemList,showProject=true){
-  _origRenderItems(container,itemList,showProject);
-  // Add share button to each item's swipe action area
-  container.querySelectorAll('.item-wrap').forEach(wrap=>{
-    const actions=wrap.querySelector('.item-actions-swipe');
-    if(actions&&!actions.querySelector('.swipe-btn-share')){
-      const shareBtn=document.createElement('button');
-      shareBtn.className='swipe-btn swipe-btn-share';
-      shareBtn.dataset.id=wrap.dataset.id;
-      shareBtn.dataset.action='share';
-      shareBtn.style.background='#14BEC8';
-      shareBtn.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg><span style="font-size:11px">Share</span>';
-      actions.insertBefore(shareBtn,actions.querySelector('.swipe-btn-delete'));
-      shareBtn.addEventListener('click',e=>{e.stopPropagation();openShareForItem(wrap.dataset.id);});
-    }
-  });
-}
 </script>
+
+<!-- Meeting invite picker overlay -->
+<div class="detail-overlay" id="invite-picker-overlay">
+  <div class="detail-card" style="max-height:80vh;">
+    <div class="detail-header">
+      <div class="detail-title">Select Item for Invite</div>
+      <button class="detail-close" onclick="closeInvitePicker()">✕</button>
+    </div>
+    <input type="text" id="invite-search" placeholder="Search items..." 
+      style="margin-bottom:12px;" oninput="renderInvitePicker()">
+    <div id="invite-item-list"></div>
+  </div>
+</div>
+
+<!-- Instructions overlay -->
+<div class="detail-overlay" id="instructions-overlay">
+  <div class="detail-card" style="max-height:92vh;">
+    <div class="detail-header">
+      <div class="detail-title">App Instructions</div>
+      <button class="detail-close" onclick="closeInstructions()">✕</button>
+    </div>
+    <div style="font-size:14px;line-height:1.8;color:var(--text);">
+      <p style="font-size:16px;font-weight:700;color:var(--primary);margin-bottom:8px;">What is Altius?</p>
+      <p style="margin-bottom:16px;">Altius is a voice-driven project action item tracker built for construction and real estate development professionals. Log meeting notes, tasks, and events hands-free while on site, in the car, or between meetings. Every item is time-stamped, linked to a project, and synced across all your devices instantly.</p>
+      
+      <p style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:8px;">Getting Started</p>
+      <p style="margin-bottom:8px;"><strong>1. Add your projects</strong> — Go to Settings → Projects and add each project by name. Altius will automatically match your speech to the correct project.</p>
+      <p style="margin-bottom:8px;"><strong>2. Add aliases</strong> — Go to Settings → Aliases to teach Altius shorthand. Add each person's full name, company, and email so you can say "Brent" and it logs "Brent Creary from ArchVeture".</p>
+      <p style="margin-bottom:16px;"><strong>3. Start logging</strong> — Tap the microphone button and speak naturally. Altius handles the rest.</p>
+
+      <p style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:8px;">Item Types</p>
+      <p style="margin-bottom:4px;"><strong>Task</strong> — Something that needs to be done. Altius assigns a responsible party and due date.</p>
+      <p style="margin-bottom:4px;"><strong>Meeting</strong> — A scheduled future meeting. Attendees and time are logged. Generate a calendar invite from the Share screen.</p>
+      <p style="margin-bottom:16px;"><strong>Event</strong> — Something that has already happened. Start and end time are recorded for billing purposes.</p>
+
+      <p style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:8px;">Voice Commands</p>
+      <p style="margin-bottom:6px;color:var(--text-muted);font-size:13px;">Tap the mic and speak naturally. Examples:</p>
+      
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:8px;">
+        <p style="font-weight:600;color:var(--primary);margin-bottom:4px;">Log an item</p>
+        <p style="font-size:13px;color:var(--text-muted);">"Meeting with Brent and Sarah from Legendary next Friday to review the foundation specs for Bluewater Marina. Sarah is responsible."</p>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:8px;">
+        <p style="font-weight:600;color:var(--primary);margin-bottom:4px;">Log with time</p>
+        <p style="font-size:13px;color:var(--text-muted);">"Site inspection event from 7am to 1pm today at Riverside Commons. Billed to ABC Electric."</p>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:8px;">
+        <p style="font-weight:600;color:var(--primary);margin-bottom:4px;">Add a project</p>
+        <p style="font-size:13px;color:var(--text-muted);">"Add a new project called Riverside Commons"</p>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:8px;">
+        <p style="font-weight:600;color:var(--primary);margin-bottom:4px;">Create an alias</p>
+        <p style="font-size:13px;color:var(--text-muted);">"Remember that Legendary means Bluewater Marina" or "Remember that Brent means Brent Creary from ArchVeture"</p>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:8px;">
+        <p style="font-weight:600;color:var(--primary);margin-bottom:4px;">Edit an item</p>
+        <p style="font-size:13px;color:var(--text-muted);">"Change the due date on the ABC Electric foundation task to May 15th"</p>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:8px;">
+        <p style="font-weight:600;color:var(--primary);margin-bottom:4px;">Delete an item</p>
+        <p style="font-size:13px;color:var(--text-muted);">"Delete the overdue task for John Smith"</p>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:16px;">
+        <p style="font-weight:600;color:var(--primary);margin-bottom:4px;">Create a meeting invite</p>
+        <p style="font-size:13px;color:var(--text-muted);">"Meeting with Brent next Tuesday at 10am and send a meeting invite"</p>
+      </div>
+
+      <p style="font-size:15px;font-weight:700;color:var(--primary);margin-bottom:8px;">Tips</p>
+      <p style="margin-bottom:6px;">• <strong>Silent mode</strong> — tap the speaker icon in the header to mute voice responses during meetings.</p>
+      <p style="margin-bottom:6px;">• <strong>Typing</strong> — tap the mic button and type instead of speaking when voice is not practical.</p>
+      <p style="margin-bottom:6px;">• <strong>Calendar invites</strong> — go to Share → Meeting Invite, or swipe left on any item and tap Share.</p>
+      <p style="margin-bottom:6px;">• <strong>Excel export</strong> — Share → Export to Excel. Includes start/end times and duration for billing.</p>
+      <p style="margin-bottom:6px;">• <strong>Editing items</strong> — tap any item tile to open the full edit card.</p>
+      <p style="margin-bottom:6px;">• <strong>Swipe left</strong> on any item to reveal Edit, Share, and Delete.</p>
+    </div>
+  </div>
+</div>
 </body>
 </html>
