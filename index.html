@@ -34,7 +34,16 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;overflow:hidden;}
-body{font-family:-apple-system,'SF Pro Text',sans-serif;background:var(--bg);color:var(--text);}
+body{
+  font-family:-apple-system,'SF Pro Text',sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;
+  min-height:-webkit-fill-available;
+}
+html{
+  height:100%;
+  height:-webkit-fill-available;
+}
 
 /* ── Header ── */
 .header{background:var(--primary);color:white;padding:10px 16px 10px;padding-top:calc(10px + var(--safe-top));position:fixed;top:0;left:0;right:0;z-index:200;}
@@ -52,9 +61,15 @@ body{font-family:-apple-system,'SF Pro Text',sans-serif;background:var(--bg);col
 /* ── Screen container ── */
 .screen-container{
   position:fixed;
-  top:0;bottom:0;left:0;right:0;
+  top:0;left:0;right:0;
   overflow:hidden;
-  /* JS sets padding-top and padding-bottom at runtime via adjustLayout() */
+  /* bottom set by JS top measurement only */
+  bottom:calc(49px + env(safe-area-inset-bottom,0px));
+}
+@media (display-mode:standalone){
+  .screen-container{
+    bottom:calc(49px + env(safe-area-inset-bottom,34px));
+  }
 }
 .screen{
   position:absolute;top:0;left:0;right:0;bottom:0;
@@ -81,18 +96,22 @@ body{font-family:-apple-system,'SF Pro Text',sans-serif;background:var(--bg);col
 /* ── Tab bar ── */
 .tab-bar{
   position:fixed;
-  left:0;right:0;
+  bottom:0;left:0;right:0;
   background:var(--surface);
   border-top:1px solid var(--border);
   display:flex;
   flex-direction:row;
-  align-items:center;
+  align-items:flex-start;
   justify-content:space-around;
-  height:49px;
+  padding-top:8px;
+  padding-bottom:env(safe-area-inset-bottom,0px);
   z-index:200;
   box-sizing:border-box;
-  /* bottom set by JS */
-  bottom:0;
+}
+@media (display-mode:standalone){
+  .tab-bar{
+    padding-bottom:env(safe-area-inset-bottom,34px);
+  }
 }
 .tab-btn{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
@@ -108,13 +127,12 @@ body{font-family:-apple-system,'SF Pro Text',sans-serif;background:var(--bg);col
   width:56px;height:56px;
   display:flex;align-items:center;justify-content:center;
   box-shadow:0 4px 16px rgba(20,50,90,0.4);
-  margin-top:-20px;
+  margin-top:-16px;
   border:3px solid white;
   color:white !important;
   transition:background 0.2s,box-shadow 0.2s;
   touch-action:none;user-select:none;-webkit-user-select:none;
   flex-shrink:0;
-  align-self:center;
 }
 .tab-mic.recording{background:var(--danger);box-shadow:0 4px 16px rgba(192,57,43,0.5);}
 .tab-mic.processing{background:var(--accent);}
@@ -2356,43 +2374,12 @@ updateSilentIcon();
 // Measure actual rendered heights and position screen container
 // This works correctly in both Safari and PWA standalone mode
 function adjustLayout(){
+  // Only adjust top based on actual header height
+  // Bottom handled by CSS env(safe-area-inset-bottom) with standalone media query
   const header=document.querySelector('.header');
-  const tabBar=document.querySelector('.tab-bar');
   const container=document.querySelector('.screen-container');
-  if(!header||!tabBar||!container)return;
-
-  const headerH=header.offsetHeight;
-  container.style.top=headerH+'px';
-
-  // Calculate safe area bottom purely from screen geometry
-  // Works in all modes — PWA, Safari, any iPhone model
-  // window.screen.availHeight = screen height minus iOS status bar
-  // window.innerHeight = actual visible viewport
-  const totalH=window.screen.height;
-  const devicePixelRatio=window.devicePixelRatio||1;
-  
-  // On iPhone 16 Pro: screen=852pt, but screen.height may report differently
-  // Most reliable: compare visualViewport height to screen height
-  const vvH=window.visualViewport?window.visualViewport.height:window.innerHeight;
-  const screenH=window.screen.height;
-  
-  // Safe area = gap between viewport bottom and physical screen bottom
-  // In Safari: innerH includes visible area (address bar takes space)
-  // In PWA: innerH = full screen minus status bar
-  // Use visualViewport which accounts for keyboard, bars etc.
-  
-  // For iPhone with home indicator: safe area is always ~34pt
-  // Detect by checking if device has no home button
-  // iPhone X and later: screen height >= 812pt
-  const hasHomeIndicator = screenH >= 812;
-  const safeAreaBottom = hasHomeIndicator ? 34 : 0;
-  
-  // Position tab bar above safe area
-  tabBar.style.bottom = safeAreaBottom + 'px';
-  
-  // Screen container fills between header and tab bar top
-  const tabBarTop = window.innerHeight - safeAreaBottom - 49;
-  container.style.bottom = (safeAreaBottom + 49) + 'px';
+  if(!header||!container)return;
+  container.style.top=header.offsetHeight+'px';
 }
 // Run immediately, after fonts load, and on resize
 adjustLayout();
