@@ -2664,6 +2664,29 @@ async function quickAddItem(){
   }
 }
 
+
+function showDebug(){
+  const tabBar=document.querySelector('.tab-bar');
+  const container=document.querySelector('.screen-container');
+  const header=document.querySelector('.header');
+  const tb=tabBar?tabBar.getBoundingClientRect():null;
+  const overlay=document.getElementById('debug-overlay');
+  const txt=document.getElementById('debug-text');
+  txt.innerHTML=[
+    'screen.width: '+window.screen.width,
+    'screen.height: '+window.screen.height,
+    'innerWidth: '+window.innerWidth,
+    'innerHeight: '+window.innerHeight,
+    'devicePixelRatio: '+window.devicePixelRatio,
+    'standalone: '+window.navigator.standalone,
+    'tabBar.bottom: '+(tb?Math.round(tb.bottom):'n/a'),
+    'tabBar.top: '+(tb?Math.round(tb.top):'n/a'),
+    'tabBar.height: '+(tb?Math.round(tb.height):'n/a'),
+    'header.height: '+(header?Math.round(header.getBoundingClientRect().height):'n/a'),
+    'gap below tabBar: '+(tb?Math.round(window.innerHeight-tb.bottom)+'px':'n/a'),
+  ].join('<br>');
+  overlay.style.display='block';
+}
 // ── Mic overlay tap outside to close ─────────────────────────
 function handleMicOverlayTap(e){
   if(e.target===document.getElementById('mic-overlay')){
@@ -2862,5 +2885,20 @@ document.addEventListener('click',function(e){
     <div id="alias-list"></div>
   </div>
 </div>
+
+<div id="debug-overlay" onclick="this.style.display='none'" style="
+  position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:rgba(0,0,0,0.9);color:white;padding:20px;border-radius:12px;
+  font-size:13px;line-height:2;z-index:9999;min-width:280px;text-align:center;
+  font-family:monospace;display:none;">
+  <div style="font-size:15px;font-weight:bold;margin-bottom:8px;">📐 Layout Debug</div>
+  <div id="debug-text"></div>
+  <div style="margin-top:12px;font-size:11px;opacity:0.6;">Tap to dismiss</div>
+</div>
+<button onclick="showDebug()" style="
+  position:fixed;bottom:200px;right:16px;
+  background:#14BEC8;color:white;border:none;border-radius:8px;
+  padding:8px 12px;font-size:12px;z-index:9998;
+  font-weight:600;">Debug</button>
 </body>
 </html>
