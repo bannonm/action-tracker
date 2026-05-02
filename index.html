@@ -36,14 +36,11 @@
 html,body{height:100%;overflow:hidden;}
 body{
   font-family:-apple-system,'SF Pro Text',sans-serif;
-  background:var(--surface);color:var(--text);
-  min-height:100vh;
-  min-height:-webkit-fill-available;
+  background:var(--bg);color:var(--text);
+  min-height:100dvh;
 }
 html{
-  height:100%;
-  height:-webkit-fill-available;
-  background:var(--surface);
+  height:100dvh;
 }
 
 /* ── Header ── */
@@ -65,6 +62,11 @@ html{
   top:0;left:0;right:0;
   overflow:hidden;
   bottom:calc(49px + env(safe-area-inset-bottom,0px));
+}
+@media (display-mode:standalone){
+  .screen-container{
+    bottom:calc(49px + env(safe-area-inset-bottom,34px));
+  }
 }
 @media (display-mode:standalone){
   .screen-container{
@@ -103,23 +105,10 @@ html{
   flex-direction:row;
   align-items:center;
   justify-content:space-around;
-  padding-bottom:0;
+  padding-top:8px;
+  padding-bottom:env(safe-area-inset-bottom,0px);
   z-index:200;
   box-sizing:border-box;
-  /* Extend background into home indicator zone */
-  overflow:visible;
-}
-
-/* This pseudo-element extends the tab bar background
-   below the viewport into the home indicator zone */
-.tab-bar::before{
-  content:'';
-  position:absolute;
-  bottom:-200px;
-  left:0;right:0;
-  height:200px;
-  background:var(--surface);
-  z-index:-1;
 }
 .tab-btn{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
@@ -2398,31 +2387,9 @@ updateSilentIcon();
 // This works correctly in both Safari and PWA standalone mode
 function adjustLayout(){
   const header=document.querySelector('.header');
-  const tabBar=document.querySelector('.tab-bar');
   const container=document.querySelector('.screen-container');
   if(!header||!container)return;
-
   container.style.top=header.offsetHeight+'px';
-
-  if(tabBar){
-    // Use screen geometry to position tab bar
-    // so buttons sit 5px above physical screen bottom
-    const screenH=window.screen.height;      // 874 on iPhone 16 Pro
-    const innerH=window.innerHeight;          // 812 on iPhone 16 Pro  
-    const gap=screenH-innerH;                 // 62px — zone below viewport
-    const targetBottom=-(gap-5);              // -57px — slides bar into that zone
-    tabBar.style.bottom=targetBottom+'px';
-    // Screen container bottom = distance from viewport bottom to top of tab bar
-    // Tab bar top = innerH + targetBottom - tabBar.height
-    //             = 812 + (-57) - 83 = 672... no
-    // Actually: bar bottom edge = innerH - targetBottom (since bottom is negative offset from viewport)
-    // Wait: bottom:-57px means bottom edge is at viewport_bottom - (-57) = 812+57 = 869
-    // bar top = 869 - 83 = 786
-    // container bottom = innerH - 786 = 812 - 786 = 26... too small
-    // Better: container bottom = tabBar height - gap + 5
-    const containerBottom=tabBar.offsetHeight-(gap-5);
-    container.style.bottom=Math.max(containerBottom,49)+'px';
-  }
 }
 // Run immediately, after fonts load, and on resize
 adjustLayout();
