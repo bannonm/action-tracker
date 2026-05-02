@@ -61,11 +61,11 @@ html{
   position:fixed;
   top:0;left:0;right:0;
   overflow:hidden;
-  bottom:calc(49px + env(safe-area-inset-bottom,0px));
+  bottom:calc(49px + var(--real-safe-bottom, env(safe-area-inset-bottom, 0px)));
 }
 @media (display-mode:standalone){
   .screen-container{
-    bottom:calc(49px + env(safe-area-inset-bottom,34px));
+    bottom:calc(49px + var(--real-safe-bottom, env(safe-area-inset-bottom, 34px)));
   }
 }
 .screen{
@@ -101,7 +101,7 @@ html{
   align-items:center;
   justify-content:space-around;
   padding-top:10px;
-  padding-bottom:env(safe-area-inset-bottom,0px);
+  padding-bottom:var(--real-safe-bottom, env(safe-area-inset-bottom, 0px));
   z-index:200;
   box-sizing:border-box;
 }
@@ -2899,5 +2899,25 @@ document.addEventListener('click',function(e){
     </div>
     <div id="debug-text" style="font-family:monospace;font-size:13px;line-height:2.2;color:var(--text);"></div>
   </div>
-</div></body>
+</div>
+<script>
+(function(){
+  function applyRealSafeBottom(){
+    var probe=document.createElement('div');
+    probe.style.cssText='position:fixed;bottom:0;left:0;width:1px;height:env(safe-area-inset-bottom,0px);pointer-events:none;opacity:0;';
+    document.body.appendChild(probe);
+    var h=probe.getBoundingClientRect().height;
+    document.body.removeChild(probe);
+    var safeBottom=h>0?h:0;
+    document.documentElement.style.setProperty('--real-safe-bottom', safeBottom+'px');
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',applyRealSafeBottom);
+  } else {
+    applyRealSafeBottom();
+  }
+  window.addEventListener('resize',applyRealSafeBottom);
+})();
+</script>
+</body>
 </html>
