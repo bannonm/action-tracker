@@ -2900,25 +2900,32 @@ document.addEventListener('click',function(e){
 (function(){
   function fixTabBar(){
     var tabBar=document.querySelector('.tab-bar');
+    var screenContainer=document.querySelector('.screen-container');
     if(!tabBar) return;
-    // Reset any padding so we can measure the natural height of the buttons
-    tabBar.style.paddingBottom='0px';
-    var barRect=tabBar.getBoundingClientRect();
-    var screenH=window.innerHeight;
-    // Gap between bottom of tab bar content and screen bottom = safe area
-    var gap=screenH-barRect.bottom;
-    // Use gap as padding (clamped: min 0, max 50 so we never go crazy)
-    var safePad=Math.max(0,Math.min(gap,50));
-    document.documentElement.style.setProperty('--safe-pad', safePad+'px');
-    var tabH=barRect.height+safePad;
-    document.documentElement.style.setProperty('--tab-bar-height', tabH+'px');
+    // Target: screen.height=874, innerHeight=812, difference=62
+    // Native iOS tab bar top sits at ~820px (screen coords)
+    // We want tabBar.top (in viewport coords) = 820 - (874-812) = 758... 
+    // Simpler: use the known physical screen vs viewport gap
+    var screenH=window.screen.height;
+    var viewH=window.innerHeight;
+    var gap=screenH-viewH; // = 62px on this device
+    // Native iOS puts tab bar top at: viewH - 49 - gap = 812 - 49 - 62 = 701? No...
+    // Direct approach: pad-bottom = gap + 34 (home indicator safe area)
+    var padBottom = gap + 34;
+    tabBar.style.paddingBottom = padBottom + 'px';
+    tabBar.style.paddingTop = '10px';
+    // Screen container stops at top of tab bar
+    // Tab bar natural content height ~49px + padBottom
+    var tabBarH = 49 + padBottom;
+    if(screenContainer){
+      screenContainer.style.bottom = tabBarH + 'px';
+    }
   }
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded',fixTabBar);
   } else {
     fixTabBar();
   }
-  // Also run after a short delay for iOS PWA which may reflow after load
   setTimeout(fixTabBar, 100);
   setTimeout(fixTabBar, 500);
   window.addEventListener('resize',fixTabBar);
