@@ -62,7 +62,7 @@ html{
   position:fixed;
   top:0;left:0;right:0;
   overflow:hidden;
-  bottom:134px;
+  bottom:calc(49px + env(safe-area-inset-bottom));
 }
 .screen{
   position:absolute;top:0;left:0;right:0;bottom:0;
@@ -97,7 +97,8 @@ html{
   align-items:center;
   justify-content:space-around;
   padding-top:10px;
-  padding-bottom:83px;
+  padding-bottom:env(safe-area-inset-bottom);
+  height:calc(49px + env(safe-area-inset-bottom));
   z-index:200;
   box-sizing:border-box;
 }
@@ -2896,40 +2897,6 @@ document.addEventListener('click',function(e){
     <div id="debug-text" style="font-family:monospace;font-size:13px;line-height:2.2;color:var(--text);"></div>
   </div>
 </div>
-<script>
-(function(){
-  function fixTabBar(){
-    var tabBar=document.querySelector('.tab-bar');
-    var screenContainer=document.querySelector('.screen-container');
-    if(!tabBar) return;
-    // Target: screen.height=874, innerHeight=812, difference=62
-    // Native iOS tab bar top sits at ~820px (screen coords)
-    // We want tabBar.top (in viewport coords) = 820 - (874-812) = 758... 
-    // Simpler: use the known physical screen vs viewport gap
-    var screenH=window.screen.height;
-    var viewH=window.innerHeight;
-    var gap=screenH-viewH; // = 62px on this device
-    // Native iOS puts tab bar top at: viewH - 49 - gap = 812 - 49 - 62 = 701? No...
-    // Direct approach: pad-bottom = gap + 34 (home indicator safe area)
-    var padBottom = gap + 34;
-    tabBar.style.paddingBottom = padBottom + 'px';
-    tabBar.style.paddingTop = '10px';
-    // Screen container stops at top of tab bar
-    // Tab bar natural content height ~49px + padBottom
-    var tabBarH = 49 + padBottom;
-    if(screenContainer){
-      screenContainer.style.bottom = tabBarH + 'px';
-    }
-  }
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',fixTabBar);
-  } else {
-    fixTabBar();
-  }
-  setTimeout(fixTabBar, 100);
-  setTimeout(fixTabBar, 500);
-  window.addEventListener('resize',fixTabBar);
-})();
-</script>
+
 </body>
 </html>
