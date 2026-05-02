@@ -61,7 +61,7 @@ html{
   position:fixed;
   top:0;left:0;right:0;
   overflow:hidden;
-  bottom:calc(49px + max(env(safe-area-inset-bottom,0px), 64px));
+  bottom:calc(49px + env(safe-area-inset-bottom,0px));
 }
 @media (display-mode:standalone){
   .screen-container{
@@ -101,7 +101,7 @@ html{
   align-items:center;
   justify-content:space-around;
   padding-top:10px;
-  padding-bottom:max(env(safe-area-inset-bottom,0px), 64px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
   z-index:200;
   box-sizing:border-box;
 }
