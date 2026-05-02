@@ -61,12 +61,7 @@ html{
   position:fixed;
   top:0;left:0;right:0;
   overflow:hidden;
-  bottom:calc(49px + var(--real-safe-bottom, env(safe-area-inset-bottom, 0px)));
-}
-@media (display-mode:standalone){
-  .screen-container{
-    bottom:calc(49px + var(--real-safe-bottom, env(safe-area-inset-bottom, 34px)));
-  }
+  bottom:var(--tab-bar-height, 83px);
 }
 .screen{
   position:absolute;top:0;left:0;right:0;bottom:0;
@@ -101,7 +96,7 @@ html{
   align-items:center;
   justify-content:space-around;
   padding-top:10px;
-  padding-bottom:var(--real-safe-bottom, env(safe-area-inset-bottom, 0px));
+  padding-bottom:var(--safe-pad, 8px);
   z-index:200;
   box-sizing:border-box;
 }
@@ -2902,21 +2897,30 @@ document.addEventListener('click',function(e){
 </div>
 <script>
 (function(){
-  function applyRealSafeBottom(){
-    var probe=document.createElement('div');
-    probe.style.cssText='position:fixed;bottom:0;left:0;width:1px;height:env(safe-area-inset-bottom,0px);pointer-events:none;opacity:0;';
-    document.body.appendChild(probe);
-    var h=probe.getBoundingClientRect().height;
-    document.body.removeChild(probe);
-    var safeBottom=h>0?h:0;
-    document.documentElement.style.setProperty('--real-safe-bottom', safeBottom+'px');
+  function fixTabBar(){
+    var tabBar=document.querySelector('.tab-bar');
+    if(!tabBar) return;
+    // Reset any padding so we can measure the natural height of the buttons
+    tabBar.style.paddingBottom='0px';
+    var barRect=tabBar.getBoundingClientRect();
+    var screenH=window.innerHeight;
+    // Gap between bottom of tab bar content and screen bottom = safe area
+    var gap=screenH-barRect.bottom;
+    // Use gap as padding (clamped: min 0, max 50 so we never go crazy)
+    var safePad=Math.max(0,Math.min(gap,50));
+    document.documentElement.style.setProperty('--safe-pad', safePad+'px');
+    var tabH=barRect.height+safePad;
+    document.documentElement.style.setProperty('--tab-bar-height', tabH+'px');
   }
   if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',applyRealSafeBottom);
+    document.addEventListener('DOMContentLoaded',fixTabBar);
   } else {
-    applyRealSafeBottom();
+    fixTabBar();
   }
-  window.addEventListener('resize',applyRealSafeBottom);
+  // Also run after a short delay for iOS PWA which may reflow after load
+  setTimeout(fixTabBar, 100);
+  setTimeout(fixTabBar, 500);
+  window.addEventListener('resize',fixTabBar);
 })();
 </script>
 </body>
