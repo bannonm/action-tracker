@@ -37,10 +37,11 @@ html,body{height:100%;overflow:hidden;}
 body{
   font-family:-apple-system,'SF Pro Text',sans-serif;
   background:var(--bg);color:var(--text);
-  min-height:100dvh;
+  min-height:100svh;
+  height:100svh;
 }
 html{
-  height:100dvh;
+  height:100svh;
 }
 
 /* ── Header ── */
@@ -61,7 +62,7 @@ html{
   position:fixed;
   top:0;left:0;right:0;
   overflow:hidden;
-  bottom:var(--tab-bar-height, 83px);
+  bottom:51px;
 }
 .screen{
   position:absolute;top:0;left:0;right:0;bottom:0;
@@ -88,7 +89,7 @@ html{
 /* ── Tab bar ── */
 .tab-bar{
   position:fixed;
-  bottom:0;left:0;right:0;
+  bottom:-62px;left:0;right:0;
   background:var(--surface);
   border-top:1px solid var(--border);
   display:flex;
