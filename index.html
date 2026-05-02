@@ -36,13 +36,14 @@
 html,body{height:100%;overflow:hidden;}
 body{
   font-family:-apple-system,'SF Pro Text',sans-serif;
-  background:var(--bg);color:var(--text);
+  background:var(--surface);color:var(--text);
   min-height:100vh;
   min-height:-webkit-fill-available;
 }
 html{
   height:100%;
   height:-webkit-fill-available;
+  background:var(--surface);
 }
 
 /* ── Header ── */
@@ -100,20 +101,15 @@ html{
   border-top:1px solid var(--border);
   display:flex;
   flex-direction:row;
-  align-items:flex-start;
+  align-items:center;
   justify-content:space-around;
-  padding-top:8px;
-  padding-bottom:env(safe-area-inset-bottom,0px);
+  padding-bottom:0;
   z-index:200;
   box-sizing:border-box;
   /* Extend background into home indicator zone */
   overflow:visible;
 }
-@media (display-mode:standalone){
-  .tab-bar{
-    padding-bottom:env(safe-area-inset-bottom,34px);
-  }
-}
+
 /* This pseudo-element extends the tab bar background
    below the viewport into the home indicator zone */
 .tab-bar::before{
@@ -135,17 +131,27 @@ html{
 .tab-btn.active{color:var(--primary);}
 .tab-btn svg{width:24px;height:24px;fill:currentColor;}
 .tab-mic{
-  background:var(--primary);border-radius:50%;
-  width:56px;height:56px;
-  display:flex;align-items:center;justify-content:center;
+  background:var(--primary);
+  border-radius:50%;
+  width:56px !important;
+  height:56px !important;
+  min-width:56px;
+  min-height:56px;
+  max-width:56px;
+  max-height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   box-shadow:0 4px 16px rgba(20,50,90,0.4);
   margin-top:-20px;
   border:3px solid white;
   color:white !important;
   transition:background 0.2s,box-shadow 0.2s;
-  touch-action:none;user-select:none;-webkit-user-select:none;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
   flex-shrink:0;
-  border-radius:50% !important;
+  aspect-ratio:1;
 }
 .tab-mic.recording{background:var(--danger);box-shadow:0 4px 16px rgba(192,57,43,0.5);}
 .tab-mic.processing{background:var(--accent);}
@@ -2391,12 +2397,32 @@ updateSilentIcon();
 // Measure actual rendered heights and position screen container
 // This works correctly in both Safari and PWA standalone mode
 function adjustLayout(){
-  // Only adjust top based on actual header height
-  // Bottom handled by CSS env(safe-area-inset-bottom) with standalone media query
   const header=document.querySelector('.header');
+  const tabBar=document.querySelector('.tab-bar');
   const container=document.querySelector('.screen-container');
   if(!header||!container)return;
+
   container.style.top=header.offsetHeight+'px';
+
+  if(tabBar){
+    // Use screen geometry to position tab bar
+    // so buttons sit 5px above physical screen bottom
+    const screenH=window.screen.height;      // 874 on iPhone 16 Pro
+    const innerH=window.innerHeight;          // 812 on iPhone 16 Pro  
+    const gap=screenH-innerH;                 // 62px — zone below viewport
+    const targetBottom=-(gap-5);              // -57px — slides bar into that zone
+    tabBar.style.bottom=targetBottom+'px';
+    // Screen container bottom = distance from viewport bottom to top of tab bar
+    // Tab bar top = innerH + targetBottom - tabBar.height
+    //             = 812 + (-57) - 83 = 672... no
+    // Actually: bar bottom edge = innerH - targetBottom (since bottom is negative offset from viewport)
+    // Wait: bottom:-57px means bottom edge is at viewport_bottom - (-57) = 812+57 = 869
+    // bar top = 869 - 83 = 786
+    // container bottom = innerH - 786 = 812 - 786 = 26... too small
+    // Better: container bottom = tabBar height - gap + 5
+    const containerBottom=tabBar.offsetHeight-(gap-5);
+    container.style.bottom=Math.max(containerBottom,49)+'px';
+  }
 }
 // Run immediately, after fonts load, and on resize
 adjustLayout();
