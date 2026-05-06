@@ -821,7 +821,7 @@ textarea{resize:vertical;min-height:80px;}
     <svg viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>
     Calendar
   </button>
-  <button class="tab-btn tab-mic" id="tab-mic" onclick="openMic()">
+  <button class="tab-btn tab-mic" id="tab-mic">
     <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3zm-1 3a1 1 0 0 1 2 0v8a1 1 0 0 1-2 0V4zm6 8a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.93V21h2v-2.07A7 7 0 0 0 19 12h-2z"/></svg>
   </button>
   <button class="tab-btn" id="tab-share" onclick="showScreen('share')">
@@ -1072,33 +1072,40 @@ function initTextInput(){
 }
 
 function initMicButton(){
-  const btn=document.getElementById('mic-btn');
   updateSilentIcon();
-  if(IS_TOUCH){
-    let touchDownTime=0;
-    const HOLD_THRESHOLD=300;
-    btn.addEventListener('touchstart',e=>{
-      e.preventDefault();
-      touchDownTime=Date.now();
-      handleMicHoldStart();
-    },{passive:false});
-    btn.addEventListener('touchend',e=>{
-      e.preventDefault();
-      const held=Date.now()-touchDownTime;
-      if(held>=HOLD_THRESHOLD) handleMicHoldEnd();
-      // Short tap — do nothing on touchend, recording continues
-    },{passive:false});
-    btn.addEventListener('touchcancel',e=>{e.preventDefault();handleMicHoldEnd();},{passive:false});
-  }else{
-    btn.addEventListener('click',handleMicTap);
+
+  function attachMicHandlers(btn){
+    if(!btn)return;
+    if(IS_TOUCH){
+      let touchDownTime=0;
+      const HOLD_THRESHOLD=300;
+      btn.addEventListener('touchstart',e=>{
+        e.preventDefault();
+        touchDownTime=Date.now();
+        handleMicHoldStart();
+      },{passive:false});
+      btn.addEventListener('touchend',e=>{
+        e.preventDefault();
+        const held=Date.now()-touchDownTime;
+        if(held>=HOLD_THRESHOLD) handleMicHoldEnd();
+        // Short tap — recording continues until silence or next tap
+      },{passive:false});
+      btn.addEventListener('touchcancel',e=>{e.preventDefault();handleMicHoldEnd();},{passive:false});
+    }else{
+      btn.addEventListener('click',handleMicTap);
+    }
   }
+
+  // Wire both the tab bar mic and the inner confirm-sheet mic button
+  attachMicHandlers(document.getElementById('tab-mic'));
+  attachMicHandlers(document.getElementById('mic-btn'));
 }
 
 function handleMicHoldStart(){
   if(appMode==='processing')return;
   if(appMode==='recording'){stopRecording();return;}
-  if(appMode==='confirm'){startConfirmRecording();}
-  else if(appMode==='clarifying'){startClarifyingRecording();}
+  if(appMode==='confirm'){openConfirmSheet();startConfirmRecording();}
+  else if(appMode==='clarifying'){openConfirmSheet();startClarifyingRecording();}
   else{startListening();}
 }
 function handleMicHoldEnd(){
@@ -1108,8 +1115,8 @@ function handleMicHoldEnd(){
 function handleMicTap(){
   if(appMode==='recording'){stopRecording();return;}
   if(appMode==='processing')return;
-  if(appMode==='confirm'){startConfirmRecording();return;}
-  if(appMode==='clarifying'){startClarifyingRecording();return;}
+  if(appMode==='confirm'){openConfirmSheet();startConfirmRecording();return;}
+  if(appMode==='clarifying'){openConfirmSheet();startClarifyingRecording();return;}
   startListening();
 }
 function stopRecording(){
@@ -1224,6 +1231,7 @@ function startListening(){
   document.getElementById('confirm-card').classList.add('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
   hideResponseBubble();
+  // Don't open overlay yet — it opens after Claude parses
   recognition=makeSR(finalText=>{
     if(finalText){
       appMode='processing';
@@ -1357,6 +1365,7 @@ async function handleIntent(parsed, originalTranscript){
 
     appMode='clarifying';
     setMicState('idle','');
+    openConfirmSheet();
     const understood=buildUnderstoodSummary(parsed);
     const clarify=parsed.clarification_needed||'Can you provide more detail?';
     const html=`<div class="claude-understood">${understood}</div><div class="claude-unclear">I need more info: ${esc(clarify)}</div>`;
@@ -1383,6 +1392,7 @@ async function handleIntent(parsed, originalTranscript){
       currentData['company'+i]=parsed['company'+i]||null;
     }
     prevData={};
+    openConfirmSheet();
     hideResponseBubble();
     showConfirmCard(false);
     return;
@@ -1567,8 +1577,7 @@ async function confirmSave(){
     await sbCall('sb-save-item',item);
     setSyncStatus('ok');await loadAll();
     const shouldInvite=currentData._createInvite;
-    discardAll();
-    closeMicOverlay();
+    discardAll(); // discardAll now closes overlay too
     const msg='Item saved.';
     showToast(msg);speak(msg);
     if(shouldInvite){maybeGenerateInviteAfterSave(item);}
@@ -1584,7 +1593,9 @@ function discardAll(){
   document.getElementById('transcript-box').value='';
   document.getElementById('transcript-box').classList.remove('has-text');
   showSendButton(false);
-  document.getElementById('voice-tip').classList.remove('hidden');
+  if(document.getElementById('voice-tip'))
+    document.getElementById('voice-tip').classList.remove('hidden');
+  document.getElementById('mic-overlay').classList.remove('open');
   setMicState('idle','');
 }
 
@@ -2545,11 +2556,27 @@ function showScreen(screen){
 }
 
 function openMic(){
-  // Show mic overlay on top of current screen
-  const overlay=document.getElementById('mic-overlay');
-  overlay.classList.add('open');
-  discardAll();
+  // Start recording immediately — no overlay needed
+  if(appMode==='processing')return;
+  if(appMode==='recording'){stopRecording();return;}
+  if(appMode==='confirm'){
+    // Show confirm sheet and start clarify recording
+    openConfirmSheet();
+    startConfirmRecording();
+    return;
+  }
+  if(appMode==='clarifying'){
+    openConfirmSheet();
+    startClarifyingRecording();
+    return;
+  }
+  startListening();
 }
+
+function openConfirmSheet(){
+  document.getElementById('mic-overlay').classList.add('open');
+}
+
 function closeMicOverlay(){
   document.getElementById('mic-overlay').classList.remove('open');
   discardAll();
@@ -2683,9 +2710,10 @@ function showDebug(){
 // ── Mic overlay tap outside to close ─────────────────────────
 function handleMicOverlayTap(e){
   if(e.target===document.getElementById('mic-overlay')){
-    if(appMode==='initial'||appMode==='clarifying'){
+    if(appMode==='initial'){
       closeMicOverlay();
     }
+    // Don't close during recording, processing, or confirm
   }
 }
 
