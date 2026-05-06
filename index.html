@@ -1048,11 +1048,8 @@ function releaseAudioSession(){
 // ── Text input (keyboard) ─────────────────────────────────────
 function showSendButton(show){
   const btn=document.getElementById('send-btn');
-  // Only show send arrow when typing and NOT in confirm mode
-  if(btn){
-    const showSend=show&&appMode!=='confirm';
-    btn.style.display=showSend?'flex':'none';
-  }
+  // Show send arrow whenever there is text — works in all modes
+  if(btn) btn.style.display=show?'flex':'none';
 }
 
 function handleTextSubmit(){
@@ -1901,9 +1898,8 @@ function showConfirmCard(showChanges){
   hideResponseBubble();
   // Show Save Item button at top, hide Send
   const qs=document.getElementById('quick-save-btn');
-  const sd=document.getElementById('send-btn');
   if(qs)qs.style.display='block';
-  if(sd)sd.style.display='none';
+  // send-btn managed by showSendButton based on text content
   setMicState('confirm','Does this look correct?');
   if(document.getElementById('voice-tip'))document.getElementById('voice-tip').classList.add('hidden');
   // Scroll overlay to top so Save Item button is immediately visible
