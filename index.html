@@ -257,7 +257,7 @@ body{
 .claude-unclear{color:var(--danger);font-style:italic;margin-top:6px;}
 
 /* ── Send button ── */
-#send-btn{width:100%;padding:13px;background:var(--primary);color:white;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;margin-bottom:12px;display:none;min-height:44px;}
+
 
 /* ── Calendar ── */
 .cal-view-switch{display:flex;gap:0;margin-bottom:12px;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
@@ -642,8 +642,22 @@ textarea{resize:vertical;min-height:80px;}
       </div>
       <div class="voice-status" id="voice-status">Tap mic or type below</div>
     </div>
-    <textarea class="transcript-box" id="transcript-box" placeholder="Speak or type your item here..." rows="3"></textarea>
-    <button class="btn btn-primary" id="send-btn" onclick="handleTextSubmit()">Send</button>
+    <div style="position:relative;margin-bottom:8px;">
+      <textarea class="transcript-box" id="transcript-box" placeholder="Speak or type your item here..." rows="3" style="padding-right:50px;margin:0;"></textarea>
+      <button id="send-btn" onclick="handleTextSubmit()" title="Send" style="
+        position:absolute;bottom:8px;right:8px;
+        width:34px;height:34px;
+        border-radius:50%;
+        background:var(--primary);
+        color:white;border:none;
+        display:none;
+        align-items:center;justify-content:center;
+        cursor:pointer;
+        box-shadow:0 2px 8px rgba(20,50,90,0.3);
+        padding:0;
+      "><svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></button>
+    </div>
+    <button class="btn-save" id="quick-save-btn" onclick="confirmSave()" style="width:100%;display:none;margin-bottom:8px;">Save Item</button>
 
     <!-- Alias banner -->
     <div class="alias-banner hidden" id="alias-banner">
@@ -1034,7 +1048,11 @@ function releaseAudioSession(){
 // ── Text input (keyboard) ─────────────────────────────────────
 function showSendButton(show){
   const btn=document.getElementById('send-btn');
-  if(btn) btn.style.display=show?'block':'none';
+  // Only show send arrow when typing and NOT in confirm mode
+  if(btn){
+    const showSend=show&&appMode!=='confirm';
+    btn.style.display=showSend?'flex':'none';
+  }
 }
 
 function handleTextSubmit(){
@@ -1197,6 +1215,17 @@ function startClarifyingRecording(){
 }
 
 async function parseClarification(transcript){
+  // If user says they want to proceed as-is, treat as confirmation
+  const skipWords=/(fine|leave it|skip|as is|as-is|that'?s? (?:ok|fine|good)|never mind|nevermind|proceed|continue|save it|go ahead)/i;
+  if(skipWords.test(transcript)){
+    delete currentData._clarificationNeeded;
+    delete currentData._intent;
+    prevData={};
+    openConfirmSheet();
+    hideResponseBubble();
+    showConfirmCard(false);
+    return;
+  }
   const today=new Date().toISOString().slice(0,10);
   const prompt=`You are helping complete a partially understood item entry.
 What we have so far: ${JSON.stringify(currentData)}
@@ -1207,7 +1236,7 @@ Defined projects: ${projectNames().join(', ')||'none'}
 
 Merge the user's clarification into the existing data. Return the complete updated object.
 Fields: type (task/meeting/event), project, person1, company1, person2, company2, person3, company3, person4, company4, person5, company5, item, responsible, duedate (YYYY-MM-DD), datetime (YYYY-MM-DDTHH:MM).
-If still missing mandatory fields (type or project), set partial:true and clarification_needed to ask again.
+If still missing the mandatory field (type only), set partial:true and clarification_needed to ask again. Project is optional — if user says to leave it or skip it, set partial:false and proceed.
 Otherwise set partial:false.
 Respond ONLY with valid JSON.`;
 
@@ -1308,7 +1337,7 @@ POSSIBLE INTENTS:
 
 RULES:
 - Apply alias mappings automatically before returning data
-- For add_item: type must be "task", "meeting", or "event". Project MUST match one of the defined projects above (closest match). Both type and project are mandatory for add_item.
+- For add_item: type must be "task", "meeting", or "event". Type is mandatory. Project is optional — if mentioned, match to defined projects above; if not mentioned or no match, set to null. Never set partial:true solely because project is missing.
 - Extract up to 5 people from speech. For each person, use alias table to resolve full name and company. Use fields person1/company1 through person5/company5.
 - For starttime and endtime: extract from speech like "7am to 1pm today" or "from 9am to 5pm next Friday". Format as YYYY-MM-DDTHH:MM. If only a start time is mentioned, set starttime but leave endtime null. If a duration is mentioned (e.g. "2 hour meeting"), calculate endtime from starttime + duration.
 - For add_project: extract the project name only
@@ -1616,6 +1645,8 @@ function discardAll(){
   if(document.getElementById('voice-tip'))
     document.getElementById('voice-tip').classList.remove('hidden');
   document.getElementById('mic-overlay').classList.remove('open');
+  const saveBtn2=document.getElementById('quick-save-btn');
+  if(saveBtn2)saveBtn2.style.display='none';
   setMicState('idle','');
 }
 
@@ -1866,10 +1897,18 @@ function showConfirmCard(showChanges){
   document.getElementById('confirm-card').classList.remove('hidden');
   document.getElementById('confirm-banner').classList.remove('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
+  openConfirmSheet();
   hideResponseBubble();
+  // Show Save Item button at top, hide Send
+  const qs=document.getElementById('quick-save-btn');
+  const sd=document.getElementById('send-btn');
+  if(qs)qs.style.display='block';
+  if(sd)sd.style.display='none';
   setMicState('confirm','Does this look correct?');
-  document.getElementById('voice-tip').classList.add('hidden');
-  setTimeout(()=>window.scrollTo({top:document.getElementById('confirm-card').offsetTop-80}),100);
+  if(document.getElementById('voice-tip'))document.getElementById('voice-tip').classList.add('hidden');
+  // Scroll overlay to top so Save Item button is immediately visible
+  const card=document.getElementById('mic-overlay-card');
+  if(card)setTimeout(()=>{card.scrollTop=0;},100);
 }
 
 // ── Detail card ───────────────────────────────────────────────
