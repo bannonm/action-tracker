@@ -97,21 +97,21 @@ body{
 .tab-btn{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
   background:none;border:none;cursor:pointer;
-  color:var(--text-muted);font-size:15px;font-weight:500;
+  color:var(--text-muted);font-size:13px;font-weight:500;
   flex:1;padding:0;
   transition:color 0.15s;
 }
 .tab-btn.active{color:var(--primary);}
-.tab-btn svg{width:36px;height:36px;fill:currentColor;}
+.tab-btn svg{width:30px;height:30px;fill:currentColor;}
 .tab-mic{
   background:var(--primary);
   border-radius:50%;
-  width:72px !important;
-  height:72px !important;
-  min-width:72px;
-  min-height:72px;
-  max-width:72px;
-  max-height:72px;
+  width:70px !important;
+  height:70px !important;
+  min-width:70px;
+  min-height:70px;
+  max-width:70px;
+  max-height:70px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -128,7 +128,7 @@ body{
 }
 .tab-mic.recording{background:var(--danger);box-shadow:0 4px 16px rgba(192,57,43,0.5);}
 .tab-mic.processing{background:var(--accent);}
-.tab-mic svg{width:38px;height:38px;fill:white;}
+.tab-mic svg{width:35px;height:35px;fill:white;}
 
 /* ── Mic overlay ── */
 .mic-overlay{
@@ -323,7 +323,7 @@ body{
 .settings-label{flex:1;font-size:15px;color:var(--text);}
 .settings-value{font-size:14px;color:var(--text-muted);}
 .settings-chevron{color:var(--text-muted);font-size:16px;}
-.settings-back{background:none;border:none;color:var(--accent);font-size:15px;font-weight:500;cursor:pointer;padding:4px 0;display:flex;align-items:center;gap:4px;margin-bottom:16px;min-height:44px;}
+.settings-back{background:none;border:none;color:var(--accent);font-size:13px;font-weight:500;cursor:pointer;padding:4px 0;display:flex;align-items:center;gap:4px;margin-bottom:16px;min-height:44px;}
 
 /* ── Projects/Aliases in settings ── */
 .project-add-card,.alias-add-card{background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
@@ -555,7 +555,7 @@ textarea{resize:vertical;min-height:80px;}
     <div class="screen-content">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <div style="font-size:20px;font-weight:700;color:var(--text);">Settings</div>
-        <button onclick="showScreen('items')" style="background:none;border:none;color:var(--accent);font-size:15px;font-weight:500;cursor:pointer;min-height:44px;">Done</button>
+        <button onclick="showScreen('items')" style="background:none;border:none;color:var(--accent);font-size:13px;font-weight:500;cursor:pointer;min-height:44px;">Done</button>
       </div>
 
       <div class="settings-section">
