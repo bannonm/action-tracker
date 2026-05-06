@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<meta name="apple-touch-fullscreen" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Altius</title>
 <meta name="application-name" content="Altius">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Altius">
 <meta name="theme-color" content="#14325A">
 <link rel="apple-touch-icon" id="pwa-icon">
@@ -37,14 +36,10 @@ html,body{height:100%;overflow:hidden;}
 body{
   font-family:-apple-system,'SF Pro Text',sans-serif;
   background:var(--bg);color:var(--text);
-  min-height:100dvh;
-}
-html{
-  height:100dvh;
 }
 
 /* ── Header ── */
-.header{background:var(--primary);color:white;padding:10px 16px 10px;padding-top:calc(10px + var(--safe-top));position:fixed;top:0;left:0;right:0;z-index:200;}
+.header{background:var(--primary);color:white;padding:10px 16px 10px;position:fixed;top:0;left:0;right:0;z-index:200;}
 .header-row{display:flex;align-items:center;justify-content:space-between;}
 .sync-indicator{font-size:11px;opacity:0.85;display:flex;align-items:center;gap:5px;}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:#14BEC8;flex-shrink:0;}
