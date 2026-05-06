@@ -382,6 +382,26 @@ textarea{resize:vertical;min-height:80px;}
 .confirm-dialog-msg{font-size:14px;color:var(--text-muted);margin-bottom:20px;line-height:1.5;}
 .confirm-dialog-actions{display:flex;gap:10px;}
 .confirm-dialog-actions button{flex:1;padding:12px;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;min-height:44px;}
+
+/* ── Mic button state animations ── */
+@keyframes mic-pulse-listen{
+  0%  {transform:scale(1.0);box-shadow:0 4px 20px rgba(192,57,43,0.4);}
+  50% {transform:scale(1.12);box-shadow:0 6px 28px rgba(192,57,43,0.7);}
+  100%{transform:scale(1.0);box-shadow:0 4px 20px rgba(192,57,43,0.4);}
+}
+@keyframes mic-pulse-think{
+  0%  {transform:scale(1.0);box-shadow:0 4px 20px rgba(20,190,200,0.4);}
+  50% {transform:scale(1.06);box-shadow:0 6px 24px rgba(20,190,200,0.7);}
+  100%{transform:scale(1.0);box-shadow:0 4px 20px rgba(20,190,200,0.4);}
+}
+.tab-mic.listening{
+  background:#C0392B !important;
+  animation:mic-pulse-listen 1.2s ease-in-out infinite;
+}
+.tab-mic.thinking{
+  background:var(--accent) !important;
+  animation:mic-pulse-think 1.6s ease-in-out infinite;
+}
 .hidden{display:none !important;}
 .quick-add-row{display:flex;gap:8px;margin-bottom:14px;align-items:center;}
 .quick-add-row input{flex:1;padding:11px 14px;border:1.5px solid var(--accent);border-radius:var(--radius-sm);font-size:15px;background:white;min-height:44px;}
@@ -1025,20 +1045,20 @@ function handleTextSubmit(){
   if(appMode==='confirm'){
     // In confirm mode, typed text is treated as a correction
     appMode='processing';
-    setMicState('processing','AI is interpreting...');
+    setMicState('processing','Thinking...');
     parseConfirmResponse(text);
     return;
   }
   if(appMode==='clarifying'){
     // In clarifying mode, typed text answers the clarification question
     appMode='processing';
-    setMicState('processing','AI is interpreting...');
+    setMicState('processing','Thinking...');
     parseClarification(text);
     return;
   }
   // Initial input — run through full intent pipeline
   appMode='processing';
-  setMicState('processing','AI is thinking...');
+  setMicState('processing','Thinking...');
   document.getElementById('confirm-card').classList.add('hidden');
   document.getElementById('alias-banner').classList.add('hidden');
   hideResponseBubble();
@@ -1166,7 +1186,7 @@ function startClarifyingRecording(){
   recognition=makeSR(finalText=>{
     if(finalText){
       appMode='processing';
-      setMicState('processing','AI is interpreting...');
+      setMicState('processing','Thinking...');
       parseClarification(finalText);
     }else{
       appMode='clarifying';
@@ -1235,7 +1255,7 @@ function startListening(){
   recognition=makeSR(finalText=>{
     if(finalText){
       appMode='processing';
-      setMicState('processing','AI is thinking...');
+      setMicState('processing','Thinking...');
       determineIntent(finalText);
     }else{
       appMode='initial';
@@ -1253,7 +1273,7 @@ function startConfirmRecording(){
   recognition=makeSR(finalText=>{
     if(finalText){
       appMode='processing';
-      setMicState('processing','AI is interpreting...');
+      setMicState('processing','Thinking...');
       parseConfirmResponse(finalText);
     }else{
       appMode='confirm';
@@ -1768,14 +1788,25 @@ async function saveAlias(aliasText,canonical,company,email){
 // ── Mic state ─────────────────────────────────────────────────
 function setMicState(state,statusText){
   const btn=document.getElementById('mic-btn');
+  const tabMic=document.getElementById('tab-mic');
   const status=document.getElementById('voice-status');
   const r1=document.getElementById('ring1');
   const r2=document.getElementById('ring2');
-  btn.className='mic-btn'+(state==='recording'?' recording':state==='processing'?' processing':state==='confirm'?' confirm':state==='clarifying'?' alias-mode':'');
-  r1.className='voice-ring-anim'+(state==='recording'?' active':'');
-  r2.className='voice-ring-anim2'+(state==='recording'?' active':'');
-  if(statusText!==undefined) status.textContent=statusText;
-  status.className='voice-status'+(state==='recording'?' listening':state==='processing'?' processing':state==='confirm'?' confirm-mode':'');
+
+  // Inner sheet mic button
+  if(btn) btn.className='mic-btn'+(state==='recording'?' recording':state==='processing'?' processing':state==='confirm'?' confirm':state==='clarifying'?' alias-mode':'');
+
+  // Tab bar mic — listening pulse or thinking pulse
+  if(tabMic){
+    tabMic.classList.remove('listening','thinking');
+    if(state==='recording') tabMic.classList.add('listening');
+    else if(state==='processing') tabMic.classList.add('thinking');
+  }
+
+  if(r1) r1.className='voice-ring-anim'+(state==='recording'?' active':'');
+  if(r2) r2.className='voice-ring-anim2'+(state==='recording'?' active':'');
+  if(statusText!==undefined&&status) status.textContent=statusText;
+  if(status) status.className='voice-status'+(state==='recording'?' listening':state==='processing'?' processing':state==='confirm'?' confirm-mode':'');
 }
 
 
