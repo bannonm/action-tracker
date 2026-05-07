@@ -624,8 +624,8 @@ textarea{resize:vertical;min-height:80px;}
         <div class="settings-section-title">App Info</div>
         <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">1.0.0</div></div>
         <div class="settings-row"><div class="settings-label">Built with</div><div class="settings-value">Claude + Supabase</div></div>
-        <div class="settings-row" onclick="showDebug()" style="cursor:pointer;">
-          <div class="settings-label">Layout Diagnostics</div>
+        <div class="settings-row" onclick="openSubPage('advanced')" style="cursor:pointer;">
+          <div class="settings-label">Advanced</div>
           <div class="settings-chevron">›</div>
         </div>
       </div>
@@ -3148,6 +3148,23 @@ document.addEventListener('click',function(e){
       <div style="display:flex;gap:8px;margin-top:8px;">
         <button class="btn btn-primary" onclick="saveNewUser()" style="flex:1;">Save Profile</button>
         <button class="btn" style="flex:none;background:var(--bg);border:1px solid var(--border);" onclick="hideAddUserForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Advanced settings sub-page -->
+<div class="detail-overlay" id="subpage-advanced">
+  <div class="detail-card" style="max-height:92vh;">
+    <div class="detail-header">
+      <div class="detail-title">Advanced</div>
+      <button class="detail-close" onclick="closeSubPage('advanced')">✕</button>
+    </div>
+    <div class="settings-section">
+      <div class="settings-section-title">Diagnostics</div>
+      <div class="settings-row" onclick="showDebug()" style="cursor:pointer;">
+        <div class="settings-label">Layout Diagnostics</div>
+        <div class="settings-chevron">›</div>
       </div>
     </div>
   </div>
