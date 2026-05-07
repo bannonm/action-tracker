@@ -614,6 +614,13 @@ textarea{resize:vertical;min-height:80px;}
         </div>
       </div>
       <div class="settings-section">
+        <div class="settings-section-title">Account</div>
+        <div class="settings-row" id="current-user-row" style="cursor:pointer;" onclick="switchUser()">
+          <div class="settings-label" id="current-user-name">Not logged in</div>
+          <div class="settings-value" style="color:var(--accent);">Switch</div>
+        </div>
+      </div>
+      <div class="settings-section">
         <div class="settings-section-title">App Info</div>
         <div class="settings-row"><div class="settings-label">Version</div><div class="settings-value">1.0.0</div></div>
         <div class="settings-row"><div class="settings-label">Built with</div><div class="settings-value">Claude + Supabase</div></div>
@@ -900,7 +907,9 @@ function setSyncStatus(s){
 
 function updateHeader(){
   const ov=items.filter(i=>statusOf(i)==='overdue').length;
-  document.getElementById('header-sub').textContent=items.length+' item'+(items.length!==1?'s':'')+' · '+ov+' overdue';
+  const userPrefix=currentUser?currentUser.name+' · ':'';
+  document.getElementById('header-sub').textContent=userPrefix+items.length+' item'+(items.length!==1?'s':'')+' · '+ov+' overdue';
+  updateUserDisplay();
 }
 
 // ── Load all data from Supabase via Worker ────────────────────
@@ -908,11 +917,15 @@ async function loadAll(){
   setSyncStatus('syncing');
   try{
     const [id,al,pr]=await Promise.all([
-      sbCall('sb-get-items'),
-      sbCall('sb-get-aliases'),
-      sbCall('sb-get-projects')
+      sbCall('sb-get-items',{user_id:currentUser?.id}),
+      sbCall('sb-get-aliases',{user_id:currentUser?.id}),
+      sbCall('sb-get-projects',{user_id:currentUser?.id})
     ]);
-    items=id; aliases=al; projects=pr;
+    // App-level filtering by user_id
+    const uid=currentUser?.id;
+    items=uid?id.filter(i=>i.user_id===uid):id;
+    aliases=uid?al.filter(a=>a.user_id===uid):al;
+    projects=uid?pr.filter(p=>p.user_id===uid):pr;
     setSyncStatus('ok');
   }catch(e){setSyncStatus('error');showToast('Connection error');}
   updateHeader();
@@ -961,6 +974,7 @@ async function callClaude(prompt){
 // ── Voice system state ───────────────────────────────────────
 let appMode='initial'; // initial|recording|processing|confirm|clarifying
 // currentScreen initialized above
+let currentUser=null; // {id,name,company,email}
 let currentData={}, prevData={};
 let recordingStart=0;
 let silentMode=localStorage.getItem('altius-silent')==='true';
@@ -1459,7 +1473,7 @@ async function handleIntent(parsed, originalTranscript){
   if(parsed.intent==='add_project'){
     const name=parsed.project_name;
     if(!name){showResponseBubble("I couldn't determine the project name. Please try again.",'error');appMode='initial';setMicState('idle','');return;}
-    const rec={id:Date.now().toString(),name,created:new Date().toISOString()};
+    const rec={id:Date.now().toString(),name,created:new Date().toISOString(),user_id:currentUser?.id||null};
     setSyncStatus('syncing');
     try{
       await sbCall('sb-save-project',rec);
@@ -1629,7 +1643,8 @@ async function confirmSave(){
     type:currentData.type,
     responsible:currentData.responsible||null,
     duedate:currentData.duedate||null,
-    created:new Date().toISOString()
+    created:new Date().toISOString(),
+    user_id:currentUser?.id||null
   };
   for(let i=1;i<=5;i++){
     item['person'+i]=currentData['person'+i]||null;
@@ -1682,7 +1697,7 @@ async function addProjectManually(){
   const name=document.getElementById('new-project-name').value.trim();
   if(!name){showToast('Enter a project name');return;}
   if(projects.find(p=>p.name.toLowerCase()===name.toLowerCase())){showToast('Project already exists');return;}
-  const rec={id:Date.now().toString(),name,created:new Date().toISOString()};
+  const rec={id:Date.now().toString(),name,created:new Date().toISOString(),user_id:currentUser?.id||null};
   try{
     await sbCall('sb-save-project',rec);
     projects.push(rec);
@@ -1820,7 +1835,7 @@ function knownCompanies(){return[...new Set([...items.map(i=>i.company1),...item
 function knownResponsible(){return[...new Set(items.map(i=>i.responsible).filter(Boolean))];}
 
 async function saveAlias(aliasText,canonical,company,email){
-  const rec={id:Date.now().toString(),alias:aliasText,canonical,company:company||null,email:email||null,created:new Date().toISOString()};
+  const rec={id:Date.now().toString(),alias:aliasText,canonical,company:company||null,email:email||null,created:new Date().toISOString(),user_id:currentUser?.id||null};
   try{
     await sbCall('sb-save-alias',rec);
     aliases.push(rec);
@@ -2460,6 +2475,8 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 initMicButton();
 initTextInput();
 updateSilentIcon();
+// User session init — shows selector if no saved user, then loads data
+initUserSession();
 
 // Measure actual rendered heights and position screen container
 // This works correctly in both Safari and PWA standalone mode
@@ -2485,11 +2502,7 @@ if(window.speechSynthesis){
   window.speechSynthesis.onvoiceschanged=loadVoiceList;
   setTimeout(loadVoiceList,500);
 }
-// Load data — renderAll called automatically after load
-loadAll().then(()=>{
-  renderAll();
-  renderCalendar();
-}).catch(()=>{});
+// Data loaded via initUserSession → selectUser/loadAll chain
 
 // Request microphone permission on load so iOS prompts once at startup
 // rather than interrupting mid-recording
@@ -2790,6 +2803,112 @@ function showDebug(){
   ].join('<br>');
   document.getElementById('debug-overlay').classList.add('open');
 }
+
+// ── User identity ─────────────────────────────────────────────
+async function initUserSession(){
+  // Check localStorage for saved user id
+  const savedId=localStorage.getItem('altius-user-id');
+  if(savedId){
+    // Try to load from Supabase
+    try{
+      const profiles=await sbCall('sb-get-profiles');
+      const found=profiles.find(p=>p.id===savedId);
+      if(found){
+        currentUser=found;
+        updateUserDisplay();
+        return; // Skip selector
+      }
+    }catch(e){console.error('Profile load failed',e);}
+  }
+  // No saved user — show selector
+  await showUserSelector();
+}
+
+async function showUserSelector(){
+  try{
+    const profiles=await sbCall('sb-get-profiles');
+    const list=document.getElementById('user-list');
+    if(!profiles.length){
+      list.innerHTML='<p style="color:var(--text-muted);font-size:14px;text-align:center;margin-bottom:8px;">No users yet — add one below.</p>';
+    }else{
+      list.innerHTML=profiles.map(p=>`
+        <div onclick="selectUser('${p.id}')" style="
+          background:var(--surface);border:1.5px solid var(--border);
+          border-radius:var(--radius-sm);padding:14px 16px;
+          margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);
+            color:white;display:flex;align-items:center;justify-content:center;
+            font-size:16px;font-weight:700;flex-shrink:0;">
+            ${esc(p.name.charAt(0).toUpperCase())}
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:600;color:var(--text);">${esc(p.name)}</div>
+            <div style="font-size:12px;color:var(--text-muted);">${esc(p.company||'')}${p.email?' · '+esc(p.email):''}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }catch(e){
+    document.getElementById('user-list').innerHTML='<p style="color:var(--danger);">Could not load profiles</p>';
+  }
+  document.getElementById('user-select-overlay').classList.add('open');
+}
+
+async function selectUser(id){
+  try{
+    const profiles=await sbCall('sb-get-profiles');
+    const found=profiles.find(p=>p.id===id);
+    if(found){
+      currentUser=found;
+      localStorage.setItem('altius-user-id',id);
+      document.getElementById('user-select-overlay').classList.remove('open');
+      updateUserDisplay();
+      await loadAll();
+    }
+  }catch(e){showToast('Could not load profile');}
+}
+
+function updateUserDisplay(){
+  if(!currentUser)return;
+  // Update settings account row
+  const nameEl=document.getElementById('current-user-name');
+  if(nameEl) nameEl.textContent=currentUser.name+(currentUser.company?' · '+currentUser.company:'');
+}
+
+function showAddUserForm(){
+  document.getElementById('add-user-form').style.display='block';
+  document.getElementById('add-user-btn').style.display='none';
+}
+function hideAddUserForm(){
+  document.getElementById('add-user-form').style.display='none';
+  document.getElementById('add-user-btn').style.display='block';
+}
+
+async function saveNewUser(){
+  const name=document.getElementById('new-user-name').value.trim();
+  const company=document.getElementById('new-user-company').value.trim();
+  const email=document.getElementById('new-user-email').value.trim();
+  if(!name){showToast('Name is required');return;}
+  // Generate ID from name
+  const id=name.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,12)+'_'+Date.now().toString().slice(-4);
+  const profile={id,name,company:company||null,email:email||null};
+  try{
+    await sbCall('sb-save-profile',profile);
+    currentUser=profile;
+    localStorage.setItem('altius-user-id',id);
+    document.getElementById('user-select-overlay').classList.remove('open');
+    updateUserDisplay();
+    await loadAll();
+    showToast('Welcome, '+name+'!');
+  }catch(e){showToast('Could not save profile');}
+}
+
+function switchUser(){
+  currentUser=null;
+  localStorage.removeItem('altius-user-id');
+  showUserSelector();
+}
+
 // ── Mic overlay tap outside to close ─────────────────────────
 function handleMicOverlayTap(e){
   if(e.target===document.getElementById('mic-overlay')){
@@ -2999,5 +3118,39 @@ document.addEventListener('click',function(e){
     </div>
     <div id="debug-text" style="font-family:monospace;font-size:13px;line-height:2.2;color:var(--text);"></div>
   </div>
-</div></body>
+</div>
+<!-- User selection overlay -->
+<div class="detail-overlay" id="user-select-overlay" style="z-index:500;">
+  <div class="detail-card" style="max-height:70vh;">
+    <div class="detail-header">
+      <div class="detail-title">👤 Who are you?</div>
+    </div>
+    <p style="font-size:14px;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">
+      Select your profile or add a new user to get started.
+    </p>
+    <div id="user-list" style="margin-bottom:16px;"></div>
+    <button class="btn btn-primary" onclick="showAddUserForm()" id="add-user-btn" style="margin-bottom:8px;">
+      + Add New User
+    </button>
+    <div id="add-user-form" style="display:none;background:var(--bg);border-radius:var(--radius);padding:16px;margin-top:8px;">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="new-user-name" placeholder="e.g. Matt Bannon">
+      </div>
+      <div class="form-group">
+        <label>Company</label>
+        <input type="text" id="new-user-company" placeholder="e.g. Summit Devco">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="new-user-email" placeholder="e.g. matt@company.com">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;">
+        <button class="btn btn-primary" onclick="saveNewUser()" style="flex:1;">Save Profile</button>
+        <button class="btn" style="flex:none;background:var(--bg);border:1px solid var(--border);" onclick="hideAddUserForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
 </html>
