@@ -924,11 +924,16 @@ async function loadAll(){
 // ── Claude API ────────────────────────────────────────────────
 async function callClaude(prompt){
   try{
+    // Timeout after 30 seconds to prevent infinite hang
+    const controller=new AbortController();
+    const timeout=setTimeout(()=>controller.abort(),30000);
     const res=await fetch(PROXY_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]}),
+      signal:controller.signal
     });
+    clearTimeout(timeout);
     const text=await res.text();
     if(!res.ok){showToast('AI error '+res.status);throw new Error('API error: '+res.status);}
     let data;
@@ -942,6 +947,10 @@ async function callClaude(prompt){
     }
     return data.content?.find(b=>b.type==='text')?.text||'';
   }catch(e){
+    if(e.name==='AbortError'){
+      showToast('Request timed out — please try again');
+      throw new Error('Timeout');
+    }
     if(!e.message?.includes('Claude error')&&!e.message?.includes('API error')&&!e.message?.includes('Bad JSON')){
       showToast('Network error — check Cloudflare Worker');
     }
@@ -1370,7 +1379,9 @@ Unknown: {"intent":"unknown","message":"I'm not sure what you'd like to do. I ca
     console.error(e);
     appMode='initial';
     setMicState('idle','');
-    const msg="I couldn't process that. Please try again.";
+    const msg=e.name==='AbortError'||e.message?.includes('Timeout')
+      ? "Request timed out. Please try again."
+      : "I couldn't process that. Please try again.";
     showResponseBubble(msg,'error');
     speak(msg);
   }
@@ -1563,8 +1574,11 @@ function buildUnderstoodSummary(parsed){
 
 // ── Confirm response ──────────────────────────────────────────
 async function parseConfirmResponse(transcript){
-  const confirmWords=/(yes|correct|good|save|confirm|looks good|that('s| is) (right|correct|good)|perfect|go ahead|do it|yep|yeah|ok|okay)/i;
-  if(confirmWords.test(transcript)&&transcript.trim().split(/\s+/).length<8){confirmSave();return;}
+  const confirmWords=/\b(yes|yep|yeah|correct|confirmed|good|save|confirm|looks good|looks right|looks correct|perfect|go ahead|do it|ok|okay|sounds good|absolutely|affirmative|that works|that's right|that is right|that's correct|that is correct|save it|right|approve|approved)\b/i;
+  // Option C: match if ANY confirm word present AND short input (under 12 words)
+  const words=transcript.trim().split(/\s+/);
+  if(confirmWords.test(transcript)&&words.length<12){confirmSave();return;}
+
   const today=new Date().toISOString().slice(0,10);
   const prompt=`You are managing an item confirmation.
 Current data: ${JSON.stringify(currentData)}
@@ -1588,8 +1602,11 @@ Respond ONLY with valid JSON.`;
       showConfirmCard(true);
     }
   }catch(e){
-    appMode='confirm';setMicState('confirm','Does this look correct?');
-    if(e.message&&(e.message.includes('529')||e.message.includes('quota')||e.message.includes('billing'))){
+    appMode='confirm';
+    setMicState('confirm','Does this look correct?');
+    if(e.name==='AbortError'||e.message?.includes('Timeout')){
+      showToast('Request timed out — please try again');
+    }else if(e.message?.includes('529')||e.message?.includes('quota')||e.message?.includes('billing')){
       showToast('Claude usage limit reached — try again later');
     }else{
       showToast('Could not parse — please try again');
