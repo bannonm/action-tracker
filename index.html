@@ -1288,7 +1288,11 @@ Respond ONLY with valid JSON.`;
   }catch(e){
     appMode='clarifying';
     setMicState('idle','');
-    showToast('Could not parse — please try again');
+    if(e.name==='AbortError'||e.message?.includes('Timeout')){
+      showToast('Request timed out — please try again');
+    }else{
+      showToast('Could not parse — please try again');
+    }
   }
 }
 
@@ -2816,6 +2820,7 @@ async function initUserSession(){
       if(found){
         currentUser=found;
         updateUserDisplay();
+        await loadAll(); // Load data for this user
         return; // Skip selector
       }
     }catch(e){console.error('Profile load failed',e);}
